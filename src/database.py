@@ -97,3 +97,14 @@ def create_user(name, email, password_hash):
     conn.commit()
     conn.close()
     return user_id
+
+
+def get_user_projects(user_id, limit=6):
+    """Return list of user's projects.
+
+    This is a lightweight stub that returns project metadata.
+    Currently returns an empty list by default. You can later
+    implement a `projects` table and return real data.
+    """
+    # TODO: implement real projects table and query
+    return []
