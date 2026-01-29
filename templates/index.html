@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DreamLayout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-[#090d17] text-white font-sans">
+
+<!-- ================= HEADER ================= -->
+<header class="bg-[#090d17] text-white shadow-md fixed top-0 left-0 w-full z-10 border-b border-gray-700">
+    <nav class="flex items-center justify-between p-4">
+        <div class="flex items-center space-x-4">
+            <!-- Increased logo size -->
+            <img src="/static/logo.png" alt="DreamLayout Logo" class="h-8">
+            <!-- Increased navbar text size -->
+            <h1 class="text-2xl font-bold">DreamLayout</h1>
+        </div>
+        <div>
+            <img src="/static/profile-icon.png" alt="Profile Icon" class="h-8 w-8 rounded-full cursor-pointer">
+        </div>
+    </nav>
+</header>
+
+<!-- ================= HERO SECTION ================= -->
+<section class="max-w-7xl mx-auto px-8 py-24 grid md:grid-cols-2 gap-16 items-center">
+    <div>
+        <!-- Bigger hero heading -->
+        <h1 class="text-5xl md:text-6xl font-extrabold leading-tight">
+            AI-Powered <span class="text-blue-400">Architectural</span><br>
+            Design & Cost Planning
+        </h1>
+
+        <!-- Bigger paragraph text -->
+        <p class="mt-8 text-white/70 text-xl leading-relaxed">
+            DreamLayout transforms minimal inputs into intelligent layouts and
+            realistic construction cost estimates — faster, smarter, and simpler.
+        </p>
+
+        <div class="mt-10 flex space-x-5">
+            <button class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-xl text-lg font-semibold transition">
+                Generate Layout
+            </button>
+            <button class="border border-white/30 hover:border-white text-white px-8 py-4 rounded-xl text-lg transition">
+                View Samples
+            </button>
+        </div>
+    </div>
+
+    <div class="flex justify-center">
+        <!-- Slightly bigger hero image -->
+        <img src="/static/hero-illustration.jpg"
+             alt="AI Architecture Illustration"
+             class="max-w-md opacity-95 rounded-xl shadow-lg">
+    </div>
+</section>
+
+<!-- ================= ABOUT SECTION ================= -->
+<section class="bg-[#0f1525] py-20">
+    <div class="max-w-5xl mx-auto px-8 text-center">
+        <h2 class="text-4xl font-bold">About DreamLayout</h2>
+        <p class="mt-6 text-white/70 text-xl leading-relaxed">
+            DreamLayout acts as an AI architectural co-pilot. Whether you’re planning
+            a home, office, or commercial space, our system combines AI reasoning,
+            design rules, and cost analytics to deliver reliable results.
+        </p>
+    </div>
+</section>
+
+<!-- ================= FEATURES ================= -->
+<section class="max-w-7xl mx-auto px-8 py-20">
+    <h2 class="text-4xl font-bold text-center mb-14">Why DreamLayout?</h2>
+
+    <div class="grid md:grid-cols-3 gap-10">
+        <div class="bg-[#0f1525] p-8 rounded-2xl border border-white/10">
+            <h3 class="text-2xl font-semibold mb-3">Minimal Inputs</h3>
+            <p class="text-white/70 text-lg">
+                Just area, requirements, and budget — no technical expertise required.
+            </p>
+        </div>
+
+        <div class="bg-[#0f1525] p-8 rounded-2xl border border-white/10">
+            <h3 class="text-2xl font-semibold mb-3">AI-Driven Design</h3>
+            <p class="text-white/70 text-lg">
+                Powered by advanced AI models and architectural logic rules.
+            </p>
+        </div>
+
+        <div class="bg-[#0f1525] p-8 rounded-2xl border border-white/10">
+            <h3 class="text-2xl font-semibold mb-3">Accurate Cost Estimation</h3>
+            <p class="text-white/70 text-lg">
+                Realistic construction cost breakdowns using data analytics.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- ================= PREVIOUS LAYOUTS ================= -->
+<section class="bg-[#0f1525] py-20">
+    <div class="max-w-7xl mx-auto px-8">
+        <h2 class="text-4xl font-bold mb-12">Previously Designed Layouts</h2>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-[#090d17] border border-white/10 rounded-2xl overflow-hidden">
+                <div class="h-48 bg-gradient-to-br from-blue-500/30 to-purple-500/30"></div>
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold">Modern 3BHK Home</h3>
+                    <p class="text-white/60 text-base mt-2">1200 sq.ft • Budget Friendly</p>
+                </div>
+            </div>
+
+            <div class="bg-[#090d17] border border-white/10 rounded-2xl overflow-hidden">
+                <div class="h-48 bg-gradient-to-br from-green-500/30 to-blue-500/30"></div>
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold">Office Workspace</h3>
+                    <p class="text-white/60 text-base mt-2">2000 sq.ft • Corporate</p>
+                </div>
+            </div>
+
+            <div class="bg-[#090d17] border border-white/10 rounded-2xl overflow-hidden">
+                <div class="h-48 bg-gradient-to-br from-purple-500/30 to-pink-500/30"></div>
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold">Retail Store</h3>
+                    <p class="text-white/60 text-base mt-2">800 sq.ft • Commercial</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="bg-[#090d17] text-white text-center p-4">
+    © 2026 DreamLayout. All rights reserved.
+</footer>
+
+</body>
+</html>
