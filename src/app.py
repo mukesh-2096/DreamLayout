@@ -6,6 +6,9 @@ from src.models import User
 from src.routes import auth_bp
 from src.main_routes import main_bp
 
+# Initialize global extensions
+login_manager = LoginManager()
+
 def create_app():
     """Application factory pattern"""
     app = Flask(
@@ -18,16 +21,17 @@ def create_app():
     app.config.from_object(Config)
     app.secret_key = Config.SECRET_KEY
     
-    # Initialize Flask-Login
-    login_manager = LoginManager()
+    # Initialize extensions
     login_manager.init_app(app)
+    
     login_manager.login_view = 'auth.login'
     
     @login_manager.user_loader
     def load_user(user_id):
         user_data = get_user_by_id(user_id)
         if user_data:
-            return User(user_data[0], user_data[1], user_data[2])
+            # Matches SELECT id, name, email, about, profile_pic, location FROM users
+            return User(user_data[0], user_data[1], user_data[2], about=user_data[3], profile_pic=user_data[4], location=user_data[5])
         return None
     
     # Register blueprints
@@ -35,4 +39,3 @@ def create_app():
     app.register_blueprint(main_bp)
     
     return app
-

@@ -19,3 +19,15 @@ class Config:
     # Embedding model
     EMBEDDING_MODEL = 'all-MiniLM-L6-v2'
     EMBEDDING_DIMENSION = 384
+    
+    # Upload Settings
+    UPLOAD_FOLDER = 'static/uploads/profiles'
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    
+    # Cloudinary Settings
+    CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME', 'dys7uqgs8')
+    CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY', '499189479929149')
+    CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET', 'EpzRI8Q9EyACpEugEFd97id3XIY')
+    
+
+

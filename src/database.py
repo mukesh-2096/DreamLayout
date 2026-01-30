@@ -19,11 +19,21 @@ def init_db():
             name TEXT NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password_hash TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            about TEXT,
+            profile_pic TEXT,
+            location TEXT
         )
     ''')
+    # Migration: Check if columns exist
+    for col in ['about', 'profile_pic', 'location']:
+        try:
+            cursor.execute(f"ALTER TABLE users ADD COLUMN {col} TEXT")
+        except sqlite3.OperationalError:
+            pass
     conn.commit()
     conn.close()
+
 
 def init_faiss():
     """Initialize FAISS index"""
@@ -73,7 +83,7 @@ def get_user_by_id(user_id):
     """Get user from database by ID"""
     conn = sqlite3.connect(Config.DB_PATH)
     cursor = conn.cursor()
-    cursor.execute('SELECT id, name, email FROM users WHERE id = ?', (user_id,))
+    cursor.execute('SELECT id, name, email, about, profile_pic, location FROM users WHERE id = ?', (user_id,))
     user_data = cursor.fetchone()
     conn.close()
     return user_data
@@ -82,7 +92,7 @@ def get_user_by_email(email):
     """Get user from database by email"""
     conn = sqlite3.connect(Config.DB_PATH)
     cursor = conn.cursor()
-    cursor.execute('SELECT id, name, email, password_hash FROM users WHERE email = ?', (email,))
+    cursor.execute('SELECT id, name, email, password_hash, about, profile_pic, location FROM users WHERE email = ?', (email,))
     user_data = cursor.fetchone()
     conn.close()
     return user_data
@@ -97,6 +107,19 @@ def create_user(name, email, password_hash):
     conn.commit()
     conn.close()
     return user_id
+def update_user(user_id, name, email, about, profile_pic=None, location=None):
+    """Update user information in database"""
+    conn = sqlite3.connect(Config.DB_PATH)
+    cursor = conn.cursor()
+    if profile_pic:
+        cursor.execute('UPDATE users SET name = ?, email = ?, about = ?, profile_pic = ?, location = ? WHERE id = ?',
+                     (name, email, about, profile_pic, location, user_id))
+    else:
+        cursor.execute('UPDATE users SET name = ?, email = ?, about = ?, location = ? WHERE id = ?',
+                     (name, email, about, location, user_id))
+    conn.commit()
+    conn.close()
+    return True
 
 
 def get_user_projects(user_id, limit=6):
