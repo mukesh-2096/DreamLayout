@@ -1,11 +1,20 @@
 # 🚀 DreamLayout Project Setup Guide
 
-Welcome to **DreamLayout**! Follow these steps to set up the project on your local machine.
+Welcome to **DreamLayout**! DreamLayout is an AI-powered Architectural Co-pilot built with **FastAPI**. Follow these steps to set up the project on your local machine.
+
+## 🏗️ Tech Stack
+- **Backend:** FastAPI (Python 3.8+)
+- **Frontend:** HTML5, Tailwind CSS, Jinja2 Templates
+- **Database:** SQLite (Relational) & FAISS (Vector Index)
+- **Image Hosting:** Cloudinary
+- **Authentication:** Custom Session-based with FastAPI Middlewares
+
+---
 
 ## 📋 Prerequisites
-- **Python 3.8+** installed on your system.
+- **Python 3.8+** installed.
 - **Git** for cloning the repository.
-- A **Cloudinary Account** (Free tier works perfectly) for image hosting.
+- A **Cloudinary Account** (Free tier) for image hosting.
 
 ---
 
@@ -18,7 +27,7 @@ cd DreamLayout
 ```
 
 ### 2. Create a Virtual Environment
-It's highly recommended to use a virtual environment to keep dependencies isolated.
+It's highly recommended to use a virtual environment.
 ```powershell
 # Windows
 python -m venv venv
@@ -36,45 +45,53 @@ pip install -r requirements.txt
 ```
 
 ### 4. Environment Configuration
-Create a `.env` file in the root directory by copying the example:
+Create a `.env` file in the root directory. You can use `.env.example` as a template:
 ```bash
+# Windows
+copy .env.example .env
+# Linux/macOS
 cp .env.example .env
 ```
 
-Now, open `.env` and fill in your details:
-- **SECRET_KEY**: Any random long string for session security.
-- **Cloudinary Keys**: Log in to your [Cloudinary Dashboard](https://cloudinary.com/console) and copy your `Cloud Name`, `API Key`, and `API Secret`.
+Open `.env` and fill in:
+- **SECRET_KEY**: A random secret string for session security.
+- **CLOUDINARY_URL**: Your Cloudinary connection string (or individual keys if configured that way).
+  - `CLOUDINARY_CLOUD_NAME`
+  - `CLOUDINARY_API_KEY`
+  - `CLOUDINARY_API_SECRET`
 
 ---
 
-## 🗄️ Database Initialization
-The project uses **SQLite** (for user data) and **FAISS** (for AI vector search). These will be automatically initialized when you first run the app, but you can also run:
-```bash
-# This creates users.db and indexing files if they don't exist
-python run.py
-```
+## 🗄️ Database & Vector Index
+The project uses **SQLite** for user data and **FAISS** for vector-based search.
+- **SQLite**: `users.db` stores profile info.
+- **FAISS**: `user_embeddings.index` and `user_id_mapping.pkl` handle the AI search indexing.
+These are initialized automatically on the first run.
 
 ---
 
 ## 🏃‍♂️ Running the Project
-Once configured, start the development server:
+Start the development server with auto-reload:
 ```bash
 python run.py
 ```
-Open your browser and navigate to: `http://127.0.0.1:5000`
+Open your browser to: `http://127.0.0.1:5000`
 
 ---
 
-## 🔍 Database Troubleshooting
-If you want to view the users currently in your local database, you can use the built-in utility:
-```bash
-python view_database.py
-```
+## 📁 Key Directories
+- `src/`: Backend logic (Routes, Models, Database).
+- `templates/`: HTML Jinja2 templates (Modern UI with Tailwind CSS).
+- `static/`: CSS, JS, and local images.
+- `venv/`: Your Python virtual environment (Git-ignored).
 
-## ☁️ Cloudinary Structure
-The project automatically creates a folder named `dreamlayout_profiles` in your Cloudinary account. Each user's data is isolated in a subfolder named `u_<unique_id>`, ensuring maximum privacy and data integrity.
+---
+
+## 🔍 Utilities
+- **View Local Database**: `python view_database.py` (CLI tool to see registered users).
+- **Check FAISS Index**: `python check_faiss.py` (Verified vector search status).
 
 ---
 
 ## 🛡️ Security Note
-The `.env` file and `users.db` are strictly ignored by Git to prevent your private keys and user data from being exposed on GitHub. **Never commit your `.env` file.**
+The `.env`, `users.db`, and FAISS index files are ignored by Git. **Never commit your credentials.**

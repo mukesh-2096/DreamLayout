@@ -1,6 +1,13 @@
-flask
-flask-login
-werkzeug
+# FastAPI stack
+fastapi
+uvicorn
+jinja2
+python-multipart
+itsdangerous
+pydantic
+pydantic-settings
+
+# Existing ML/Image libs
 faiss-cpu
 sentence-transformers
 numpy

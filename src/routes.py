@@ -1,80 +1,66 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_user, logout_user, login_required
+from fastapi import APIRouter, Request, Form, Depends, HTTPException, status
+from fastapi.responses import HTMLResponse, RedirectResponse
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
-from src.models import User
+
 from src.database import get_user_by_email, create_user, add_user_to_faiss
+from src.models import User
+from src.fastapi_utils import flash, render_template
 
-auth_bp = Blueprint('auth', __name__)
+auth_router = APIRouter(tags=["Authentication"])
 
-@auth_bp.route("/login", methods=["GET", "POST"])
-def login():
-    """Handle user login"""
-    if request.method == "POST":
-        email = request.form.get('email')
-        password = request.form.get('password')
-        
-        # Query user from database
-        user_data = get_user_by_email(email)
-        
-        if user_data and check_password_hash(user_data[3], password):
-            # user_data: (id, name, email, password_hash, about, profile_pic, location, user_key)
-            user = User(
-                user_data[0], user_data[1], user_data[2], 
-                about=user_data[4], profile_pic=user_data[5], 
-                location=user_data[6], user_key=user_data[7]
-            )
-            login_user(user)
-            flash('Login successful!', 'success')
-            return redirect(url_for("main.dashboard"))
-        else:
-            flash('Invalid email or password', 'error')
-            return redirect(url_for("auth.login"))
+@auth_router.get("/login", response_class=HTMLResponse)
+async def login_page(request: Request):
+    return render_template(request, "login.html")
+
+@auth_router.post("/login")
+async def login(request: Request, email: str = Form(...), password: str = Form(...)):
+    user_data = get_user_by_email(email)
     
-    return render_template("login.html")
+    if user_data and check_password_hash(user_data[3], password):
+        # user_data: (id, name, email, password_hash, about, profile_pic, location, user_key)
+        request.state.session["user_id"] = user_data[0]
+        flash(request, 'Login successful!', 'success')
+        return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+    else:
+        flash(request, 'Invalid email or password', 'error')
+        return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
 
-@auth_bp.route("/signup", methods=["GET", "POST"])
-def signup():
-    """Handle user signup"""
-    if request.method == "POST":
-        name = request.form.get('name')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        confirm_password = request.form.get('confirm_password')
+@auth_router.get("/signup", response_class=HTMLResponse)
+async def signup_page(request: Request):
+    return render_template(request, "signup.html")
+
+@auth_router.post("/signup")
+async def signup(
+    request: Request, 
+    name: str = Form(...), 
+    email: str = Form(...), 
+    password: str = Form(...), 
+    confirm_password: str = Form(...)
+):
+    # Validate password length
+    if len(password) < 6:
+        flash(request, 'Password must be at least 6 characters long', 'error')
+        return RedirectResponse(url="/signup", status_code=status.HTTP_303_SEE_OTHER)
         
-        # Validate password length
-        if len(password) < 6:
-            flash('Password must be at least 6 characters long', 'error')
-            return redirect(url_for("auth.signup"))
-            
-        # Validate passwords match
-        if password != confirm_password:
-            flash('Passwords do not match', 'error')
-            return redirect(url_for("auth.signup"))
-        
-        # Hash password
-        password_hash = generate_password_hash(password)
-        
-        try:
-            # Insert user into database
-            user_id = create_user(name, email, password_hash)
-            
-            # Add user to FAISS vector database
-            add_user_to_faiss(user_id, email, name)
-            
-            flash('Account created successfully! Please login.', 'success')
-            return redirect(url_for("auth.login"))
-        
-        except sqlite3.IntegrityError:
-            flash('Email already exists', 'error')
-            return redirect(url_for("auth.signup"))
+    # Validate passwords match
+    if password != confirm_password:
+        flash(request, 'Passwords do not match', 'error')
+        return RedirectResponse(url="/signup", status_code=status.HTTP_303_SEE_OTHER)
     
-    return render_template("signup.html")
+    password_hash = generate_password_hash(password)
+    
+    try:
+        user_id = create_user(name, email, password_hash)
+        add_user_to_faiss(user_id, email, name)
+        flash(request, 'Account created successfully! Please login.', 'success')
+        return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
+    except sqlite3.IntegrityError:
+        flash(request, 'Email already exists', 'error')
+        return RedirectResponse(url="/signup", status_code=status.HTTP_303_SEE_OTHER)
 
-@auth_bp.route("/logout")
-@login_required
-def logout():
-    """Handle user logout"""
-    logout_user()
-    flash('Logged out successfully', 'success')
-    return redirect(url_for("auth.login"))
+@auth_router.get("/logout")
+async def logout(request: Request):
+    request.state.session.clear()
+    flash(request, 'Logged out successfully', 'success')
+    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)

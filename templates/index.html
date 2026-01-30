@@ -58,6 +58,22 @@
             background: rgba(15, 23, 42, 0.8);
             border-color: rgba(255, 255, 255, 0.1);
         }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
 
@@ -100,6 +116,22 @@
             </div>
         </nav>
     </header>
+
+    <!-- Flash Messages -->
+    <div class="fixed top-24 left-1/2 -translate-x-1/2 z-[60] w-full max-w-md px-6 pointer-events-none">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div
+            class="mb-4 p-4 rounded-2xl text-sm font-bold flex items-center gap-3 animate-fade-in-up border glass pointer-events-auto shadow-2xl
+            {{ 'bg-emerald-50/90 dark:bg-emerald-900/40 border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400' if category == 'success' else 'bg-rose-50/90 dark:bg-rose-900/40 border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400' }}">
+            <span>{{ '✅' if category == 'success' else '⚠️' }}</span> {{ message }}
+            <button onclick="this.parentElement.remove()" class="ml-auto hover:opacity-70 transition">✕</button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
 
     <!-- ================= HERO ================= -->
     <section class="relative pt-48 pb-32 overflow-hidden">
