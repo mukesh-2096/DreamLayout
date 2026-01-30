@@ -5,3 +5,5 @@ faiss-cpu
 sentence-transformers
 numpy
 python-dotenv
+requests
+cloudinary

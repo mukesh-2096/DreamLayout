@@ -1,110 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DreamLayout</title>
+    <title>DreamLayout – AI Architectural Co-pilot</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .dark .glass {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+    </style>
 </head>
 
-<body class="bg-white text-gray-900 font-sans">
+<body
+    class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-violet-100 dark:selection:bg-violet-900 transition-colors duration-300 overflow-x-hidden">
 
-<!-- ================= NAVBAR ================= -->
-<header class="border-b border-gray-200 fixed top-0 left-0 w-full bg-white z-50">
-    <nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <!-- Logo -->
-        <div class="flex items-center space-x-3">
-            <img src="/static/logo.png" alt="DreamLayout Logo" class="h-10">
-            <span class="text-2xl font-bold">DreamLayout</span>
-        </div>
-
-        <!-- Navigation -->
-        <div class="hidden md:flex space-x-8 text-lg">
-            <a href="#" class="hover:text-blue-600">Products</a>
-            <a href="#" class="hover:text-blue-600">Use cases</a>
-            <a href="#" class="hover:text-blue-600">Resources</a>
-            <a href="#" class="hover:text-blue-600">Pricing</a>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex items-center space-x-4">
-            <a href="/signup" class="text-lg hover:text-blue-600">Sign Up</a>
-            <a href="/login" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full text-lg font-semibold">
-                Get Started
-            </a>
-        </div>
-    </nav>
-</header>
-
-<!-- ================= HERO ================= -->
-<section class="pt-36 pb-24">
-    <div class="max-w-4xl mx-auto text-center px-6">
-        <h1 class="text-5xl md:text-6xl font-extrabold leading-tight">
-            AI-Powered Architectural <br />
-            Design & Cost Planning
-        </h1>
-
-        <p class="mt-6 text-xl text-gray-600">
-            DreamLayout helps you design intelligent layouts and generate realistic
-            construction cost estimates using AI — faster, smarter, and simpler.
-        </p>
-
-        <div class="mt-10">
-            <a href="/login" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full text-lg font-semibold">
-                Get Started
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- ================= CREATE FROM SCRATCH ================= -->
-<section class="bg-gray-50 py-24">
-    <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-4xl font-bold text-center mb-16">
-            Create a floor plan from scratch
-        </h2>
-
-        <div class="grid md:grid-cols-3 gap-10">
-            <!-- Card 1 -->
-            <div class="bg-white p-8 rounded-2xl shadow-md text-center">
-                <h3 class="text-2xl font-semibold mb-4">Create a floor plan</h3>
-                <p class="text-gray-600 text-lg mb-6">
-                    Start from scratch by entering area, rooms, and requirements.
-                </p>
-                <button class="text-blue-600 font-semibold text-lg hover:underline">
-                    Get Started →
-                </button>
+    <!-- ================= NAVBAR ================= -->
+    <header class="fixed top-0 left-0 w-full z-50 px-6 py-4">
+        <nav
+            class="max-w-7xl mx-auto glass border border-white/20 rounded-full px-6 py-3 flex items-center justify-between shadow-lg shadow-slate-200/50 dark:shadow-none">
+            <div class="flex items-center space-x-3">
+                <img src="/static/logo.png" alt="DreamLayout" class="h-10 dark:brightness-110">
+                <span
+                    class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-700 to-indigo-700 dark:from-violet-400 dark:to-indigo-400">DreamLayout</span>
             </div>
 
-            <!-- Card 2 -->
-            <div class="bg-white p-8 rounded-2xl shadow-md text-center">
-                <h3 class="text-2xl font-semibold mb-4">Design your space</h3>
-                <p class="text-gray-600 text-lg mb-6">
-                    AI generates optimized layouts based on real architectural rules.
-                </p>
-                <button class="text-blue-600 font-semibold text-lg hover:underline">
-                    Get Started →
-                </button>
+            <div class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-600 dark:text-slate-400">
+                <a href="#features" class="hover:text-violet-600 dark:hover:text-violet-400 transition">Features</a>
+                <a href="#how-it-works" class="hover:text-violet-600 dark:hover:text-violet-400 transition">How it
+                    Works</a>
+                <a href="/templates" class="hover:text-violet-600 dark:hover:text-violet-400 transition">Templates</a>
             </div>
 
-            <!-- Card 3 -->
-            <div class="bg-white p-8 rounded-2xl shadow-md text-center">
-                <h3 class="text-2xl font-semibold mb-4">Estimate cost</h3>
-                <p class="text-gray-600 text-lg mb-6">
-                    Get a realistic construction cost breakdown instantly.
-                </p>
-                <button class="text-blue-600 font-semibold text-lg hover:underline">
-                    Get Started →
-                </button>
+            <div class="flex items-center space-x-4">
+                <!-- Mini Theme Toggle -->
+                <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-full items-center">
+                    <button onclick="setTheme('light')"
+                        class="theme-btn light w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all hover:bg-white dark:hover:bg-slate-700">☀️</button>
+                    <button onclick="setTheme('dark')"
+                        class="theme-btn dark w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all hover:bg-white dark:hover:bg-slate-700">🌙</button>
+                </div>
+
+                <div class="flex items-center space-x-1 lg:space-x-2">
+                    <a href="/login"
+                        class="px-4 py-2.5 rounded-full text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 transition">Login</a>
+                    <a href="/signup"
+                        class="bg-violet-600 hover:bg-violet-700 text-white px-5 lg:px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-violet-200 dark:shadow-none transition">Get
+                        Started</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ================= HERO ================= -->
+    <section class="relative pt-48 pb-32 overflow-hidden">
+        <!-- Blobs -->
+        <div
+            class="absolute top-0 -left-4 w-72 h-72 bg-violet-300 dark:bg-violet-900 rounded-full mix-blend-multiply filter blur-3xl opacity-30 dark:opacity-20 animate-blob">
+        </div>
+        <div
+            class="absolute top-0 -right-4 w-72 h-72 bg-indigo-300 dark:bg-indigo-900 rounded-full mix-blend-multiply filter blur-3xl opacity-30 dark:opacity-20 animate-blob animation-delay-2000">
+        </div>
+        <div
+            class="absolute bottom-32 left-1/2 w-72 h-72 bg-fuchsia-300 dark:bg-fuchsia-900 rounded-full mix-blend-multiply filter blur-3xl opacity-30 dark:opacity-20 animate-blob animation-delay-4000">
+        </div>
+
+        <div class="max-w-7xl mx-auto px-6 text-center relative z-10">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 bg-violet-50 dark:bg-violet-900/30 border border-violet-100 dark:border-violet-800 rounded-full mb-6">
+                <span class="flex h-2 w-2 rounded-full bg-violet-600 animate-pulse"></span>
+                <span
+                    class="text-xs font-bold text-violet-700 dark:text-violet-400 uppercase tracking-widest">AI-Powered
+                    Architectural Co-pilot</span>
+            </div>
+
+            <h1 class="text-6xl md:text-8xl font-extrabold leading-[1.1] text-slate-900 dark:text-slate-100 mb-8">
+                Build your dream <br />
+                <span class="text-violet-600 dark:text-violet-400 italic">intelligently.</span>
+            </h1>
+
+            <p class="max-w-2xl mx-auto text-xl text-slate-500 dark:text-slate-400 leading-relaxed mb-12">
+                DreamLayout transforms minimal user inputs into production-ready architectural designs and realistic
+                construction cost plans.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="/signup"
+                    class="w-full sm:w-auto bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-8 py-4 rounded-2xl text-lg font-bold shadow-xl transition-all hover:scale-105">
+                    Start Designing Free
+                </a>
+                <a href="#how-it-works"
+                    class="w-full sm:w-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 px-8 py-4 rounded-2xl text-lg font-bold shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+                    See How it Works
+                </a>
+            </div>
+
+            <!-- Dashboard Mockup -->
+            <div class="mt-24 relative max-w-5xl mx-auto animate-float">
+                <div
+                    class="relative z-10 rounded-3xl overflow-hidden border border-white/50 dark:border-slate-800 shadow-2xl shadow-indigo-200/50 dark:shadow-none">
+                    <img src="/static/architectural_ai_dashboard_mockup_1769701086808.png" alt="DreamLayout Dashboard"
+                        class="w-full h-auto dark:opacity-80">
+                </div>
+                <!-- Accent Gradients behind image -->
+                <div
+                    class="absolute -inset-4 bg-gradient-to-tr from-violet-500 to-indigo-500 rounded-[2.5rem] blur-2xl opacity-10">
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- ================= FOOTER ================= -->
-<footer class="border-t border-gray-200 py-6 text-center text-gray-500">
-    © 2026 DreamLayout. All rights reserved.
-</footer>
+    <!-- ================= FEATURES ================= -->
+    <section id="features" class="py-32 bg-white dark:bg-slate-900/50 relative z-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20">
+                <h2 class="text-4xl font-extrabold text-slate-900 dark:text-slate-100 mb-4">Powerful Features for Modern
+                    Visionaries</h2>
+                <p class="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Everything you need to go from
+                    an idea to a detailed architectural plan with cost accuracy.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div
+                    class="p-10 rounded-3xl bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 transition-all group">
+                    <div
+                        class="w-16 h-16 bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 rounded-2xl flex items-center justify-center text-3xl mb-8 group-hover:scale-110 transition">
+                        ✨</div>
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">Intelligent Designs</h3>
+                    <p class="text-slate-500 dark:text-slate-400 leading-relaxed text-lg">Input area, venture type
+                        (office, home, etc.), and requirements. AI generates tailored layouts that respect architectural
+                        rules.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div
+                    class="p-10 rounded-3xl bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 transition-all group">
+                    <div
+                        class="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center text-3xl mb-8 group-hover:scale-110 transition">
+                        📊</div>
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">Realistic Cost Plans</h3>
+                    <p class="text-slate-500 dark:text-slate-400 leading-relaxed text-lg">Get instant construction cost
+                        estimations based on current market data and your optional target budget settings.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div
+                    class="p-10 rounded-3xl bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 transition-all group">
+                    <div
+                        class="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center text-3xl mb-8 group-hover:scale-110 transition">
+                        📁</div>
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">Reference Library</h3>
+                    <p class="text-slate-500 dark:text-slate-400 leading-relaxed text-lg">Browse our curated library of
+                        previously designed layouts for inspiration and rapid referencing for your new projects.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= HOW IT WORKS ================= -->
+    <section id="how-it-works" class="py-32 bg-slate-50 dark:bg-slate-950">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col lg:flex-row items-center gap-20">
+                <div class="lg:w-1/2">
+                    <h2 class="text-5xl font-extrabold text-slate-900 dark:text-slate-100 mb-8 leading-tight">From Input
+                        to <br /> Plan in Minutes.</h2>
+
+                    <div class="space-y-10">
+                        <div class="flex gap-6">
+                            <div
+                                class="flex-shrink-0 w-10 h-10 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full flex items-center justify-center font-bold">
+                                1</div>
+                            <div>
+                                <h4 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Define Your
+                                    Requirements</h4>
+                                <p class="text-slate-500 dark:text-slate-400">Provide the total area and venture type
+                                    (OfficeSpace, Residential, Retail).</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6">
+                            <div
+                                class="flex-shrink-0 w-10 h-10 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full flex items-center justify-center font-bold">
+                                2</div>
+                            <div>
+                                <h4 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Set Preferences &
+                                    Budget</h4>
+                                <p class="text-slate-500 dark:text-slate-400">Add specific room needs or lifestyle
+                                    preferences. Optionally set a target construction budget.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6">
+                            <div
+                                class="flex-shrink-0 w-10 h-10 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full flex items-center justify-center font-bold">
+                                3</div>
+                            <div>
+                                <h4 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Generate & Refine
+                                </h4>
+                                <p class="text-slate-500 dark:text-slate-400">DreamLayout produces a custom floor plan
+                                    and a itemized cost breakdown instantly.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:w-1/2 relative">
+                    <div
+                        class="bg-gradient-to-tr from-violet-600 to-indigo-700 rounded-[3rem] p-12 text-white shadow-2xl">
+                        <div class="space-y-6">
+                            <div class="h-2 w-20 bg-white/20 rounded-full"></div>
+                            <h3 class="text-3xl font-bold italic">"How large is the plot?"</h3>
+                            <div class="flex gap-4">
+                                <div class="px-4 py-2 bg-white/10 rounded-xl border border-white/20">2400 sq.ft</div>
+                                <div class="px-4 py-2 bg-white text-violet-700 rounded-xl font-bold shadow-lg">
+                                    Residential</div>
+                            </div>
+                            <div class="py-8 space-y-4">
+                                <div class="flex justify-between items-center text-sm opacity-60"><span>Generating
+                                        Design...</span><span>88%</span></div>
+                                <div class="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                                    <div class="h-full bg-white w-[88%]"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= CTA ================= -->
+    <section class="py-32 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 text-center relative z-10">
+            <div
+                class="bg-slate-900 dark:bg-slate-900/50 border border-white/10 rounded-[3rem] py-24 px-10 shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-96 h-96 bg-violet-600/20 rounded-full blur-3xl"></div>
+                <h2 class="text-5xl font-extrabold text-white mb-8">Ready to design your next masterpiece?</h2>
+                <p class="text-xl text-slate-400 max-w-2xl mx-auto mb-12">Join hundreds of architects and home-builders
+                    using DreamLayout's AI to plan their projects.</p>
+                <a href="/login"
+                    class="inline-block bg-white text-slate-900 px-10 py-5 rounded-2xl text-xl font-bold hover:bg-slate-100 transition shadow-xl">Get
+                    Started Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 py-16 transition-colors">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-10">
+            <div class="flex items-center space-x-3">
+                <img src="/static/logo.png" alt="DreamLayout" class="h-8 dark:brightness-110">
+                <span class="text-xl font-bold text-slate-800 dark:text-slate-200 tracking-tight">DreamLayout</span>
+            </div>
+            <div class="flex space-x-8 text-sm font-medium text-slate-500 dark:text-slate-400">
+                <a href="#" class="hover:text-slate-900 dark:hover:text-white transition">Privacy</a>
+                <a href="#" class="hover:text-slate-900 dark:hover:text-white transition">Terms</a>
+                <a href="#" class="hover:text-slate-900 dark:hover:text-white transition">Contact</a>
+            </div>
+            <p class="text-sm text-slate-400 dark:text-slate-500">© 2026 DreamLayout AI. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ================= THEME SCRIPT & UTILS ================= -->
+    <script>
+            // Init Theme
+            (function () {
+                const saved = localStorage.getItem('theme') || 'system';
+                applyTheme(saved);
+            })();
+
+        function applyTheme(theme) {
+            const html = document.documentElement;
+            const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            if (theme === 'dark' || (theme === 'system' && darkQuery.matches)) {
+                html.classList.add('dark');
+            } else {
+                html.classList.remove('dark');
+            }
+            localStorage.setItem('theme', theme);
+            updateThemeUI(theme);
+        }
+
+        function setTheme(theme) { applyTheme(theme); }
+
+        function updateThemeUI(theme) {
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'dark:bg-slate-700', 'shadow-sm', 'text-violet-600');
+                if (btn.classList.contains(theme)) {
+                    btn.classList.add('bg-white', 'dark:bg-slate-700', 'shadow-sm', 'text-violet-600');
+                }
+            });
+        }
+    </script>
 
 </body>
+
 </html>
