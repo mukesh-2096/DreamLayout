@@ -29,5 +29,8 @@ class Config:
     CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY', '499189479929149')
     CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET', 'EpzRI8Q9EyACpEugEFd97id3XIY')
     
+    # Gemini Settings
+    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+    
 
 

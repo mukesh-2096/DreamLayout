@@ -267,7 +267,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
 
                     <!-- Create New Button -->
-                    <a href="#"
+                    <a href="javascript:void(0)" onclick="openProposalModal()"
                         class="group h-[360px] rounded-[2.5rem] border-2 border-dashed border-violet-200 dark:border-violet-800 bg-white dark:bg-slate-900 hover:bg-violet-50/50 dark:hover:bg-violet-900/10 hover:border-violet-400 dark:hover:border-violet-600 flex flex-col items-center justify-center text-violet-600 dark:text-violet-400 transition-all duration-500 shadow-sm hover:shadow-xl">
                         <div
                             class="w-20 h-20 rounded-full bg-violet-50 dark:bg-slate-800 ring-8 ring-violet-50/50 dark:ring-slate-800/50 flex items-center justify-center text-4xl font-light mb-6 group-hover:scale-110 group-hover:rotate-90 transition-all duration-500">
@@ -289,6 +289,11 @@
                             <img src="{{ project.thumbnail }}"
                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 alt="Preview">
+                            {% elif project.svg_content %}
+                            <div
+                                class="w-full h-full p-4 bg-white/50 dark:bg-slate-900/50 flex items-center justify-center transition-transform duration-700 group-hover:scale-105">
+                                {{ project.svg_content | safe }}
+                            </div>
                             {% else %}
                             <div
                                 class="w-full h-full flex items-center justify-center text-slate-200 dark:text-slate-700">
@@ -307,12 +312,12 @@
                                     Plan • AI</span>
                             </div>
 
-                            <div
+                            <a href="/project/{{ project.id }}"
                                 class="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                <button
-                                    class="bg-white text-slate-900 text-xs font-black px-6 py-3 rounded-full shadow-2xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 uppercase tracking-widest">Open
-                                    Workspace</button>
-                            </div>
+                                <span
+                                    class="bg-white text-slate-900 text-xs font-black px-6 py-3 rounded-full shadow-2xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 uppercase tracking-widest text-center">Open
+                                    Workspace</span>
+                            </a>
                         </div>
                         <div class="p-8 flex-1 flex flex-col justify-between">
                             <div>
@@ -346,6 +351,138 @@
                     {% endif %}
                     {% endfor %}
 
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= PROPOSAL MODAL ================= -->
+    <div id="proposal-modal" class="fixed inset-0 z-[100] hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity bg-slate-950/60 backdrop-blur-sm"
+                onclick="closeProposalModal()"></div>
+
+            <div
+                class="inline-block w-full max-w-4xl p-8 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-slate-900 shadow-2xl rounded-[3rem] border border-white/20 relative">
+
+                <!-- Close Button -->
+                <button onclick="closeProposalModal()"
+                    class="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+
+                <!-- Steps Progress -->
+                <div class="flex items-center justify-center mb-12">
+                    <div class="flex items-center space-x-4">
+                        <div id="step-dot-1"
+                            class="w-10 h-10 rounded-full bg-violet-600 text-white flex items-center justify-center font-bold">
+                            1</div>
+                        <div class="h-1 w-12 bg-slate-100 dark:bg-slate-800 rounded-full">
+                            <div id="step-bar-1" class="h-full bg-violet-600 w-0 transition-all duration-500"></div>
+                        </div>
+                        <div id="step-dot-2"
+                            class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center font-bold">
+                            2</div>
+                        <div class="h-1 w-12 bg-slate-100 dark:bg-slate-800 rounded-full">
+                            <div id="step-bar-2" class="h-full bg-violet-600 w-0 transition-all duration-500"></div>
+                        </div>
+                        <div id="step-dot-3"
+                            class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center font-bold">
+                            3</div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Venture & Area -->
+                <div id="step-1" class="step-content space-y-8">
+                    <div class="text-center">
+                        <h2 class="text-3xl font-black text-slate-900 dark:text-slate-100 mb-2">Project Basics</h2>
+                        <p class="text-slate-500 font-medium">Tell us what you're building and where.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Venture
+                                Type</label>
+                            <select id="venture_type"
+                                class="w-full px-6 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-900/20 focus:outline-none transition-all font-bold">
+                                <option value="home">Residential Home</option>
+                                <option value="office">Modern Office</option>
+                                <option value="retail">Retail Store</option>
+                                <option value="cafe">Cafe / Restaurant</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Total
+                                Area (sq ft)</label>
+                            <input type="number" id="area" placeholder="e.g. 2400"
+                                class="w-full px-6 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-900/20 focus:outline-none transition-all font-bold">
+                        </div>
+                    </div>
+                    <button onclick="goToStep(2)"
+                        class="w-full py-5 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-black shadow-xl shadow-violet-200 dark:shadow-violet-900/20 hover:scale-[1.02] transition-all uppercase tracking-widest text-sm">Continue
+                        to Site Sketch</button>
+                </div>
+
+                <!-- Step 2: Drawing Canvas -->
+                <div id="step-2" class="step-content hidden space-y-8">
+                    <div class="text-center">
+                        <h2 class="text-3xl font-black text-slate-900 dark:text-slate-100 mb-2">Sketch Site Outline</h2>
+                        <p class="text-slate-500 font-medium">Draw the shape of your site on the grid below.</p>
+                    </div>
+
+                    <div
+                        class="relative bg-slate-50 dark:bg-slate-950 rounded-[2rem] border border-slate-200 dark:border-slate-800 overflow-hidden cursor-crosshair">
+                        <canvas id="sketch-canvas" width="800" height="400" class="w-full h-auto"></canvas>
+                        <div class="absolute bottom-4 right-4 flex space-x-2">
+                            <button onclick="clearCanvas()"
+                                class="px-4 py-2 bg-white dark:bg-slate-800 shadow-md rounded-xl text-[10px] font-black uppercase tracking-widest text-red-500 hover:bg-red-50 transition">Clear</button>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <button onclick="goToStep(1)"
+                            class="w-1/3 py-5 rounded-2xl border border-slate-200 dark:border-slate-800 font-black text-slate-500 hover:bg-slate-50 transition uppercase tracking-widest text-xs">Back</button>
+                        <button onclick="goToStep(3)"
+                            class="w-2/3 py-5 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-black shadow-xl shadow-violet-200 dark:shadow-violet-900/20 hover:scale-[1.02] transition-all uppercase tracking-widest text-sm">Looks
+                            Good</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Requirements & Generate -->
+                <div id="step-3" class="step-content hidden space-y-8">
+                    <div class="text-center">
+                        <h2 class="text-3xl font-black text-slate-900 dark:text-slate-100 mb-2">Fine-Tuning</h2>
+                        <p class="text-slate-500 font-medium">Any specific rooms or styles you want Gemini to include?
+                        </p>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Your
+                            Requirements</label>
+                        <textarea id="prompt_reqs" rows="4"
+                            placeholder="e.g. 3 bedrooms, open kitchen, minimalist style, master bedroom facing east..."
+                            class="w-full px-6 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-900/20 focus:outline-none transition-all font-medium"></textarea>
+                    </div>
+
+                    <div id="generating-state" class="hidden">
+                        <div class="flex flex-col items-center justify-center space-y-4 py-8">
+                            <div
+                                class="w-16 h-16 border-4 border-violet-600 border-t-transparent rounded-full animate-spin">
+                            </div>
+                            <p class="text-sm font-black text-violet-600 uppercase tracking-[0.3em] animate-pulse">
+                                Gemini is Architecting...</p>
+                        </div>
+                    </div>
+
+                    <div id="result-actions" class="flex gap-4">
+                        <button onclick="goToStep(2)"
+                            class="w-1/3 py-5 rounded-2xl border border-slate-200 dark:border-slate-800 font-black text-slate-500 hover:bg-slate-50 transition uppercase tracking-widest text-xs">Back</button>
+                        <button onclick="generateProposal()"
+                            class="w-2/3 py-5 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-black shadow-xl shadow-violet-200 dark:shadow-violet-900/20 hover:scale-[1.02] transition-all uppercase tracking-widest text-sm">Generate
+                            Layout</button>
+                    </div>
                 </div>
 
             </div>
@@ -472,6 +609,151 @@
                 if (!wrapper.contains(e.target)) { dropdown.classList.add('hidden'); }
             });
         })();
+
+        /* ================= PROPOSAL FLOW JS ================= */
+        let currentStep = 1;
+        const modal = document.getElementById('proposal-modal');
+        const canvas = document.getElementById('sketch-canvas');
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+        let points = [];
+
+        function openProposalModal() {
+            modal.classList.remove('hidden');
+            currentStep = 1;
+            goToStep(1);
+            initCanvas();
+        }
+
+        function closeProposalModal() {
+            modal.classList.add('hidden');
+        }
+
+        function goToStep(step) {
+            document.querySelectorAll('.step-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`step-${step}`).classList.remove('hidden');
+
+            // Update dots
+            for (let i = 1; i <= 3; i++) {
+                const dot = document.getElementById(`step-dot-${i}`);
+                if (i <= step) {
+                    dot.classList.add('bg-violet-600', 'text-white');
+                    dot.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-400');
+                } else {
+                    dot.classList.remove('bg-violet-600', 'text-white');
+                    dot.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-400');
+                }
+
+                if (i < step) {
+                    document.getElementById(`step-bar-${i}`).style.width = '100%';
+                } else {
+                    if (document.getElementById(`step-bar-${i}`))
+                        document.getElementById(`step-bar-${i}`).style.width = '0%';
+                }
+            }
+            currentStep = step;
+        }
+
+        function initCanvas() {
+            ctx.strokeStyle = '#8b5cf6';
+            ctx.lineWidth = 3;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+
+            // Draw grid
+            drawGrid();
+
+            canvas.onmousedown = (e) => {
+                drawing = true;
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                points.push({ x, y });
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            };
+
+            canvas.onmousemove = (e) => {
+                if (!drawing) return;
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                points.push({ x, y });
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            };
+
+            canvas.onmouseup = () => {
+                drawing = false;
+            };
+        }
+
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i < canvas.width; i += 20) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, canvas.height);
+                ctx.stroke();
+            }
+            for (let i = 0; i < canvas.height; i += 20) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(canvas.width, i);
+                ctx.stroke();
+            }
+            ctx.strokeStyle = '#8b5cf6';
+            ctx.lineWidth = 3;
+        }
+
+        function clearCanvas() {
+            points = [];
+            drawGrid();
+        }
+
+        async function generateProposal() {
+            const venture = document.getElementById('venture_type').value;
+            const area = document.getElementById('area').value;
+            const prompt = document.getElementById('prompt_reqs').value;
+
+            if (!area) {
+                alert('Please enter the area.');
+                return;
+            }
+
+            document.getElementById('generating-state').classList.remove('hidden');
+            document.getElementById('result-actions').classList.add('hidden');
+
+            const payload = {
+                venture_type: venture,
+                area: area,
+                dimensions: points,
+                prompt: prompt
+            };
+
+            try {
+                const response = await fetch('/api/generate-layout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    window.location.reload(); // Simple reload to show the new project
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('An error occurred.');
+                console.error(err);
+            } finally {
+                document.getElementById('generating-state').classList.add('hidden');
+                document.getElementById('result-actions').classList.remove('hidden');
+            }
+        }
     </script>
     <style>
         .animate-fade-in-up {
