@@ -18,7 +18,12 @@ def login():
         user_data = get_user_by_email(email)
         
         if user_data and check_password_hash(user_data[3], password):
-            user = User(user_data[0], user_data[1], user_data[2])
+            # user_data: (id, name, email, password_hash, about, profile_pic, location, user_key)
+            user = User(
+                user_data[0], user_data[1], user_data[2], 
+                about=user_data[4], profile_pic=user_data[5], 
+                location=user_data[6], user_key=user_data[7]
+            )
             login_user(user)
             flash('Login successful!', 'success')
             return redirect(url_for("main.dashboard"))
@@ -37,6 +42,11 @@ def signup():
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
         
+        # Validate password length
+        if len(password) < 6:
+            flash('Password must be at least 6 characters long', 'error')
+            return redirect(url_for("auth.signup"))
+            
         # Validate passwords match
         if password != confirm_password:
             flash('Passwords do not match', 'error')
@@ -67,4 +77,4 @@ def logout():
     """Handle user logout"""
     logout_user()
     flash('Logged out successfully', 'success')
-    return redirect(url_for("main.home"))
+    return redirect(url_for("auth.login"))

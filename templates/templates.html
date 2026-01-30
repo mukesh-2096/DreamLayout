@@ -86,10 +86,10 @@
                                 current_user.name }}</p>
                         </div>
                         <div
-                            class="w-9 h-9 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-full flex items-center justify-center text-white font-bold shadow-sm overflow-hidden">
+                            class="w-9 h-9 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-full flex items-center justify-center text-white font-bold shadow-sm overflow-hidden shrink-0">
                             {% if current_user.profile_pic %}
-                            <img src="/static/{{ current_user.profile_pic }}" alt="Profile"
-                                class="w-full h-full object-cover">
+                            <img src="{{ (current_user.profile_pic if 'http' in current_user.profile_pic else '/static/' + current_user.profile_pic) + '?v=' + current_user.user_key[:8] }}"
+                                alt="Profile" class="w-full h-full object-cover">
                             {% else %}
                             {{ current_user.name[0].upper() }}
                             {% endif %}
@@ -160,21 +160,26 @@
                     <h3 class="text-[10px] font-black text-slate-400 uppercase mb-8 tracking-[0.2em] px-2">Categories
                     </h3>
                     <nav class="space-y-3">
-                        <a href="#"
-                            class="flex items-center gap-3 px-5 py-4 rounded-2xl bg-violet-600 text-white font-bold shadow-lg shadow-violet-200 dark:shadow-none transition-all">
+                        <button onclick="filterTemplates('all', this)"
+                            class="category-btn w-full flex items-center gap-3 px-5 py-4 rounded-2xl bg-violet-600 text-white font-bold shadow-lg shadow-violet-200 dark:shadow-none transition-all">
+                            <span class="text-xl">✨</span>
+                            <span class="text-sm">All Designs</span>
+                        </button>
+                        <button onclick="filterTemplates('residential', this)"
+                            class="category-btn w-full flex items-center gap-3 px-5 py-4 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:text-violet-700 dark:hover:text-violet-400 transition-all font-bold">
                             <span class="text-xl">🏠</span>
                             <span class="text-sm">Residential</span>
-                        </a>
-                        <a href="#"
-                            class="flex items-center gap-3 px-5 py-4 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:text-violet-700 dark:hover:text-violet-400 transition-all font-bold">
+                        </button>
+                        <button onclick="filterTemplates('commercial', this)"
+                            class="category-btn w-full flex items-center gap-3 px-5 py-4 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:text-violet-700 dark:hover:text-violet-400 transition-all font-bold">
                             <span class="text-xl">🏢</span>
                             <span class="text-sm">Commercial</span>
-                        </a>
-                        <a href="#"
-                            class="flex items-center gap-3 px-5 py-4 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:text-violet-700 dark:hover:text-violet-400 transition-all font-bold">
+                        </button>
+                        <button onclick="filterTemplates('landscape', this)"
+                            class="category-btn w-full flex items-center gap-3 px-5 py-4 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:text-violet-700 dark:hover:text-violet-400 transition-all font-bold">
                             <span class="text-xl">🌳</span>
                             <span class="text-sm">Landscape</span>
-                        </a>
+                        </button>
                     </nav>
                 </div>
 
@@ -202,35 +207,101 @@
                         designs for your inspiration.</p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Demo Template Card -->
-                    <div
-                        class="group bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden flex flex-col h-[360px]">
-                        <div
-                            class="relative h-52 bg-slate-50 dark:bg-slate-800 overflow-hidden flex items-center justify-center">
-                            <div class="text-center group-hover:scale-110 transition duration-700">
-                                <span class="block text-5xl mb-3">🏘️</span>
-                                <span
-                                    class="text-[10px] font-black text-violet-600 dark:text-violet-400 uppercase tracking-[0.2em]">Minimalist
-                                    Villa</span>
-                            </div>
+                <div id="templates-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Residential Template -->
+                    <div data-category="residential"
+                        class="template-card group bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden flex flex-col h-[420px]">
+                        <div class="relative h-56 bg-slate-50 dark:bg-slate-800 overflow-hidden">
+                            <img src="/static/images/templates/res_layout.png" alt="Zen Villa Layout"
+                                class="w-full h-full object-contain p-4 group-hover:scale-105 transition duration-700">
                             <div
-                                class="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                 <button
-                                    class="bg-white text-slate-900 text-xs font-black px-6 py-3 rounded-full shadow-2xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 uppercase tracking-widest">View
-                                    Details</button>
+                                    class="bg-white text-slate-900 text-xs font-black px-6 py-3 rounded-full shadow-2xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 uppercase tracking-widest">Open
+                                    Blueprint</button>
+                            </div>
+                            <div class="absolute top-4 left-4">
+                                <span
+                                    class="px-3 py-1 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-full text-[10px] font-black text-violet-600 uppercase tracking-widest shadow-sm">Residential</span>
                             </div>
                         </div>
                         <div class="p-8 flex-1 flex flex-col justify-between">
                             <div>
                                 <h3 class="font-extrabold text-slate-900 dark:text-slate-100 text-xl mb-1">Modern Zen
                                     Villa</h3>
-                                <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest">Architectural
-                                    Reference • 3,200 sq.ft</p>
+                                <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest">3 BHK Layout
+                                    •
+                                    Floor Plan</p>
                             </div>
                             <div class="flex items-center justify-between">
                                 <span
-                                    class="px-3 py-1.5 rounded-xl text-[10px] font-black bg-violet-50 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 border border-violet-100 dark:border-violet-800 uppercase tracking-widest">Reference</span>
+                                    class="px-3 py-1.5 rounded-xl text-[10px] font-black bg-violet-50 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 border border-violet-100 dark:border-violet-800 uppercase tracking-widest">Premium</span>
+                                <button
+                                    class="text-slate-300 dark:text-slate-600 hover:text-rose-500 transition text-xl">❤️</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Commercial Template -->
+                    <div data-category="commercial"
+                        class="template-card group bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden flex flex-col h-[420px]">
+                        <div class="relative h-56 bg-slate-50 dark:bg-slate-800 overflow-hidden">
+                            <img src="/static/images/templates/com_layout.png" alt="Office Tower Layout"
+                                class="w-full h-full object-contain p-4 group-hover:scale-105 transition duration-700">
+                            <div
+                                class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <button
+                                    class="bg-white text-slate-900 text-xs font-black px-6 py-3 rounded-full shadow-2xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 uppercase tracking-widest">Open
+                                    Blueprint</button>
+                            </div>
+                            <div class="absolute top-4 left-4">
+                                <span
+                                    class="px-3 py-1 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-full text-[10px] font-black text-indigo-600 uppercase tracking-widest shadow-sm">Commercial</span>
+                            </div>
+                        </div>
+                        <div class="p-8 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-extrabold text-slate-900 dark:text-slate-100 text-xl mb-1">Skyline Hub
+                                </h3>
+                                <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest">Office Floor
+                                    Plan • Open Space</p>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span
+                                    class="px-3 py-1.5 rounded-xl text-[10px] font-black bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800 uppercase tracking-widest">Corporate</span>
+                                <button
+                                    class="text-slate-300 dark:text-slate-600 hover:text-rose-500 transition text-xl">❤️</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Landscape Template -->
+                    <div data-category="landscape"
+                        class="template-card group bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden flex flex-col h-[420px]">
+                        <div class="relative h-56 bg-slate-50 dark:bg-slate-800 overflow-hidden">
+                            <img src="/static/images/templates/land_layout.png" alt="Zen Park Layout"
+                                class="w-full h-full object-contain p-4 group-hover:scale-105 transition duration-700">
+                            <div
+                                class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <button
+                                    class="bg-white text-slate-900 text-xs font-black px-6 py-3 rounded-full shadow-2xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 uppercase tracking-widest">Open
+                                    Blueprint</button>
+                            </div>
+                            <div class="absolute top-4 left-4">
+                                <span
+                                    class="px-3 py-1 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-full text-[10px] font-black text-emerald-600 uppercase tracking-widest shadow-sm">Landscape</span>
+                            </div>
+                        </div>
+                        <div class="p-8 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-extrabold text-slate-900 dark:text-slate-100 text-xl mb-1">Verdant Oasis
+                                </h3>
+                                <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest">Garden Site
+                                    Plan • Master Plan</p>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span
+                                    class="px-3 py-1.5 rounded-xl text-[10px] font-black bg-emerald-50 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800 uppercase tracking-widest">Public</span>
                                 <button
                                     class="text-slate-300 dark:text-slate-600 hover:text-rose-500 transition text-xl">❤️</button>
                             </div>
@@ -238,9 +309,9 @@
                     </div>
 
                     <!-- Empty Slots -->
-                    {% for i in range(5) %}
+                    {% for i in range(3) %}
                     <div
-                        class="h-[360px] bg-slate-50/50 dark:bg-slate-800/20 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 border-dashed flex flex-col items-center justify-center text-slate-300 dark:text-slate-700 opacity-60">
+                        class="h-[420px] bg-slate-50/50 dark:bg-slate-800/20 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 border-dashed flex flex-col items-center justify-center text-slate-300 dark:text-slate-700 opacity-60">
                         <span class="text-3xl mb-2">🏗️</span>
                         <span class="text-[10px] font-black uppercase tracking-widest italic">Coming Soon</span>
                     </div>
@@ -314,6 +385,29 @@
                 if (!wrapper.contains(e.target)) { dropdown.classList.add('hidden'); }
             });
         })();
+
+        // Filtering Logic
+        function filterTemplates(category, btn) {
+            // Update UI buttons
+            document.querySelectorAll('.category-btn').forEach(el => {
+                el.classList.remove('bg-violet-600', 'text-white', 'shadow-lg', 'shadow-violet-200');
+                el.classList.add('text-slate-600', 'dark:text-slate-400', 'hover:bg-white', 'dark:hover:bg-slate-800');
+            });
+            btn.classList.add('bg-violet-600', 'text-white', 'shadow-lg', 'shadow-violet-200');
+            btn.classList.remove('text-slate-600', 'dark:text-slate-400', 'hover:bg-white', 'dark:hover:bg-slate-800');
+
+            // Filter cards
+            const cards = document.querySelectorAll('.template-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'flex';
+                    card.classList.add('animate-fade-in-up');
+                } else {
+                    card.style.display = 'none';
+                    card.classList.remove('animate-fade-in-up');
+                }
+            });
+        }
     </script>
     <style>
         .animate-fade-in-up {

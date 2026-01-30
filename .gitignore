@@ -15,6 +15,8 @@ user_embeddings.index
 
 # Utility scripts (optional - uncomment to ignore)
 view_users.py
+check_pic.py
+view_database.py
 
 # Python cache
 __pycache__/

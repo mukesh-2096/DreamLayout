@@ -70,9 +70,9 @@
                     <button id="profile-toggle"
                         class="flex items-center gap-3 focus:outline-none pl-2 pr-1 py-1 rounded-full border border-white dark:border-slate-800 bg-white/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md transition-all">
                         <div
-                            class="w-9 h-9 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-full flex items-center justify-center text-white font-bold shadow-sm overflow-hidden">
+                            class="w-9 h-9 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-full flex items-center justify-center text-white font-bold shadow-sm overflow-hidden shrink-0">
                             {% if current_user.profile_pic %}
-                            <img src="{{ current_user.profile_pic if 'http' in current_user.profile_pic else '/static/' + current_user.profile_pic }}"
+                            <img src="{{ (current_user.profile_pic if 'http' in current_user.profile_pic else '/static/' + current_user.profile_pic) + '?v=' + current_user.user_key[:8] }}"
                                 alt="Profile" class="w-full h-full object-cover">
                             {% else %}
                             {{ current_user.name[0].upper() }}
