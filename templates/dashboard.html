@@ -97,9 +97,9 @@
                                 current_user.name }}</p>
                         </div>
                         <div
-                            class="w-9 h-9 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-full flex items-center justify-center text-white font-bold shadow-sm overflow-hidden">
+                            class="w-9 h-9 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-full flex items-center justify-center text-white font-bold shadow-sm overflow-hidden shrink-0">
                             {% if current_user.profile_pic %}
-                            <img src="{{ current_user.profile_pic if 'http' in current_user.profile_pic else '/static/' + current_user.profile_pic }}"
+                            <img src="{{ (current_user.profile_pic if 'http' in current_user.profile_pic else '/static/' + current_user.profile_pic) + '?v=' + current_user.user_key[:8] }}"
                                 alt="Profile" class="w-full h-full object-cover">
                             {% else %}
                             {{ current_user.name[0].upper() }}

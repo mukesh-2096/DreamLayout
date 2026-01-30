@@ -3,6 +3,7 @@ import faiss
 import numpy as np
 import pickle
 import os
+import uuid
 from sentence_transformers import SentenceTransformer
 from src.config import Config
 
@@ -19,6 +20,7 @@ def init_db():
             name TEXT NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password_hash TEXT NOT NULL,
+            user_key TEXT UNIQUE NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             about TEXT,
             profile_pic TEXT,
@@ -26,9 +28,15 @@ def init_db():
         )
     ''')
     # Migration: Check if columns exist
-    for col in ['about', 'profile_pic', 'location']:
+    for col in ['about', 'profile_pic', 'location', 'user_key']:
         try:
             cursor.execute(f"ALTER TABLE users ADD COLUMN {col} TEXT")
+            if col == 'user_key':
+                # Populate existing users with a key
+                cursor.execute("SELECT id FROM users")
+                for row in cursor.fetchall():
+                    new_key = str(uuid.uuid4())
+                    cursor.execute("UPDATE users SET user_key = ? WHERE id = ?", (new_key, row[0]))
         except sqlite3.OperationalError:
             pass
     conn.commit()
@@ -83,7 +91,7 @@ def get_user_by_id(user_id):
     """Get user from database by ID"""
     conn = sqlite3.connect(Config.DB_PATH)
     cursor = conn.cursor()
-    cursor.execute('SELECT id, name, email, about, profile_pic, location FROM users WHERE id = ?', (user_id,))
+    cursor.execute('SELECT id, name, email, about, profile_pic, location, user_key FROM users WHERE id = ?', (user_id,))
     user_data = cursor.fetchone()
     conn.close()
     return user_data
@@ -92,17 +100,18 @@ def get_user_by_email(email):
     """Get user from database by email"""
     conn = sqlite3.connect(Config.DB_PATH)
     cursor = conn.cursor()
-    cursor.execute('SELECT id, name, email, password_hash, about, profile_pic, location FROM users WHERE email = ?', (email,))
+    cursor.execute('SELECT id, name, email, password_hash, about, profile_pic, location, user_key FROM users WHERE email = ?', (email,))
     user_data = cursor.fetchone()
     conn.close()
     return user_data
 
 def create_user(name, email, password_hash):
-    """Create new user in database"""
+    """Create new user in database with a unique user_key"""
+    user_key = str(uuid.uuid4())
     conn = sqlite3.connect(Config.DB_PATH)
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)',
-                 (name, email, password_hash))
+    cursor.execute('INSERT INTO users (name, email, password_hash, user_key) VALUES (?, ?, ?, ?)',
+                 (name, email, password_hash, user_key))
     user_id = cursor.lastrowid
     conn.commit()
     conn.close()
@@ -111,16 +120,37 @@ def update_user(user_id, name, email, about, profile_pic=None, location=None):
     """Update user information in database"""
     conn = sqlite3.connect(Config.DB_PATH)
     cursor = conn.cursor()
+    
+    # Identify the target user_key correctly
+    target_key = user_id
+    if not (isinstance(user_id, str) and '-' in user_id):
+        # If passed an integer ID, look up the key
+        user_data = get_user_by_id(user_id)
+        if user_data:
+            target_key = user_data[6]
+        else:
+            conn.close()
+            return False
+
     if profile_pic:
-        cursor.execute('UPDATE users SET name = ?, email = ?, about = ?, profile_pic = ?, location = ? WHERE id = ?',
-                     (name, email, about, profile_pic, location, user_id))
+        cursor.execute('UPDATE users SET name = ?, email = ?, about = ?, profile_pic = ?, location = ? WHERE user_key = ?',
+                     (name, email, about, profile_pic, location, target_key))
     else:
-        cursor.execute('UPDATE users SET name = ?, email = ?, about = ?, location = ? WHERE id = ?',
-                     (name, email, about, location, user_id))
+        cursor.execute('UPDATE users SET name = ?, email = ?, about = ?, location = ? WHERE user_key = ?',
+                     (name, email, about, location, target_key))
     conn.commit()
     conn.close()
     return True
 
+
+def delete_user_db(user_key):
+    """Delete user from database by user_key"""
+    conn = sqlite3.connect(Config.DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM users WHERE user_key = ?', (user_key,))
+    conn.commit()
+    conn.close()
+    return True
 
 def get_user_projects(user_id, limit=6):
     """Return list of user's projects.

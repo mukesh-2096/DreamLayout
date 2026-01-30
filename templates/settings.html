@@ -77,7 +77,7 @@
                                 current_user.name }}</p>
                         </div>
                         <div
-                            class="w-9 h-9 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-full flex items-center justify-center text-white font-bold shadow-sm overflow-hidden">
+                            class="w-9 h-9 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-full flex items-center justify-center text-white font-bold shadow-sm overflow-hidden shrink-0">
                             {% if current_user.profile_pic %}
                             <img src="{{ current_user.profile_pic if 'http' in current_user.profile_pic else '/static/' + current_user.profile_pic }}"
                                 alt="Profile" class="w-full h-full object-cover">
@@ -161,7 +161,7 @@
                         class="flex flex-col md:flex-row items-center gap-8 pb-8 border-b border-slate-100 dark:border-slate-800">
                         <div class="relative group">
                             {% if current_user.profile_pic %}
-                            <img src="{{ current_user.profile_pic if 'http' in current_user.profile_pic else '/static/' + current_user.profile_pic }}"
+                            <img src="{{ (current_user.profile_pic if 'http' in current_user.profile_pic else '/static/' + current_user.profile_pic) + '?v=' + current_user.user_key[:8] }}"
                                 alt="Profile"
                                 class="w-24 h-24 rounded-3xl object-cover shadow-xl shadow-violet-200 dark:shadow-none border-2 border-white dark:border-slate-800">
                             {% else %}
@@ -250,14 +250,55 @@
                         <p class="text-sm font-bold text-rose-400 mt-1">Once you delete your account, there is no
                             going back. Please be certain.</p>
                     </div>
-                    <button type="button"
-                        class="px-8 py-4 border-2 border-rose-200 dark:border-rose-900 text-rose-500 dark:text-rose-400 hover:bg-rose-500 hover:text-white dark:hover:bg-rose-900 transition-all rounded-2xl font-black text-xs uppercase tracking-widest">Delete
-                        Forever</button>
+                    <div id="delete-trigger">
+                        <button type="button" onclick="showDeleteModal()"
+                            class="px-8 py-4 border-2 border-rose-200 dark:border-rose-900 text-rose-500 dark:text-rose-400 hover:bg-rose-500 hover:text-white dark:hover:bg-rose-900 transition-all rounded-2xl font-black text-xs uppercase tracking-widest">Delete
+                            Forever</button>
+                    </div>
                 </div>
             </section>
         </div>
     </div>
 
+
+    <!-- ================= DELETE CONFIRMATION MODAL ================= -->
+    <div id="deleteModal"
+        class="hidden fixed inset-0 z-[100] flex items-center justify-center px-6 transition-all duration-300">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm" onclick="hideDeleteModal()">
+        </div>
+
+        <!-- Modal Content -->
+        <div
+            class="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 shadow-2xl border border-white dark:border-slate-800 animate-fade-in-up">
+            <div class="text-center mb-6">
+                <div
+                    class="w-16 h-16 bg-rose-50 dark:bg-rose-900/20 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl">
+                    ⚠️</div>
+                <h3 class="text-2xl font-black text-slate-900 dark:text-slate-100 mb-2">Delete Permanently?</h3>
+                <p class="text-sm font-bold text-slate-500 dark:text-slate-400">This action is irreversible. All your
+                    projects, settings, and profile data will be erased forever.</p>
+            </div>
+
+            <div class="space-y-4">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Type <span
+                        class="text-rose-500">DELETE</span> to confirm</p>
+                <input type="text" id="deleteConfirmInput" oninput="checkDeleteInput()"
+                    class="w-full px-6 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 focus:ring-4 focus:ring-rose-100 dark:focus:ring-rose-900/20 focus:border-rose-500 focus:outline-none transition-all font-black text-center text-slate-900 dark:text-slate-100 placeholder:text-slate-300 uppercase"
+                    placeholder="Type here...">
+
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button onclick="hideDeleteModal()"
+                        class="px-6 py-4 bg-slate-100 dark:bg-slate-800 rounded-2xl text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">Cancel</button>
+                    <form action="/delete_account" method="POST" id="finalDeleteForm">
+                        <button type="submit" id="finalDeleteBtn" disabled
+                            class="w-full px-6 py-4 bg-rose-100 dark:bg-rose-900/20 text-rose-300 dark:text-rose-900 rounded-2xl text-xs font-black uppercase tracking-widest transition-all cursor-not-allowed">Delete
+                            Now</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ================= THEME SCRIPT & UTILS ================= -->
     <script>
@@ -307,6 +348,33 @@
                     }
                 }
                 reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function showDeleteModal() {
+            const modal = document.getElementById('deleteModal');
+            modal.classList.remove('hidden');
+            document.getElementById('deleteConfirmInput').focus();
+        }
+
+        function hideDeleteModal() {
+            const modal = document.getElementById('deleteModal');
+            modal.classList.add('hidden');
+            document.getElementById('deleteConfirmInput').value = '';
+            checkDeleteInput();
+        }
+
+        function checkDeleteInput() {
+            const val = document.getElementById('deleteConfirmInput').value;
+            const btn = document.getElementById('finalDeleteBtn');
+            if (val.trim().toUpperCase() === 'DELETE') {
+                btn.disabled = false;
+                btn.classList.remove('bg-rose-100', 'dark:bg-rose-900/20', 'text-rose-300', 'dark:text-rose-900', 'cursor-not-allowed');
+                btn.classList.add('bg-rose-600', 'text-white', 'shadow-lg', 'shadow-rose-200', 'dark:shadow-none');
+            } else {
+                btn.disabled = true;
+                btn.classList.add('bg-rose-100', 'dark:bg-rose-900/20', 'text-rose-300', 'dark:text-rose-900', 'cursor-not-allowed');
+                btn.classList.remove('bg-rose-600', 'text-white', 'shadow-lg', 'shadow-rose-200', 'dark:shadow-none');
             }
         }
 
