@@ -7,6 +7,8 @@ Welcome to **DreamLayout**! DreamLayout is an AI-powered Architectural Co-pilot 
 - **Frontend:** HTML5, Tailwind CSS, Jinja2 Templates
 - **Database:** SQLite (Relational) & FAISS (Vector Index)
 - **Image Hosting:** Cloudinary
+- **AI Brain:** Gemini 2.5 Flash (via Google AI Studio)
+- **AI Orchestration:** LangChain (LCEL)
 - **Authentication:** Custom Session-based with FastAPI Middlewares
 
 ---
@@ -59,6 +61,7 @@ Open `.env` and fill in:
   - `CLOUDINARY_CLOUD_NAME`
   - `CLOUDINARY_API_KEY`
   - `CLOUDINARY_API_SECRET`
+- **GEMINI_API_KEY**: Your Google Gemini API Key from [Google AI Studio](https://aistudio.google.com/).
 
 ---
 

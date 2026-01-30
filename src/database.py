@@ -27,6 +27,23 @@ def init_db():
             location TEXT
         )
     ''')
+    
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS projects (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT,
+            thumbnail TEXT,
+            svg_content TEXT,
+            rooms TEXT,
+            design_philosophy TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    ''')
+
     # Migration: Check if columns exist
     for col in ['about', 'profile_pic', 'location', 'user_key']:
         try:
@@ -152,12 +169,58 @@ def delete_user_db(user_key):
     conn.close()
     return True
 
-def get_user_projects(user_id, limit=6):
-    """Return list of user's projects.
+def add_user_project(user_id, title, description, thumbnail, svg_content, rooms, design_philosophy):
+    """Add a new project to the database"""
+    conn = sqlite3.connect(Config.DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT INTO projects (user_id, title, description, thumbnail, svg_content, rooms, design_philosophy)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ''', (user_id, title, description, thumbnail, svg_content, rooms, design_philosophy))
+    project_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return project_id
 
-    This is a lightweight stub that returns project metadata.
-    Currently returns an empty list by default. You can later
-    implement a `projects` table and return real data.
-    """
-    # TODO: implement real projects table and query
-    return []
+def get_user_projects(user_id, limit=6):
+    """Return list of user's projects"""
+    conn = sqlite3.connect(Config.DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT id, title, description, thumbnail, svg_content, rooms, design_philosophy, updated_at 
+        FROM projects 
+        WHERE user_id = ? 
+        ORDER BY updated_at DESC 
+        LIMIT ?
+    ''', (user_id, limit))
+    projects = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return projects
+
+def get_project_by_id(project_id):
+    """Get a single project by ID"""
+    conn = sqlite3.connect(Config.DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT id, user_id, title, description, thumbnail, svg_content, rooms, design_philosophy, updated_at 
+        FROM projects 
+        WHERE id = ?
+    ''', (project_id,))
+    row = cursor.fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+def update_project(project_id, title, description):
+    """Update project metadata"""
+    conn = sqlite3.connect(Config.DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''
+        UPDATE projects 
+        SET title = ?, description = ?, updated_at = CURRENT_TIMESTAMP 
+        WHERE id = ?
+    ''', (title, description, project_id))
+    conn.commit()
+    conn.close()
+    return True

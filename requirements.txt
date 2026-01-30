@@ -14,3 +14,9 @@ numpy
 python-dotenv
 requests
 cloudinary
+
+# AI Co-pilot
+langchain
+langchain-core
+langchain-google-genai
+google-generativeai

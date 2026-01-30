@@ -1,15 +1,51 @@
 from fastapi import APIRouter, Request, Form, Depends, File, UploadFile, status, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 import time
+import json
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
-from src.database import get_user_projects, update_user, delete_user_db
+from src.database import get_user_projects, update_user, delete_user_db, add_user_project, get_project_by_id
 from src.config import Config
 from src.fastapi_utils import flash, render_template
+from src.layout_generator import layout_generator
 
 main_router = APIRouter(tags=["Main"])
+
+@main_router.post("/api/generate-layout")
+async def api_generate_layout(request: Request):
+    if not request.state.user:
+        return {"error": "Unauthorized"}, 401
+    
+    data = await request.json()
+    venture_type = data.get("venture_type")
+    area = data.get("area")
+    dimensions = data.get("dimensions")
+    user_prompt = data.get("prompt")
+    
+    try:
+        result = layout_generator.generate_layout(venture_type, area, dimensions, user_prompt)
+        
+        # Save to database (placeholder logic, assuming add_user_project exists or I'll create it)
+        # We'll store the SVG as the 'rendering' or similar field
+        project_id = add_user_project(
+            user_id=request.state.user.id,
+            title=result.get("title", "New Proposal"),
+            description=result.get("description", ""),
+            thumbnail=None, # We could generate a thumbnail from SVG if needed
+            svg_content=result.get("svg", ""),
+            rooms=json.dumps(result.get("rooms", [])),
+            design_philosophy=result.get("design_philosophy", "")
+        )
+        
+        return {
+            "success": True,
+            "project_id": project_id,
+            "layout": result
+        }
+    except Exception as e:
+        return {"success": False, "error": str(e)}
 
 def get_current_user_req(request: Request):
     if not request.state.user:
@@ -148,3 +184,21 @@ async def profile_update(
 @main_router.get("/favourites")
 async def favourites_dummy(request: Request):
     return render_template(request, "favourites.html")
+
+@main_router.get("/project/{project_id}")
+async def view_project(request: Request, project_id: int):
+    if not request.state.user:
+        return RedirectResponse(url="/login")
+    
+    project = get_project_by_id(project_id)
+    if not project or project['user_id'] != request.state.user.id:
+        flash(request, "Project not found or access denied.", "error")
+        return RedirectResponse(url="/dashboard")
+    
+    # Parse rooms JSON
+    try:
+        project['rooms'] = json.loads(project['rooms'])
+    except:
+        project['rooms'] = []
+        
+    return render_template(request, "project_view.html", {"project": project})

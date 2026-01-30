@@ -17,6 +17,7 @@ user_embeddings.index
 view_users.py
 check_pic.py
 view_database.py
+models_list.txt
 
 # Python cache
 __pycache__/
