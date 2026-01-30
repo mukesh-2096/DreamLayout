@@ -2,11 +2,12 @@ from fastapi import APIRouter, Request, Form, Depends, File, UploadFile, status,
 from fastapi.responses import HTMLResponse, RedirectResponse
 import time
 import json
+import base64
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
-from src.database import get_user_projects, update_user, delete_user_db, add_user_project, get_project_by_id
+from src.database import get_user_projects, update_user, delete_user_db, add_user_project, get_project_by_id, soft_delete_project, restore_project, hard_delete_project, get_user_archived_projects
 from src.config import Config
 from src.fastapi_utils import flash, render_template
 from src.layout_generator import layout_generator
@@ -27,14 +28,31 @@ async def api_generate_layout(request: Request):
     try:
         result = layout_generator.generate_layout(venture_type, area, dimensions, user_prompt)
         
-        # Save to database (placeholder logic, assuming add_user_project exists or I'll create it)
-        # We'll store the SVG as the 'rendering' or similar field
+        # Upload SVG to Cloudinary
+        svg_content = result.get("svg", "")
+        cloudinary_url = None
+        if svg_content:
+            try:
+                svg_base64 = base64.b64encode(svg_content.encode('utf-8')).decode('utf-8')
+                data_uri = f"data:image/svg+xml;base64,{svg_base64}"
+                
+                upload_res = cloudinary.uploader.upload(
+                    data_uri,
+                    folder=f"dreamlayout_projects/u_{request.state.user.user_key}",
+                    public_id=f"layout_{int(time.time())}",
+                    resource_type="image"
+                )
+                cloudinary_url = upload_res['secure_url']
+            except Exception as ce:
+                print(f"Cloudinary upload error: {ce}")
+
+        # Save to database
         project_id = add_user_project(
             user_id=request.state.user.id,
             title=result.get("title", "New Proposal"),
             description=result.get("description", ""),
-            thumbnail=None, # We could generate a thumbnail from SVG if needed
-            svg_content=result.get("svg", ""),
+            thumbnail=cloudinary_url, # Now storing Cloudinary URL
+            svg_content=svg_content,
             rooms=json.dumps(result.get("rooms", [])),
             design_philosophy=result.get("design_philosophy", "")
         )
@@ -42,7 +60,8 @@ async def api_generate_layout(request: Request):
         return {
             "success": True,
             "project_id": project_id,
-            "layout": result
+            "layout": result,
+            "cloudinary_url": cloudinary_url
         }
     except Exception as e:
         return {"success": False, "error": str(e)}
@@ -202,3 +221,128 @@ async def view_project(request: Request, project_id: int):
         project['rooms'] = []
         
     return render_template(request, "project_view.html", {"project": project})
+
+@main_router.get("/archive")
+async def archive_view(request: Request):
+    if not request.state.user:
+        return RedirectResponse(url="/login")
+    archived_projects = get_user_archived_projects(request.state.user.id)
+    return render_template(request, "archive.html", {"projects": archived_projects})
+
+@main_router.post("/api/project/{project_id}/delete")
+async def api_soft_delete(request: Request, project_id: int):
+    if not request.state.user:
+        return {"error": "Unauthorized"}, 401
+    
+    project = get_project_by_id(project_id)
+    if not project or project['user_id'] != request.state.user.id:
+        return {"error": "Access denied"}, 403
+    
+    soft_delete_project(project_id)
+    return {"success": True}
+
+@main_router.post("/api/project/{project_id}/restore")
+async def api_restore(request: Request, project_id: int):
+    if not request.state.user:
+        return {"error": "Unauthorized"}, 401
+    
+    # Check project ownership (even if archived)
+    project = get_project_by_id(project_id)
+    if not project or project['user_id'] != request.state.user.id:
+        return {"error": "Access denied"}, 403
+    
+    restore_project(project_id)
+    return {"success": True}
+
+@main_router.post("/api/project/{project_id}/permanent-delete")
+async def api_hard_delete(request: Request, project_id: int):
+    if not request.state.user:
+        return {"error": "Unauthorized"}, 401
+    
+    project = get_project_by_id(project_id)
+    if not project or project['user_id'] != request.state.user.id:
+        return {"error": "Access denied"}, 403
+    
+    hard_delete_project(project_id)
+    return {"success": True}
+
+@main_router.get("/generate", response_class=HTMLResponse)
+async def generate_page(request: Request):
+    if not request.state.user:
+        return RedirectResponse(url="/login")
+    return render_template(request, "generate.html")
+
+@main_router.post("/api/generate-preview")
+async def api_generate_preview(request: Request):
+    if not request.state.user:
+        return {"error": "Unauthorized"}, 401
+    
+    data = await request.json()
+    venture_type = data.get("venture_type")
+    area = data.get("area")
+    dimensions = data.get("dimensions")
+    user_prompt = data.get("prompt")
+    
+    try:
+        # Generate layout using Gemini but DO NOT save to database yet
+        result = layout_generator.generate_layout(venture_type, area, dimensions, user_prompt)
+        return {
+            "success": True,
+            "layout": result
+        }
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+@main_router.post("/api/save-project")
+async def api_save_project(request: Request):
+    if not request.state.user:
+        return {"error": "Unauthorized"}, 401
+    
+    data = await request.json()
+    layout = data.get("layout")
+    if not layout:
+        return {"error": "No layout data provided"}, 400
+        
+    try:
+        svg_content = layout.get("svg", "")
+        cloudinary_url = None
+        
+        # Upload to Cloudinary
+        if svg_content:
+            try:
+                # IMPORTANT: Ensure SVG has xmlns namespace, otherwise it won't render
+                # correctly as an external source in an <img> tag.
+                if 'xmlns=' not in svg_content:
+                    svg_content = svg_content.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"')
+                
+                svg_base64 = base64.b64encode(svg_content.encode('utf-8')).decode('utf-8')
+                data_uri = f"data:image/svg+xml;base64,{svg_base64}"
+                
+                upload_res = cloudinary.uploader.upload(
+                    data_uri,
+                    folder=f"dreamlayout_projects/u_{request.state.user.user_key}",
+                    public_id=f"layout_{int(time.time())}",
+                    format="svg", # Force SVG format
+                    resource_type="image"
+                )
+                cloudinary_url = upload_res['secure_url']
+            except Exception as ce:
+                print(f"Cloudinary upload error: {ce}")
+
+        # Save to database
+        project_id = add_user_project(
+            user_id=request.state.user.id,
+            title=layout.get("title", "New Proposal"),
+            description=layout.get("description", ""),
+            thumbnail=cloudinary_url,
+            svg_content=svg_content,
+            rooms=json.dumps(layout.get("rooms", [])),
+            design_philosophy=layout.get("design_philosophy", "")
+        )
+        
+        return {
+            "success": True,
+            "project_id": project_id
+        }
+    except Exception as e:
+        return {"success": False, "error": str(e)}

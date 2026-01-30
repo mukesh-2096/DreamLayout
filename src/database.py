@@ -38,6 +38,8 @@ def init_db():
             svg_content TEXT,
             rooms TEXT,
             design_philosophy TEXT,
+            is_deleted INTEGER DEFAULT 0,
+            deleted_at TIMESTAMP,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users (id)
@@ -54,6 +56,13 @@ def init_db():
                 for row in cursor.fetchall():
                     new_key = str(uuid.uuid4())
                     cursor.execute("UPDATE users SET user_key = ? WHERE id = ?", (new_key, row[0]))
+        except sqlite3.OperationalError:
+            pass
+
+    # Migration for projects: add is_deleted and deleted_at
+    for col, type_info in [('is_deleted', 'INTEGER DEFAULT 0'), ('deleted_at', 'TIMESTAMP')]:
+        try:
+            cursor.execute(f"ALTER TABLE projects ADD COLUMN {col} {type_info}")
         except sqlite3.OperationalError:
             pass
     conn.commit()
@@ -190,7 +199,7 @@ def get_user_projects(user_id, limit=6):
     cursor.execute('''
         SELECT id, title, description, thumbnail, svg_content, rooms, design_philosophy, updated_at 
         FROM projects 
-        WHERE user_id = ? 
+        WHERE user_id = ? AND is_deleted = 0
         ORDER BY updated_at DESC 
         LIMIT ?
     ''', (user_id, limit))
@@ -224,3 +233,65 @@ def update_project(project_id, title, description):
     conn.commit()
     conn.close()
     return True
+
+def soft_delete_project(project_id):
+    """Move project to recycle bin"""
+    conn = sqlite3.connect(Config.DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''
+        UPDATE projects 
+        SET is_deleted = 1, deleted_at = CURRENT_TIMESTAMP 
+        WHERE id = ?
+    ''', (project_id,))
+    conn.commit()
+    conn.close()
+    return True
+
+def restore_project(project_id):
+    """Restore project from recycle bin"""
+    conn = sqlite3.connect(Config.DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''
+        UPDATE projects 
+        SET is_deleted = 0, deleted_at = NULL 
+        WHERE id = ?
+    ''', (project_id,))
+    conn.commit()
+    conn.close()
+    return True
+
+def hard_delete_project(project_id):
+    """Permanently delete project"""
+    conn = sqlite3.connect(Config.DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM projects WHERE id = ?', (project_id,))
+    conn.commit()
+    conn.close()
+    return True
+
+def get_user_archived_projects(user_id):
+    """Get soft-deleted projects for a user"""
+    # Auto-purge old items first
+    purge_old_archived_projects()
+    
+    conn = sqlite3.connect(Config.DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT id, title, description, thumbnail, svg_content, rooms, design_philosophy, deleted_at 
+        FROM projects 
+        WHERE user_id = ? AND is_deleted = 1
+        ORDER BY deleted_at DESC
+    ''', (user_id,))
+    projects = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return projects
+
+def purge_old_archived_projects():
+    """Permanently delete projects older than 5 days in recycle bin"""
+    conn = sqlite3.connect(Config.DB_PATH)
+    cursor = conn.cursor()
+    # SQLITE logic for 5 days: datetime('now', '-5 days')
+    cursor.execute("DELETE FROM projects WHERE is_deleted = 1 AND deleted_at < datetime('now', '-5 days')")
+    conn.commit()
+    conn.close()
