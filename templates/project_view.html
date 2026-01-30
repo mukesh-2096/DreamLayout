@@ -28,11 +28,12 @@
         .glass {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
         .dark .glass {
             background: rgba(15, 23, 42, 0.8);
-            border-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         svg {
@@ -41,6 +42,18 @@
             border-radius: 1.5rem;
         }
     </style>
+    <script>
+            (function () {
+                const saved = localStorage.getItem('theme') || 'system';
+                const html = document.documentElement;
+                const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                if (saved === 'dark' || (saved === 'system' && darkQuery.matches)) {
+                    html.classList.add('dark');
+                } else {
+                    html.classList.remove('dark');
+                }
+            })();
+    </script>
 </head>
 
 <body
@@ -86,8 +99,14 @@
                     </div>
 
                     <div
-                        class="aspect-[4/3] bg-slate-50 dark:bg-slate-950 rounded-[2rem] p-8 flex items-center justify-center border border-slate-100 dark:border-slate-800">
+                        class="aspect-[4/3] bg-slate-50 dark:bg-slate-950 rounded-[2rem] p-8 flex items-center justify-center border border-slate-100 dark:border-slate-800 overflow-hidden">
+                        {% if project.svg_content %}
                         {{ project.svg_content | safe }}
+                        {% elif project.thumbnail %}
+                        <img src="{{ project.thumbnail }}" class="w-full h-full object-contain" alt="Plan">
+                        {% else %}
+                        <div class="text-slate-300 dark:text-slate-700">No layout available</div>
+                        {% endif %}
                     </div>
                 </div>
 

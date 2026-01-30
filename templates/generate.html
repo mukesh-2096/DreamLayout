@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Generation – DreamLayout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'Inter', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .dark .glass {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .step-transition {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .pulse-border {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                border-color: rgba(139, 92, 246, 0.3);
+            }
+
+            50% {
+                border-color: rgba(139, 92, 246, 0.7);
+            }
+
+            100% {
+                border-color: rgba(139, 92, 246, 0.3);
+            }
+        }
+    </style>
+    <script>
+            (function () {
+                const saved = localStorage.getItem('theme') || 'system';
+                const html = document.documentElement;
+                const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                if (saved === 'dark' || (saved === 'system' && darkQuery.matches)) {
+                    html.classList.add('dark');
+                } else {
+                    html.classList.remove('dark');
+                }
+            })();
+    </script>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen transition-all duration-300">
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 w-full z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto glass rounded-full px-6 py-3 flex items-center justify-between shadow-xl">
+            <div class="flex items-center gap-3">
+                <span
+                    class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-700 to-indigo-700">Generation
+                    Workspace</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <div id="step-indicator" class="hidden sm:flex items-center gap-2">
+                    <div class="h-2 w-12 rounded-full bg-violet-600 transition-all duration-500" id="progress-bar">
+                    </div>
+                    <span class="text-[10px] font-black uppercase text-slate-400">Phase <span
+                            id="current-phase">1</span>/3</span>
+                </div>
+                <button onclick="window.history.back()"
+                    class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition">✕</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="min-h-screen pt-28 pb-10 px-6 flex items-center justify-center relative">
+
+        <!-- Background Accents -->
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-violet-500/10 blur-[120px] rounded-full"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500/10 blur-[120px] rounded-full">
+        </div>
+
+        <!-- Multi-Step Container -->
+        <div id="survey-container" class="w-full max-w-4xl relative z-10">
+
+            <!-- Step 1: Base Info -->
+            <div id="step-1" class="step-transition">
+                <div class="text-center mb-10">
+                    <span
+                        class="inline-block px-4 py-1 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400 text-xs font-black uppercase tracking-widest mb-4">Foundation</span>
+                    <h1 class="text-4xl font-extrabold mb-2">What are we building today?</h1>
+                    <p class="text-slate-500">Let's start with the basic parameters of your layout.</p>
+                </div>
+
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white dark:bg-slate-900 p-10 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-800">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-bold mb-3 px-1">Venture Type</label>
+                            <select id="venture_type"
+                                class="w-full px-6 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-violet-500/10 transition">
+                                <option>Modern Cafe</option>
+                                <option>Tech Office</option>
+                                <option>Residential Apartment</option>
+                                <option>Retail Boutique</option>
+                                <option>Restaurant</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-3 px-1">Available Area (sq ft)</label>
+                            <input type="number" id="area" placeholder="e.g. 1500"
+                                class="w-full px-6 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-violet-500/10 transition">
+                        </div>
+                    </div>
+                    <div
+                        class="flex items-center justify-center p-8 bg-slate-50 dark:bg-slate-800 rounded-3xl border border-dashed border-slate-200 dark:border-slate-700">
+                        <div class="text-center">
+                            <span class="text-4xl block mb-4">🏗️</span>
+                            <p class="text-xs font-medium text-slate-400">These details define the<br>scale of our
+                                generation.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-10 flex justify-center">
+                    <button onclick="nextStep(2)"
+                        class="px-10 py-5 rounded-full bg-violet-600 text-white font-black hover:scale-105 hover:shadow-2xl transition-all shadow-xl shadow-violet-600/20">Continue
+                        to Sketch</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Drawing -->
+            <div id="step-2" class="hidden step-transition">
+                <div class="text-center mb-8">
+                    <span
+                        class="inline-block px-4 py-1 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400 text-xs font-black uppercase tracking-widest mb-4">Geometry</span>
+                    <h1 class="text-4xl font-extrabold mb-2">Sketch the site outline</h1>
+                    <p class="text-slate-500">Draw the perimeter on the grid below. Rough lines will be rectified.</p>
+                </div>
+
+                <div
+                    class="bg-white dark:bg-slate-900 rounded-[3rem] p-4 shadow-2xl border border-slate-100 dark:border-slate-800">
+                    <div class="relative group">
+                        <canvas id="sketch-canvas" width="800" height="400"
+                            class="w-full h-auto bg-slate-50 dark:bg-slate-950 rounded-[2.5rem] cursor-crosshair border border-transparent hover:border-violet-500/20 transition-all"></canvas>
+                        <div class="absolute bottom-6 right-6 flex gap-2">
+                            <button onclick="clearCanvas()"
+                                class="px-6 py-3 rounded-full bg-white dark:bg-slate-900 shadow-xl border border-slate-100 dark:border-slate-700 text-xs font-bold hover:bg-red-50 hover:text-red-500 transition">Clear
+                                Sketch</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-center gap-4">
+                    <button onclick="nextStep(1)"
+                        class="px-10 py-5 rounded-full bg-slate-100 dark:bg-slate-800 font-bold">Back</button>
+                    <button onclick="nextStep(3)"
+                        class="px-10 py-5 rounded-full bg-violet-600 text-white font-black hover:scale-105 hover:shadow-2xl transition-all shadow-xl shadow-violet-600/20">Finalize
+                        Details</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Prompting -->
+            <div id="step-3" class="hidden step-transition">
+                <div class="text-center mb-8">
+                    <span
+                        class="inline-block px-4 py-1 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400 text-xs font-black uppercase tracking-widest mb-4">Vision</span>
+                    <h1 class="text-4xl font-extrabold mb-2">Final Requirements</h1>
+                    <p class="text-slate-500">Mention any special rooms, styles (modern, industrial), or specific zones
+                        you need.</p>
+                </div>
+
+                <div
+                    class="bg-white dark:bg-slate-900 p-10 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-800">
+                    <textarea id="prompt_reqs" rows="6"
+                        placeholder="e.g. Industrial style with a large open pantry, Two private meeting rooms near the entrance..."
+                        class="w-full px-8 py-8 rounded-[2rem] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-violet-500/10 transition text-lg"></textarea>
+                </div>
+
+                <div class="mt-10 flex justify-center gap-4">
+                    <button onclick="nextStep(2)"
+                        class="px-10 py-5 rounded-full bg-slate-100 dark:bg-slate-800 font-bold">Back</button>
+                    <button onclick="startGeneration()"
+                        class="px-16 py-5 rounded-full bg-gradient-to-r from-violet-600 to-indigo-700 text-white font-black hover:scale-105 hover:shadow-2xl transition-all shadow-xl shadow-violet-600/20">Execute
+                        Generation</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading & Progress Screen -->
+        <div id="generation-ui" class="hidden w-full min-h-full flex items-start justify-center py-10">
+            <div class="flex flex-col lg:flex-row w-full max-w-7xl min-h-[80vh] gap-10">
+
+                <!-- Sidebar Snapshot -->
+                <div
+                    class="w-full lg:w-80 glass rounded-[3rem] p-10 flex flex-col justify-between animate-fade-in lg:sticky lg:top-28 h-fit">
+                    <div>
+                        <h2 class="text-xs font-black uppercase text-violet-600 tracking-widest mb-8">Design Context
+                        </h2>
+                        <div class="space-y-8">
+                            <div>
+                                <label
+                                    class="text-[10px] font-black uppercase text-slate-400 block mb-1">Venture</label>
+                                <p id="summary-venture" class="font-bold"></p>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-black uppercase text-slate-400 block mb-1">Approx.
+                                    Area</label>
+                                <p id="summary-area" class="font-bold"></p>
+                            </div>
+                            <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">
+                                <label class="text-[10px] font-black uppercase text-slate-400 block mb-3">Site
+                                    Outline</label>
+                                <canvas id="summary-canvas" width="200" height="100"
+                                    class="w-full h-auto opacity-50"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="generation-status" class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            <span class="text-xs font-bold text-slate-500">AI rectifying geometry...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content Area -->
+                <div
+                    class="flex-1 bg-white dark:bg-slate-900 rounded-[4rem] shadow-2xl border border-slate-100 dark:border-slate-800 p-12 flex flex-col">
+
+                    <div id="loader-view" class="flex-1 flex flex-col items-center justify-center text-center">
+                        <div class="w-32 h-32 relative mb-10">
+                            <div
+                                class="absolute inset-0 border-4 border-violet-100 dark:border-violet-900/30 rounded-full">
+                            </div>
+                            <div
+                                class="absolute inset-0 border-4 border-violet-600 rounded-full border-t-transparent animate-spin">
+                            </div>
+                            <div
+                                class="absolute inset-4 bg-violet-600 rounded-full animate-pulse flex items-center justify-center text-white text-2xl">
+                                🪄</div>
+                        </div>
+                        <h2 class="text-3xl font-extrabold mb-4">Gemini is sketching...</h2>
+                        <p class="text-slate-500 max-w-sm">Designing rooms, interior flow, and architectural
+                            distribution based on your vision.</p>
+                    </div>
+
+                    <div id="result-view" class="hidden flex-1 flex flex-col">
+                        <div class="flex items-center justify-between mb-8">
+                            <div>
+                                <h1 id="result-title" class="text-3xl font-extrabold"></h1>
+                                <p id="result-desc" class="text-slate-500 text-sm"></p>
+                            </div>
+                            <div class="flex gap-4">
+                                <button onclick="window.location.reload()"
+                                    class="px-6 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm font-bold order-1">Retry</button>
+                                <button onclick="saveGeneration()" id="save-btn"
+                                    class="px-8 py-4 rounded-2xl bg-violet-600 text-white text-sm font-black hover:scale-105 transition shadow-lg shadow-violet-600/20 order-2">Save
+                                    Layout</button>
+                            </div>
+                        </div>
+                        <div class="flex-1 min-h-[500px] bg-slate-50 dark:bg-slate-950 rounded-[2.5rem] p-10 flex items-center justify-center border border-slate-100 dark:border-slate-800"
+                            id="svg-container">
+                            <!-- SVG will be injected here -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        let currentStep = 1;
+        const canvas = document.getElementById('sketch-canvas');
+        const ctx = canvas.getContext('2d');
+        let points = [];
+        let drawing = false;
+        let generatedLayout = null;
+
+        function nextStep(step) {
+            document.getElementById(`step-${currentStep}`).classList.add('hidden');
+            document.getElementById(`step-${step}`).classList.remove('hidden');
+            currentStep = step;
+
+            // Update progress
+            document.getElementById('current-phase').innerText = step;
+            document.getElementById('progress-bar').style.width = (step * 33.3) + '%';
+
+            if (step === 2) initCanvas();
+        }
+
+        function initCanvas() {
+            ctx.strokeStyle = '#8b5cf6';
+            ctx.lineWidth = 3;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            drawGrid();
+
+            canvas.onmousedown = (e) => {
+                drawing = true;
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const x = (e.clientX - rect.left) * scaleX;
+                const y = (e.clientY - rect.top) * scaleY;
+                points.push({ x, y });
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            };
+
+            canvas.onmousemove = (e) => {
+                if (!drawing) return;
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const x = (e.clientX - rect.left) * scaleX;
+                const y = (e.clientY - rect.top) * scaleY;
+                points.push({ x, y });
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            };
+
+            canvas.onmouseup = () => drawing = false;
+        }
+
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = document.documentElement.classList.contains('dark') ? '#1e293b' : '#f1f5f9';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < canvas.width; i += 40) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            }
+            for (let i = 0; i < canvas.height; i += 40) {
+                ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
+            }
+            ctx.strokeStyle = '#8b5cf6';
+            ctx.lineWidth = 3;
+        }
+
+        function clearCanvas() { points = []; drawGrid(); }
+
+        async function startGeneration() {
+            const venture = document.getElementById('venture_type').value;
+            const area = document.getElementById('area').value;
+            const prompt = document.getElementById('prompt_reqs').value;
+
+            if (!area) { alert('Please specify the area.'); return; }
+
+            // Switch UI
+            document.getElementById('survey-container').classList.add('hidden');
+            document.getElementById('generation-ui').classList.remove('hidden');
+            document.getElementById('step-indicator').classList.add('hidden');
+
+            // Set Summary
+            document.getElementById('summary-venture').innerText = venture;
+            document.getElementById('summary-area').innerText = area + ' sq ft';
+
+            // Draw thumbnail on summary canvas
+            const sCanvas = document.getElementById('summary-canvas');
+            const sCtx = sCanvas.getContext('2d');
+            sCtx.strokeStyle = '#8b5cf6';
+            sCtx.lineWidth = 2;
+            sCtx.beginPath();
+            points.forEach((p, i) => {
+                const x = (p.x / canvas.width) * sCanvas.width;
+                const y = (p.y / canvas.height) * sCanvas.height;
+                if (i === 0) sCtx.moveTo(x, y); else sCtx.lineTo(x, y);
+            });
+            sCtx.stroke();
+
+            // AI Call
+            const simplifiedPoints = points.filter((_, i) => i % 5 === 0);
+            try {
+                const response = await fetch('/api/generate-preview', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        venture_type: venture,
+                        area: area,
+                        dimensions: simplifiedPoints,
+                        prompt: prompt
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showResult(data.layout);
+                } else {
+                    alert('Error: ' + data.error);
+                    window.location.reload();
+                }
+            } catch (err) {
+                alert('Connection error');
+                window.location.reload();
+            }
+        }
+
+        function showResult(layout) {
+            generatedLayout = layout;
+            document.getElementById('loader-view').classList.add('hidden');
+            document.getElementById('result-view').classList.remove('hidden');
+
+            document.getElementById('result-title').innerText = layout.title;
+            document.getElementById('result-desc').innerText = layout.description;
+            document.getElementById('svg-container').innerHTML = layout.svg;
+
+            // Transform internal texts for color if needed, but the layout_generator already handles it
+            document.querySelectorAll('#svg-container svg text').forEach(t => t.style.fontFamily = 'Outfit');
+        }
+
+        async function saveGeneration() {
+            if (!generatedLayout) return;
+            const btn = document.getElementById('save-btn');
+            btn.innerText = 'Saving...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/save-project', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ layout: generatedLayout })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    window.location.href = '/dashboard';
+                } else {
+                    alert('Save failed: ' + data.error);
+                    btn.innerText = 'Save Layout';
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                alert('Connection error during save');
+                btn.innerText = 'Save Layout';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>
