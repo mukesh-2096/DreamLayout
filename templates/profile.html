@@ -289,21 +289,26 @@
 
                 <div class="grid gap-6">
 
-                    <!-- Favourites -->
-                    <a href="/favourites"
+                    <!-- My Projects (Link to page) -->
+                    <a href="/my-projects"
                         class="group block p-8 bg-white dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 rounded-[2.5rem] hover:border-violet-500 dark:hover:border-violet-600 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-6">
                                 <div
-                                    class="w-16 h-16 rounded-[1.5rem] bg-rose-50 dark:bg-rose-900/20 text-rose-500 dark:text-rose-400 flex items-center justify-center text-2xl group-hover:scale-110 transition">
-                                    ❤️
+                                    class="w-16 h-16 rounded-[1.5rem] bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                                    🏗️
                                 </div>
                                 <div>
-                                    <h3
-                                        class="text-xl font-extrabold text-slate-900 dark:text-slate-100 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition">
-                                        Favourites</h3>
-                                    <p class="text-sm font-bold text-slate-400 dark:text-slate-500 mt-1">Saved projects
-                                        and reference templates</p>
+                                    <div class="flex items-center gap-3">
+                                        <h3
+                                            class="text-xl font-extrabold text-slate-900 dark:text-slate-100 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition">
+                                            My Projects</h3>
+                                        <span
+                                            class="px-2 py-0.5 bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 rounded-lg text-[10px] font-black uppercase tracking-widest">{{
+                                            projects|length }}</span>
+                                    </div>
+                                    <p class="text-sm font-bold text-slate-400 dark:text-slate-500 mt-1">View and manage
+                                        your entire architectural portfolio</p>
                                 </div>
                             </div>
                             <div
@@ -316,8 +321,35 @@
                         </div>
                     </a>
 
-                    <!-- Reset Password -->
-                    <a href="/settings"
+                    <!-- Favourites -->
+                    <a href="/favourites"
+                        class="group block p-8 bg-white dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 rounded-[2.5rem] hover:border-pink-500 dark:hover:border-pink-600 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-6">
+                                <div
+                                    class="w-16 h-16 rounded-[1.5rem] bg-rose-50 dark:bg-rose-900/20 text-rose-500 dark:text-rose-400 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                                    ❤️
+                                </div>
+                                <div>
+                                    <h3
+                                        class="text-xl font-extrabold text-slate-900 dark:text-slate-100 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition">
+                                        Favourites</h3>
+                                    <p class="text-sm font-bold text-slate-400 dark:text-slate-500 mt-1">Saved projects
+                                        and reference templates</p>
+                                </div>
+                            </div>
+                            <div
+                                class="w-10 h-10 rounded-full border border-slate-100 dark:border-slate-800 flex items-center justify-center text-slate-300 group-hover:text-pink-500 group-hover:border-pink-100 transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                        d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Reset Password (Authentication) -->
+                    <a href="javascript:void(0)" onclick="showToast('This feature is under development 🏗️', 'info')"
                         class="group block p-8 bg-white dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 rounded-[2.5rem] hover:border-violet-500 dark:hover:border-violet-600 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-6">
@@ -343,9 +375,9 @@
                         </div>
                     </a>
 
-                    <!-- Account Management -->
+                    <!-- Account Management (Profile Settings) -->
                     <a href="/settings"
-                        class="group block p-8 bg-white dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 rounded-[2.5rem] hover:border-violet-500 dark:hover:border-violet-600 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                        class="group block p-8 bg-white dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 rounded-[2.5rem] hover:border-indigo-500 dark:hover:border-indigo-600 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-6">
                                 <div
@@ -531,7 +563,103 @@
                 if (!wrapper.contains(e.target)) { dropdown.classList.add('hidden'); }
             });
         })();
+
+        function openProjectsModal() {
+            document.getElementById('projects-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeProjectsModal() {
+            document.getElementById('projects-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            if (toast) {
+                document.getElementById('toast-msg').innerText = msg;
+                toast.classList.remove('translate-x-full');
+                setTimeout(() => toast.classList.add('translate-x-full'), 3000);
+            }
+        }
     </script>
+
+    <!-- ================= PROJECTS MODAL ================= -->
+    <div id="projects-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onclick="closeProjectsModal()"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl p-6">
+            <div
+                class="bg-white dark:bg-slate-900 rounded-[3rem] shadow-2xl border border-white dark:border-slate-800 p-10 animate-fade-in-up max-h-[85vh] flex flex-col">
+                <div class="flex justify-between items-center mb-10 shrink-0">
+                    <div>
+                        <h3 class="text-3xl font-extrabold text-slate-900 dark:text-slate-100">My Projects</h3>
+                        <p class="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">Complete
+                            Architectural Portfolio</p>
+                    </div>
+                    <button onclick="closeProjectsModal()"
+                        class="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="flex-1 overflow-y-auto pr-4 custom-scrollbar space-y-4">
+                    {% if projects %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6">
+                        {% for project in projects %}
+                        <a href="/project/{{ project.id }}"
+                            class="group block p-6 bg-slate-50/50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800 rounded-[2.5rem] hover:border-violet-500 dark:hover:border-violet-600 hover:shadow-xl transition-all duration-500">
+                            <div class="flex items-center gap-6">
+                                <div
+                                    class="w-24 h-24 rounded-[2rem] bg-white dark:bg-slate-900 p-3 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                                    {% if project.svg_content %}
+                                    <div
+                                        class="w-full h-full scale-110 group-hover:scale-125 transition-transform duration-700">
+                                        {{ project.svg_content | safe }}
+                                    </div>
+                                    {% elif project.thumbnail %}
+                                    <img src="{{ project.thumbnail }}" class="w-full h-full object-contain"
+                                        alt="Preview">
+                                    {% else %}
+                                    <span class="text-3xl">🏗️</span>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-1 overflow-hidden">
+                                    <h4
+                                        class="text-lg font-black text-slate-900 dark:text-slate-100 group-hover:text-violet-600 transition truncate">
+                                        {{ project.title }}</h4>
+                                    <p
+                                        class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1 block">
+                                        {{ project.updated_at.split(' ')[0] if project.updated_at else 'Recent' }}</p>
+                                    <div class="mt-4 flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-sm"></span>
+                                        <span
+                                            class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Active
+                                            Workspace</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="flex flex-col items-center justify-center py-20 text-center">
+                        <div
+                            class="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-[2.5rem] flex items-center justify-center text-5xl mb-6 shadow-inner">
+                            ✍️</div>
+                        <h4 class="text-xl font-black text-slate-900 dark:text-slate-100 mb-2">No projects yet</h4>
+                        <p class="text-sm font-bold text-slate-400 max-w-xs">Start your first architectural generation
+                            to see it in your portfolio.</p>
+                        <a href="/generate"
+                            class="mt-8 px-8 py-4 bg-violet-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-violet-700 transition shadow-xl shadow-fuchsia-600/20">Create
+                            New Design</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 
     <style>
         .animate-fade-in-up {
@@ -549,7 +677,37 @@
                 transform: translateY(0);
             }
         }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #1e293b;
+        }
     </style>
+
+
+    <!-- ================= TOAST ================= -->
+    <div id="toast" class="fixed bottom-10 right-10 z-[100] transition-all transform translate-x-full">
+        <div
+            class="glass dark:bg-slate-900/80 border border-white dark:border-slate-800 rounded-3xl px-8 py-5 shadow-2xl flex items-center gap-4">
+            <div class="w-10 h-10 bg-violet-100 dark:bg-violet-900/30 rounded-2xl flex items-center justify-center text-xl"
+                id="toast-icon">
+                ✨
+            </div>
+            <span id="toast-msg" class="text-sm font-bold text-slate-900 dark:text-slate-100">Action completed!</span>
+        </div>
+    </div>
 
 </body>
 

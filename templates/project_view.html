@@ -69,9 +69,9 @@
                     class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-700 to-indigo-700">DreamLayout</span>
             </a>
             <div class="flex items-center gap-4">
-                <a href="/dashboard"
+                <a href="/my-projects"
                     class="px-5 py-2 rounded-full bg-slate-100 dark:bg-slate-800 text-sm font-bold hover:bg-white dark:hover:bg-slate-700 transition">Back
-                    to Dashboard</a>
+                    to Projects</a>
             </div>
         </div>
     </nav>
@@ -92,10 +92,10 @@
                             <p id="current-floor-label" class="text-sm font-bold text-slate-400 mt-1"></p>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="window.print()"
-                                class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-violet-50 transition">🖨️</button>
-                            <button
-                                class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-violet-50 transition">💾</button>
+                            <button onclick="window.print()" title="Print Blueprint"
+                                class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-violet-50 dark:hover:bg-violet-900/40 transition">🖨️</button>
+                            <button onclick="downloadActivePng()" title="Download PNG"
+                                class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-violet-50 dark:hover:bg-violet-900/40 transition">💾</button>
                         </div>
                     </div>
 
@@ -118,38 +118,48 @@
                     </div>
                 </div>
 
-                <div
-                    class="bg-white dark:bg-slate-900 rounded-[3rem] p-8 shadow-xl border border-slate-100 dark:border-slate-800">
-                    <h2 class="text-xl font-bold mb-6 flex items-center gap-3">
-                        <span class="p-2 bg-violet-100 dark:bg-violet-900/40 rounded-xl text-sm">🧠</span>
-                        Design Philosophy
-                    </h2>
-                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
-                        {{ project.design_philosophy }}
-                    </p>
-                </div>
+
             </div>
 
             <!-- Right: Details & Sidebar -->
             <div class="space-y-8">
+                <!-- Architect's Analysis & Legend -->
+                {% if project.design_philosophy %}
+                <div class="glass border border-white rounded-[2.5rem] p-8 shadow-xl">
+                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Architect's
+                        Analysis</h3>
+                    <div class="prose prose-sm dark:prose-invert max-w-none">
+                        <div
+                            class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-wrap font-medium">
+                            {{ project.design_philosophy }}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
                 <div class="glass border border-white rounded-[2.5rem] p-8 shadow-xl">
                     <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Room Breakdown</h3>
                     <div id="rooms-container" class="space-y-4">
                         {% if project.rooms and project.rooms[0] is mapping and 'floor_name' not in project.rooms[0] %}
-                            {% for room in project.rooms %}
-                            <div
-                                class="p-4 rounded-2xl bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 group hover:border-violet-300 transition">
-                                <div class="flex items-center justify-between mb-1">
-                                    <span class="font-bold text-sm">{{ room.name }}</span>
+                        {% for room in project.rooms %}
+                        <div
+                            class="p-4 rounded-2xl bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 group hover:border-violet-300 transition">
+                            <div class="flex items-center justify-between mb-1">
+                                <div class="flex items-center gap-3">
                                     <span
-                                        class="text-[10px] bg-violet-100 dark:bg-violet-900 text-violet-600 px-2 py-0.5 rounded-lg">{{
-                                        room.size }}</span>
+                                        class="w-6 h-6 rounded-lg bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 flex items-center justify-center text-[10px] font-black shrink-0">{{
+                                        room.id or loop.index }}</span>
+                                    <span class="font-bold text-sm">{{ room.name }}</span>
                                 </div>
-                                <p class="text-[10px] text-slate-400 font-medium">{{ room.position }}</p>
+                                <span
+                                    class="text-[10px] bg-violet-100 dark:bg-violet-900 text-violet-600 px-2 py-0.5 rounded-lg">{{
+                                    room.size }}</span>
                             </div>
-                            {% endfor %}
+                            <p class="text-[10px] text-slate-400 font-medium ml-9">{{ room.position }}</p>
+                        </div>
+                        {% endfor %}
                         {% else %}
-                            <p class="text-xs text-slate-400">Select a floor to see room breakdown.</p>
+                        <p class="text-xs text-slate-400">Select a floor to see room breakdown.</p>
                         {% endif %}
                     </div>
                 </div>
@@ -169,7 +179,7 @@
                         const selector = document.getElementById('floor-selector');
                         const label = document.getElementById('current-floor-label');
                         selector.classList.remove('hidden');
-                        
+
                         floors.forEach((floor, idx) => {
                             const btn = document.createElement('button');
                             btn.className = `px-6 py-2 rounded-xl text-xs font-bold transition-all ${idx === 0 ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/20' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200'}`;
@@ -180,6 +190,8 @@
 
                         if (floors.length > 0) {
                             label.innerText = floors[0].floor_name;
+                            const firstBtn = selector.querySelector('button');
+                            if (firstBtn) switchFloor(0, firstBtn, floors);
                         }
                     }
 
@@ -207,13 +219,60 @@
                             div.className = 'p-4 rounded-2xl bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 group hover:border-violet-300 transition';
                             div.innerHTML = `
                                 <div class="flex items-center justify-between mb-1">
-                                    <span class="font-bold text-sm">${room.name}</span>
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-6 h-6 rounded-lg bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 flex items-center justify-center text-[10px] font-black shrink-0">${room.id || ''}</span>
+                                        <span class="font-bold text-sm">${room.name}</span>
+                                    </div>
                                     <span class="text-[10px] bg-violet-100 dark:bg-violet-900 text-violet-600 px-2 py-0.5 rounded-lg">${room.size}</span>
                                 </div>
-                                <p class="text-[10px] text-slate-400 font-medium">${room.position}</p>
+                                <p class="text-[10px] text-slate-400 font-medium ml-9">${room.position}</p>
                             `;
                             roomsContainer.appendChild(div);
                         });
+                    }
+
+                    function downloadActivePng() {
+                        const svgArea = document.getElementById('svg-render-area');
+                        if (!svgArea) return;
+
+                        const svgElement = svgArea.querySelector('svg');
+                        if (!svgElement) return;
+
+                        const svgContent = svgArea.innerHTML;
+                        const projectName = "{{ project.title }}".replace(/\s+/g, '_');
+                        const floorName = document.getElementById('current-floor-label').innerText.replace(/\s+/g, '_');
+                        const fileName = `${projectName}_${floorName}.png`;
+
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const img = new Image();
+
+                        const width = parseInt(svgElement.getAttribute('width')) || 1200;
+                        const height = parseInt(svgElement.getAttribute('height')) || 800;
+
+                        canvas.width = width * 2;
+                        canvas.height = height * 2;
+
+                        const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+                        const url = URL.createObjectURL(svgBlob);
+
+                        img.onload = function () {
+                            ctx.fillStyle = 'white';
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                            ctx.scale(2, 2);
+                            ctx.drawImage(img, 0, 0);
+
+                            const pngUrl = canvas.toDataURL('image/png');
+                            const link = document.createElement('a');
+                            link.href = pngUrl;
+                            link.download = fileName;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+
+                            URL.revokeObjectURL(url);
+                        };
+                        img.src = url;
                     }
                 </script>
 

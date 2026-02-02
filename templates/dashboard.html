@@ -157,6 +157,12 @@
                                 class="bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 p-2 rounded-xl text-xs">👤</span>
                             My Profile
                         </a>
+                        <a href="/my-projects"
+                            class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-emerald-50 dark:hover:bg-emerald-900/30 text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition font-bold text-sm">
+                            <span
+                                class="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-500 dark:text-emerald-400 p-2 rounded-xl text-xs">🏗️</span>
+                            My Projects
+                        </a>
                         <a href="/favourites"
                             class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-pink-50 dark:hover:bg-pink-900/30 text-slate-600 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400 transition font-bold text-sm">
                             <span
@@ -351,10 +357,7 @@
                     </a>
 
                     <!-- Existing Projects -->
-                    {% for i in range(1, 6) %}
-                    {% set idx = i-1 %}
-                    {% if projects and projects|length > idx %}
-                    {% set project = projects[idx] %}
+                    {% for project in projects[:5] %}
                     <div
                         class="group bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden flex flex-col h-[360px]">
                         <div class="relative h-52 bg-slate-50 dark:bg-slate-800 overflow-hidden">
@@ -399,34 +402,48 @@
                         </div>
                         <div class="p-8 flex-1 flex flex-col justify-between">
                             <div>
-                                <h3 class="font-extrabold text-slate-900 dark:text-slate-100 text-xl mb-2 line-clamp-1">
-                                    {{ project.title or
-                                    'Untitled Layout' }}</h3>
-                                <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">{{
-                                    project.updated_at or 'A few moments ago' }}</p>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <div class="flex -space-x-2">
-                                    <div
-                                        class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 bg-violet-100 dark:bg-violet-900/50 flex items-center justify-center text-[8px] font-bold text-violet-600 dark:text-violet-400">
-                                        AI</div>
-                                    <div
-                                        class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-[8px] font-bold text-slate-600 dark:text-slate-400">
-                                        DL</div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3
+                                        class="text-xl font-extrabold text-slate-900 dark:text-slate-100 group-hover:text-violet-600 transition truncate">
+                                        {{ project.title }}</h3>
+                                    <div class="flex items-center gap-2">
+                                        <span
+                                            class="text-[10px] font-black text-violet-500 bg-violet-50 dark:bg-violet-900/30 px-2 py-1 rounded-lg">ID:
+                                            {{ project.design_code if project.design_code else '#' ~ project.id
+                                            }}</span>
+                                        <div class="flex gap-1">
+                                            {% if project.is_favourite %}
+                                            <span
+                                                class="p-1.5 bg-rose-50 dark:bg-rose-900/30 text-rose-500 rounded-lg text-[10px]"
+                                                title="Favourite">❤️</span>
+                                            {% endif %}
+                                            {% if project.is_public %}
+                                            <span
+                                                class="p-1.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500 rounded-lg text-[10px]"
+                                                title="Public">🌍</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
                                 </div>
-                                <span
-                                    class="text-[10px] font-black py-1 px-3 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-lg uppercase tracking-widest">Finalized</span>
+                                <p class="text-slate-400 font-bold text-xs line-clamp-2 leading-relaxed h-8">
+                                    {{ project.description or 'Conceptual architectural plan for professional review.'
+                                    }}
+                                </p>
+                            </div>
+
+                            <div
+                                class="flex items-center justify-between pt-6 border-t border-slate-50 dark:border-slate-800">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    <span
+                                        class="text-[9px] font-black text-slate-400 tracking-[0.1em] uppercase">Verified
+                                        Plan</span>
+                                </div>
+                                <span class="text-[9px] font-black text-slate-300">{{
+                                    project.updated_at.split(' ')[0] if project.updated_at else 'Active' }}</span>
                             </div>
                         </div>
                     </div>
-                    {% else %}
-                    <!-- Empty Slot -->
-                    <div
-                        class="h-[360px] bg-slate-50/50 dark:bg-slate-800/20 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 border-dashed flex flex-col items-center justify-center text-slate-300 dark:text-slate-700 opacity-60">
-                        <span class="text-3xl mb-2">🏗️</span>
-                        <span class="text-[10px] font-black uppercase tracking-widest italic">Pending Layout</span>
-                    </div>
-                    {% endif %}
                     {% endfor %}
 
                 </div>
@@ -503,11 +520,11 @@
 
             items.forEach(p => {
                 const el = document.createElement('a');
-                el.href = p.url || '#';
+                el.href = `/project/${p.id}`;
                 el.className = 'block p-4 rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition border border-transparent hover:border-slate-100 dark:hover:border-slate-700 hover:shadow-sm group';
                 el.innerHTML = `
                 <div class="font-bold text-slate-700 dark:text-slate-300 text-xs group-hover:text-violet-700 dark:group-hover:text-violet-400 transition line-clamp-1">${p.title || 'Untitled'}</div>
-                <div class="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-tight">${p.updated_at || 'Recently'}</div>
+                <div class="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-tight">${p.updated_at ? p.updated_at.split(' ')[0] : 'Recently'}</div>
             `;
                 container.appendChild(el);
             });
@@ -538,7 +555,7 @@
                 return;
             }
             closeAll();
-            const recent = [...PROJECTS].slice(0, 5);
+            const recent = PROJECTS.slice(0, 3);
             renderList(box, recent);
             box.classList.remove('hidden');
         };

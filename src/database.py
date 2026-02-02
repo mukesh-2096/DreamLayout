@@ -59,8 +59,14 @@ def init_db():
         except sqlite3.OperationalError:
             pass
 
-    # Migration for projects: add is_deleted and deleted_at
-    for col, type_info in [('is_deleted', 'INTEGER DEFAULT 0'), ('deleted_at', 'TIMESTAMP')]:
+    # Migration for projects: add is_deleted, deleted_at, is_favourite, is_public
+    for col, type_info in [
+        ('is_deleted', 'INTEGER DEFAULT 0'), 
+        ('deleted_at', 'TIMESTAMP'),
+        ('is_favourite', 'INTEGER DEFAULT 0'),
+        ('is_public', 'INTEGER DEFAULT 0'),
+        ('design_code', 'TEXT')
+    ]:
         try:
             cursor.execute(f"ALTER TABLE projects ADD COLUMN {col} {type_info}")
         except sqlite3.OperationalError:
@@ -178,14 +184,20 @@ def delete_user_db(user_key):
     conn.close()
     return True
 
-def add_user_project(user_id, title, description, thumbnail, svg_content, rooms, design_philosophy):
+def add_user_project(user_id, title, description, thumbnail, svg_content, rooms, design_philosophy, design_code=None):
     """Add a new project to the database"""
+    if not design_code:
+        import random
+        import string
+        suffix = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+        design_code = f"DL-{suffix}"
+        
     conn = sqlite3.connect(Config.DB_PATH)
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO projects (user_id, title, description, thumbnail, svg_content, rooms, design_philosophy)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    ''', (user_id, title, description, thumbnail, svg_content, rooms, design_philosophy))
+        INSERT INTO projects (user_id, title, description, thumbnail, svg_content, rooms, design_philosophy, design_code)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (user_id, title, description, thumbnail, svg_content, rooms, design_philosophy, design_code))
     project_id = cursor.lastrowid
     conn.commit()
     conn.close()
@@ -197,7 +209,7 @@ def get_user_projects(user_id, limit=6):
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT id, title, description, thumbnail, svg_content, rooms, design_philosophy, updated_at 
+        SELECT id, title, description, thumbnail, svg_content, rooms, design_philosophy, updated_at, is_favourite, is_public 
         FROM projects 
         WHERE user_id = ? AND is_deleted = 0
         ORDER BY updated_at DESC 
@@ -207,13 +219,65 @@ def get_user_projects(user_id, limit=6):
     conn.close()
     return projects
 
+def get_favourite_projects(user_id):
+    """Return list of user's favourite projects"""
+    conn = sqlite3.connect(Config.DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT id, title, description, thumbnail, svg_content, rooms, updated_at, design_code 
+        FROM projects 
+        WHERE user_id = ? AND is_deleted = 0 AND is_favourite = 1
+        ORDER BY updated_at DESC
+    ''', (user_id,))
+    projects = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return projects
+
+def get_public_projects(limit=50):
+    """Return list of public templates"""
+    conn = sqlite3.connect(Config.DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT id, title, description, thumbnail, svg_content, rooms, updated_at, design_code 
+        FROM projects 
+        WHERE is_public = 1 AND is_deleted = 0
+        ORDER BY updated_at DESC
+        LIMIT ?
+    ''', (limit,))
+    projects = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return projects
+
+def update_project_status(project_ids, status_field, value, user_id):
+    """Update status field (is_favourite/is_public) for multiple projects belonging to user_id"""
+    if not project_ids:
+        return True
+    conn = sqlite3.connect(Config.DB_PATH)
+    cursor = conn.cursor()
+    placeholders = ','.join(['?'] * len(project_ids))
+    # Add user_id check for security
+    cursor.execute(f'''
+        UPDATE projects 
+        SET {status_field} = ?, updated_at = CURRENT_TIMESTAMP 
+        WHERE id IN ({placeholders}) AND user_id = ?
+    ''', [value] + project_ids + [user_id])
+    
+    updated_count = cursor.rowcount
+    conn.commit()
+    conn.close()
+    
+    # Return true only if all projects were updated (means user owned all of them)
+    return updated_count == len(project_ids)
+
 def get_project_by_id(project_id):
     """Get a single project by ID"""
     conn = sqlite3.connect(Config.DB_PATH)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT id, user_id, title, description, thumbnail, svg_content, rooms, design_philosophy, updated_at 
+        SELECT id, user_id, title, description, thumbnail, svg_content, rooms, design_philosophy, updated_at, design_code 
         FROM projects 
         WHERE id = ?
     ''', (project_id,))

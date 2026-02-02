@@ -429,7 +429,7 @@
         </div>
 
         <!-- Multi-Step Container -->
-        <div id="survey-container" class="w-full max-w-4xl relative z-10 px-4 md:px-0 mt-[-40px]">
+        <div id="survey-container" class="w-full max-w-4xl relative z-10 px-4 md:px-0 mt-8">
 
             <!-- Step 1: Base Info -->
             <div id="step-1" class="step-transition">
@@ -539,23 +539,31 @@
                 </div>
             </div>
 
-            <div id="step-2" class="hidden step-transition w-full">
-                <div class="mb-6">
-                    <span
-                        class="text-xs font-black text-violet-600 dark:text-violet-400 uppercase tracking-[0.3em] block mb-2">Phase
-                        02 / Sketch</span>
-                    <h2 class="text-3xl md:text-4xl font-black text-slate-800 dark:text-white tracking-tight">Rough
-                        Sketch of Site Outline</h2>
-                    <p class="text-slate-500 text-sm font-medium">Draw the perimeter. Our AI will rectify this into
-                        architectural walls.</p>
+            <div id="step-2" class="hidden step-transition w-full max-w-4xl mx-auto">
+                <div class="flex flex-col items-center mb-12">
+                    <div
+                        class="flex items-center gap-2 text-slate-400 font-bold text-sm tracking-widest uppercase mb-4 animate-fade-in-up">
+                        <span class="text-slate-400">Step 1</span>
+                        <span class="mx-2">❯</span>
+                        <span class="text-violet-600">Step 2</span>
+                        <span class="mx-2">❯</span>
+                        <span>Outline</span>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                    <!-- Left Side: Workspace -->
-                    <div class="lg:col-span-8 space-y-4">
-                        <div class="relative group">
+                <div class="mb-10 text-center animate-fade-in-up">
+                    <h2 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-3">Refine Site
+                        Outline</h2>
+                    <p class="text-slate-500 text-sm font-medium max-w-md mx-auto">Draw the perimeter precisely. Our AI
+                        will transform this into structured architectural walls.</p>
+                </div>
+
+                <div class="grid grid-cols-1 gap-10 items-start">
+                    <!-- Workspace -->
+                    <div class="space-y-6">
+                        <div class="relative group mx-auto">
                             <canvas id="sketch-canvas" width="800" height="500"
-                                class="w-full h-auto bg-white dark:bg-slate-950 rounded-[2.5rem] cursor-crosshair border border-slate-200 dark:border-slate-800 shadow-xl hover:border-violet-500/30 transition-all duration-500"></canvas>
+                                class="w-full h-auto bg-white dark:bg-slate-950 rounded-[2.5rem] cursor-crosshair border border-slate-200 dark:border-slate-800 shadow-xl hover:border-violet-500/30 transition-all duration-500 mx-auto"></canvas>
 
                             <!-- Architectural Directions (Canvas Edges) -->
                             <div
@@ -595,21 +603,24 @@
                         </div>
                     </div>
 
-                    <!-- Right Side: Analysis -->
-                    <div class="lg:col-span-4 space-y-6 animate-fade-in-up" style="animation-delay: 0.1s">
-                        <div class="glass p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 space-y-6">
+                    <!-- Analysis and Controls -->
+                    <div class="max-w-2xl mx-auto w-full space-y-8 animate-fade-in-up" style="animation-delay: 0.1s">
+                        <div
+                            class="glass p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 space-y-8 shadow-sm">
                             <div>
                                 <label
-                                    class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 px-1">Side
-                                    Measurements</label>
+                                    class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-6 text-center">Site
+                                    Data & Analysis</label>
 
                                 <div id="no-sketch-hint"
-                                    class="flex flex-col items-center justify-center p-8 bg-slate-50 dark:bg-slate-950/50 rounded-[2rem] border border-dashed border-slate-200 dark:border-slate-700 text-center">
+                                    class="flex flex-col items-center justify-center p-10 bg-slate-50 dark:bg-slate-950/40 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-800 text-center">
                                     <div
-                                        class="w-16 h-16 bg-white dark:bg-slate-900 rounded-2xl shadow-sm flex items-center justify-center text-3xl mb-4">
+                                        class="w-20 h-20 bg-white dark:bg-slate-900 rounded-3xl shadow-lg flex items-center justify-center text-4xl mb-6">
                                         ✍️</div>
-                                    <p class="text-xs font-bold text-slate-700 dark:text-slate-300">Ready to measure</p>
-                                    <p class="text-[10px] text-slate-400 mt-1">Draw a perimeter on the canvas.</p>
+                                    <p class="text-sm font-black text-slate-900 dark:text-slate-100">Capture Land
+                                        Perimeter</p>
+                                    <p class="text-[11px] text-slate-400 mt-2 leading-relaxed">Use the workspace to
+                                        draw<br>your site boundaries.</p>
                                 </div>
 
                                 <div id="sides-input-container" class="hidden space-y-8 animate-fade-in">
@@ -638,7 +649,8 @@
                                 </div>
                             </div>
 
-                            <div class="space-y-6 pt-10 border-t border-slate-50 dark:border-slate-800/50">
+                            <div
+                                class="space-y-6 pt-10 border-t border-slate-50 dark:border-slate-800/50 flex flex-col items-center">
                                 <button onclick="nextStep(3)"
                                     class="w-full group flex items-center justify-between px-8 py-6 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-700 text-white font-black hover:scale-[1.02] shadow-xl shadow-violet-600/20 transition-all">
                                     <span class="text-lg">Continue to Details</span>
@@ -648,6 +660,8 @@
                                             d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                     </svg>
                                 </button>
+
+
                                 <button onclick="nextStep(1)"
                                     class="w-full px-10 py-6 rounded-[2rem] bg-slate-100 dark:bg-slate-800 font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
@@ -710,7 +724,7 @@
 
         <!-- Loading & Results Screen -->
         <div id="generation-ui"
-            class="hidden w-full h-screen fixed inset-0 z-[100] bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-6">
+            class="hidden w-full min-h-screen fixed inset-0 z-[100] bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-6 overflow-y-auto custom-scrollbar">
 
             <!-- Loader View -->
             <div id="loader-view" class="flex flex-col items-center justify-center animate-fade-in">
@@ -730,7 +744,7 @@
 
             <!-- Result View -->
             <div id="result-view"
-                class="hidden w-full max-w-[1600px] h-[85vh] grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch animate-fade-in">
+                class="hidden w-full max-w-[1600px] min-h-[85vh] grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch animate-fade-in pb-20">
                 <!-- Left: Chat Workspace -->
                 <div
                     class="lg:col-span-4 flex flex-col bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-2xl overflow-hidden">
@@ -750,6 +764,14 @@
                                 </div>
                             </div>
                         </div>
+                        <button onclick="toggleChat()"
+                            class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-slate-400"
+                            title="Close Chat">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
                     </div>
 
                     <div id="chat-messages"
@@ -762,12 +784,12 @@
                             <div class="space-y-4 max-w-[90%]">
                                 <div
                                     class="bg-white dark:bg-slate-800 p-4 rounded-2xl rounded-tl-none border border-slate-100 dark:border-slate-700 shadow-sm text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
-                                    I've generated a <span id="summary-venture-chat"
-                                        class="font-bold text-violet-600"></span> layout for your <span
-                                        id="summary-area-chat" class="font-bold text-violet-600"></span> project. You
-                                    can see the blueprint on the right.
+                                    Great news! I've successfully crafted your custom <span id="summary-venture-chat"
+                                        class="font-bold text-violet-600"></span> layout for a <span
+                                        id="summary-area-chat" class="font-bold text-violet-600"></span> space.
+                                    Everything has been designed following your requirements!
                                 </div>
-                                <div class="bg-violet-50 dark:bg-violet-900/20 p-4 rounded-2xl border border-violet-100 dark:border-violet-800/50 text-sm text-violet-700 dark:text-violet-300 italic font-semibold"
+                                <div class="bg-violet-50 dark:bg-violet-900/20 p-4 rounded-2xl border border-violet-100 dark:border-violet-800/50 text-sm text-violet-700 dark:text-violet-300 italic font-semibold whitespace-pre-wrap"
                                     id="ai-advice-text">
                                     Analyzing architectural flow...
                                 </div>
@@ -777,10 +799,10 @@
 
                     <div class="p-6 bg-white dark:bg-slate-900 border-t border-slate-50 dark:border-slate-800">
                         <div class="relative">
-                            <input type="text" placeholder="Ask for modifications..."
+                            <input type="text" id="chat-input" placeholder="Ask for modifications..."
                                 class="w-full pl-6 pr-14 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 focus:ring-4 focus:ring-violet-500/10 focus:outline-none font-medium text-sm transition-all">
-                            <button
-                                class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-violet-600 text-white rounded-xl flex items-center justify-center hover:bg-violet-700 transition-all shadow-lg shadow-violet-600/20">
+                            <button onclick="sendMessage()"
+                                class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-violet-600 text-white rounded-xl flex items-center justify-center hover:bg-violet-700 transition-all shadow-lg shadow-violet-600/20 active:scale-95">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                         d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
@@ -794,29 +816,58 @@
                 <div class="lg:col-span-8 flex flex-col h-full space-y-4">
                     <div class="flex items-center justify-between px-2">
                         <div class="flex items-center gap-4">
-                            <button onclick="window.location.reload()"
-                                class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:text-violet-600 transition-all">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                                </svg>
+                            <button id="open-chat-btn" onclick="toggleChat()"
+                                class="hidden p-3 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:text-violet-600 transition-all">
+                                <span class="text-xs font-bold uppercase tracking-widest px-2">Show Chat</span>
                             </button>
                             <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Generated
                                 Workspace Preview</h4>
                         </div>
                         <div class="flex gap-3">
-                            <button
+                            <button onclick="exportPng()"
                                 class="px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-200 transition">Export
-                                SVG</button>
-                            <button id="save-btn-2" onclick="saveGeneration()"
+                                PNG</button>
+                            <button id="save-btn-2" onclick="openSaveModal()"
                                 class="px-8 py-3 rounded-xl bg-violet-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-violet-700 transition shadow-lg shadow-violet-600/20">Save
                                 Project</button>
                         </div>
                     </div>
 
                     <div id="svg-container"
-                        class="flex-1 bg-white dark:bg-slate-950 rounded-[3rem] border border-slate-200 dark:border-slate-800 shadow-inner p-8 flex items-center justify-center overflow-auto custom-scrollbar">
-                        <!-- SVG Output -->
+                        class="flex-1 bg-white dark:bg-slate-950 rounded-[3rem] border border-slate-200 dark:border-slate-800 shadow-inner p-4 md:p-8 flex items-start justify-start overflow-auto custom-scrollbar relative">
+                        <div class="min-w-full min-h-full flex items-center justify-center p-8">
+                            <!-- SVG will be injected here and will be scrollable if large -->
+                            <div id="svg-inner-container" class="max-w-none"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Save Modal -->
+        <div id="save-modal"
+            class="hidden fixed inset-0 z-[200] flex items-center justify-center p-6 backdrop-blur-md bg-slate-900/20">
+            <div
+                class="bg-white dark:bg-slate-900 w-full max-w-md rounded-[2.5rem] p-10 shadow-2xl border border-slate-100 dark:border-slate-800 animate-fade-in-up">
+                <div class="flex flex-col items-center text-center space-y-6">
+                    <div
+                        class="w-20 h-20 bg-violet-100 dark:bg-violet-900/30 rounded-3xl flex items-center justify-center text-4xl">
+                        💾</div>
+                    <div>
+                        <h3 class="text-2xl font-black text-slate-900 dark:text-white">Save Your Vision</h3>
+                        <p class="text-slate-500 text-sm font-medium mt-1">Assign a name to your architectural
+                            masterpiece.</p>
+                    </div>
+                    <div class="w-full space-y-4">
+                        <input type="text" id="project-name-input" placeholder="e.g. Modern Lakehouse 2024"
+                            class="w-full px-8 py-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 focus:ring-4 focus:ring-violet-500/10 focus:outline-none font-bold text-center">
+                        <div class="flex gap-4">
+                            <button onclick="closeSaveModal()"
+                                class="flex-1 py-5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-black hover:bg-slate-200 transition-all">Cancel</button>
+                            <button id="modal-save-confirm-btn" onclick="confirmSave()"
+                                class="flex-1 py-5 rounded-2xl bg-violet-600 text-white font-black hover:bg-violet-700 shadow-xl shadow-violet-600/20 transition-all">Save
+                                Project</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -833,17 +884,14 @@
         let generatedLayout = null;
         let detectedVertices = [];
 
+
+
         function nextStep(step) {
             const container = document.getElementById('survey-container');
-            if (step === 2) {
-                container.classList.remove('max-w-4xl');
-                container.classList.add('max-w-[1400px]');
-            } else {
-                container.classList.remove('max-w-[1400px]');
-                container.classList.add('max-w-4xl');
-            }
+            // Ensure container stays centered and focused across all steps
+            container.classList.add('max-w-4xl');
+            container.classList.remove('max-w-[1400px]');
 
-            // Validate Step 1
             if (currentStep === 1 && step > 1) {
                 const area = document.getElementById('area').value;
                 const ventureType = document.getElementById('venture_type').value;
@@ -853,7 +901,7 @@
                 if (ventureType === 'Other' && !otherVenture.trim()) { showToast('Please specify your custom venture type.'); return; }
             }
 
-            // Validate Step 2
+            // Validate Step 2 (only if NOT skipping)
             if (currentStep === 2 && step > 2) {
                 if (detectedVertices.length < 2) { showToast('Please draw the site outline first.'); return; }
 
@@ -1135,7 +1183,7 @@
 
             const simplifiedPoints = points.filter((_, i) => i % 5 === 0);
             try {
-                const response = await fetch('/api/generate-preview', {
+                const response = await fetch('/api/generate-layout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -1147,7 +1195,7 @@
                 });
                 const data = await response.json();
                 if (data.success) {
-                    showResult(data.layout);
+                    finishGeneration(data.layout);
                 } else {
                     alert('Error: ' + data.error);
                     window.location.reload();
@@ -1158,7 +1206,9 @@
             }
         }
 
-        function showResult(layout) {
+
+
+        function finishGeneration(layout) {
             generatedLayout = layout;
             document.getElementById('loader-view').classList.add('hidden');
             document.getElementById('result-view').classList.remove('hidden');
@@ -1175,7 +1225,7 @@
             if (layout.conversational_response) {
                 adviceText.innerText = layout.conversational_response;
             } else {
-                adviceText.innerText = "Architectural review complete. The design below represents an optimized spatial distribution based on your inputs.";
+                adviceText.innerText = "I've successfully generated your custom architectural layout! You can examine the numbered components in the design and refer to the legend above for details.";
             }
 
             const svgContainer = document.getElementById('svg-container');
@@ -1212,17 +1262,51 @@
             }
 
             function renderSvg(svgCode) {
-                svgContainer.innerHTML = svgCode;
+                const innerContainer = document.getElementById('svg-inner-container');
+                if (innerContainer) {
+                    innerContainer.innerHTML = svgCode;
+                    // Reset scaling or fixed sizes if necessary to allow scrolling
+                    const svgElement = innerContainer.querySelector('svg');
+                    if (svgElement) {
+                        // If SVG has fixed width/height, we might want to keep it or adjust it
+                        // For now, let it be its natural size to allow scrolling in the parent
+                    }
+                } else {
+                    svgContainer.innerHTML = svgCode;
+                }
                 document.querySelectorAll('#svg-container svg text').forEach(t => t.style.fontFamily = 'Outfit');
             }
         }
 
-        async function saveGeneration() {
+        function openSaveModal() {
             if (!generatedLayout) return;
-            const btn1 = document.getElementById('save-btn');
-            const btn2 = document.getElementById('save-btn-2');
-            if (btn1) { btn1.innerText = 'Saving...'; btn1.disabled = true; }
-            if (btn2) { btn2.innerText = 'Saving...'; btn2.disabled = true; }
+            document.getElementById('save-modal').classList.remove('hidden');
+            document.getElementById('project-name-input').focus();
+        }
+
+        function closeSaveModal() {
+            document.getElementById('save-modal').classList.add('hidden');
+        }
+
+        async function confirmSave() {
+            const nameInput = document.getElementById('project-name-input');
+            const name = nameInput ? nameInput.value.trim() : "";
+            if (!name) { showToast('Please enter a project name.', '⚠️'); return; }
+
+            if (!generatedLayout) {
+                showToast('No layout data to save.', '❌');
+                return;
+            }
+
+            const uniqueCode = 'DL-' + Math.random().toString(36).substring(2, 7).toUpperCase();
+            generatedLayout.title = name;
+            generatedLayout.design_code = uniqueCode;
+
+            const saveBtn = document.getElementById('modal-save-confirm-btn');
+            if (saveBtn) {
+                saveBtn.innerText = 'Syncing...';
+                saveBtn.disabled = true;
+            }
 
             try {
                 const response = await fetch('/api/save-project', {
@@ -1232,17 +1316,79 @@
                 });
                 const data = await response.json();
                 if (data.success) {
-                    window.location.href = '/dashboard';
+                    showToast(`Saved! Code: ${uniqueCode}`, '✅');
+                    setTimeout(() => { window.location.href = '/dashboard'; }, 1200);
                 } else {
-                    alert('Save failed: ' + data.error);
-                    btn.innerText = 'Save Layout';
-                    btn.disabled = false;
+                    showToast('Save failed: ' + data.error, '❌');
+                    if (saveBtn) {
+                        saveBtn.innerText = 'Save Project';
+                        saveBtn.disabled = false;
+                    }
                 }
             } catch (err) {
-                alert('Connection error during save');
-                btn.innerText = 'Save Layout';
-                btn.disabled = false;
+                showToast('Connection error during save', '❌');
+                if (saveBtn) {
+                    saveBtn.innerText = 'Save Project';
+                    saveBtn.disabled = false;
+                }
             }
+        }
+
+        async function exportPng() {
+            if (!generatedLayout) return;
+            const projectName = generatedLayout.title || 'dreamlayout';
+
+            if (generatedLayout.floors && generatedLayout.floors.length > 0) {
+                for (const floor of generatedLayout.floors) {
+                    const fileName = `${projectName}_${floor.floor_name.replace(/\s+/g, '_')}.png`;
+                    await triggerPngDownload(floor.svg, fileName);
+                }
+                showToast(`Exported ${generatedLayout.floors.length} floor images!`, '�️');
+            } else {
+                const svgContent = generatedLayout.svg || document.getElementById('svg-inner-container').innerHTML;
+                await triggerPngDownload(svgContent, `${projectName}_design.png`);
+                showToast('PNG Exported!', '�️');
+            }
+        }
+
+        function triggerPngDownload(svgContent, filename) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+
+                // Get SVG dimensions
+                const parser = new DOMParser();
+                const svgDoc = parser.parseFromString(svgContent, 'image/svg+xml');
+                const svgElement = svgDoc.documentElement;
+                const width = parseInt(svgElement.getAttribute('width')) || 1200;
+                const height = parseInt(svgElement.getAttribute('height')) || 800;
+
+                canvas.width = width * 2; // Higher resolution
+                canvas.height = height * 2;
+
+                const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(svgBlob);
+
+                img.onload = function () {
+                    ctx.fillStyle = 'white'; // Background for PNG
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.scale(2, 2);
+                    ctx.drawImage(img, 0, 0);
+
+                    const pngUrl = canvas.toDataURL('image/png');
+                    const link = document.createElement('a');
+                    link.href = pngUrl;
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    URL.revokeObjectURL(url);
+                    resolve();
+                };
+                img.src = url;
+            });
         }
 
         // Profile Menu Logic
@@ -1272,17 +1418,30 @@
             });
         })();
 
-        // Global Theme Functions (referenced by navbar)
+        function toggleChat() {
+            const chatCol = document.querySelector('.lg:col-span-4');
+            const drawingCol = document.querySelector('.lg:col-span-8');
+            const showChatBtn = document.getElementById('open-chat-btn');
+
+            if (chatCol.classList.contains('hidden')) {
+                chatCol.classList.remove('hidden');
+                drawingCol.classList.replace('lg:col-span-12', 'lg:col-span-8');
+                showChatBtn.classList.add('hidden');
+            } else {
+                chatCol.classList.add('hidden');
+                drawingCol.classList.replace('lg:col-span-8', 'lg:col-span-12');
+                showChatBtn.classList.remove('hidden');
+            }
+        }
+
         function setTheme(theme) {
             const html = document.documentElement;
             const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
             if (theme === 'dark' || (theme === 'system' && darkQuery.matches)) {
                 html.classList.add('dark');
             } else {
                 html.classList.remove('dark');
             }
-
             localStorage.setItem('theme', theme);
             updateThemeUI(theme);
         }
@@ -1387,40 +1546,63 @@
                 }, 4000);
             }
         }
+        function sendMessage() {
+            const chatInput = document.getElementById('chat-input');
+            if (chatInput && chatInput.value.trim()) {
+                const msg = chatInput.value.trim();
+                const messagesContainer = document.getElementById('chat-messages');
+
+                // User message
+                const userMsg = document.createElement('div');
+                userMsg.className = 'flex gap-3 flex-row-reverse animate-fade-in-up';
+                userMsg.innerHTML = `
+                    <div class="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 text-sm shrink-0 font-bold">U</div>
+                    <div class="bg-violet-600 text-white p-4 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed font-medium max-w-[80%]">
+                        ${msg}
+                    </div>
+                `;
+                messagesContainer.appendChild(userMsg);
+                chatInput.value = '';
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                // Simulated AI thinking
+                setTimeout(() => {
+                    const aiMsg = document.createElement('div');
+                    aiMsg.className = 'flex gap-3 animate-fade-in-up';
+
+                    let responseText = `I'm analyzing your request for the ${generatedLayout?.venture_type || 'custom'} layout. `;
+
+                    const lowerMsg = msg.toLowerCase();
+                    if (lowerMsg.includes('common circulation')) {
+                        responseText += "Common circulation refers to the shared hallways and transit zones that connect different functional areas like shops or offices without passing through private spaces. In this design, I've optimized it for maximum foot traffic efficiency.";
+                    } else if (lowerMsg.includes('entrance')) {
+                        responseText += "The main entrance is strategically placed to align with the primary flow from the North-East corner, ensuring visibility and easy access for all visitors.";
+                    } else if (lowerMsg.includes('wc') || lowerMsg.includes('bathroom')) {
+                        responseText += "The utility and sanitation blocks are grouped near the secondary circulation path to minimize plumbing complexity while remaining accessible.";
+                    } else if (lowerMsg.includes('dimension') || lowerMsg.includes('size')) {
+                        responseText += "I've included the precise dimensions in my initial architectural review above. If you'd like to adjust a specific room size, let me know and I'll recalibrate the layout.";
+                    } else {
+                        responseText += `I've noted your feedback: "${msg}". In a live architectural session, I would now recalculate the spatial weights and update the SVG blueprint to reflect these adjustments.`;
+                    }
+
+                    aiMsg.innerHTML = `
+                        <div class="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-violet-600 text-sm shrink-0 font-bold">A</div>
+                        <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl rounded-tl-none border border-slate-100 dark:border-slate-700 shadow-sm text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+                            ${responseText}
+                        </div>
+                    `;
+                    messagesContainer.appendChild(aiMsg);
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }, 1000);
+            }
+        }
+
         // Chat Interaction logic
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
-                const chatInput = document.querySelector('#result-view input');
-                if (chatInput && chatInput === document.activeElement && chatInput.value.trim()) {
-                    const msg = chatInput.value.trim();
-                    const messagesContainer = document.getElementById('chat-messages');
-
-                    // User message
-                    const userMsg = document.createElement('div');
-                    userMsg.className = 'flex gap-3 flex-row-reverse animate-fade-in-up';
-                    userMsg.innerHTML = `
-                        <div class="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 text-sm shrink-0 font-bold">U</div>
-                        <div class="bg-violet-600 text-white p-4 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed font-medium max-w-[80%]">
-                            ${msg}
-                        </div>
-                    `;
-                    messagesContainer.appendChild(userMsg);
-                    chatInput.value = '';
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-                    // Simulated AI thinking
-                    setTimeout(() => {
-                        const aiMsg = document.createElement('div');
-                        aiMsg.className = 'flex gap-3 animate-fade-in-up';
-                        aiMsg.innerHTML = `
-                            <div class="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-violet-600 text-sm shrink-0 font-bold">A</div>
-                            <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl rounded-tl-none border border-slate-100 dark:border-slate-700 shadow-sm text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
-                                I'm analyzing those changes. In a real session, I would update the layout now based on your feedback: "${msg}"
-                            </div>
-                        `;
-                        messagesContainer.appendChild(aiMsg);
-                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                    }, 1000);
+                const chatInput = document.getElementById('chat-input');
+                if (chatInput && chatInput === document.activeElement) {
+                    sendMessage();
                 }
             }
         });

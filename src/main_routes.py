@@ -7,7 +7,12 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
-from src.database import get_user_projects, update_user, delete_user_db, add_user_project, get_project_by_id, soft_delete_project, restore_project, hard_delete_project, get_user_archived_projects
+from src.database import (
+    get_user_projects, update_user, delete_user_db, add_user_project, 
+    get_project_by_id, soft_delete_project, restore_project, 
+    hard_delete_project, get_user_archived_projects, update_project_status,
+    get_favourite_projects, get_public_projects
+)
 from src.config import Config
 from src.fastapi_utils import flash, render_template
 from src.layout_generator import layout_generator
@@ -41,23 +46,34 @@ async def api_generate_layout(request: Request):
         cloudinary_url = None
         if svg_content:
             try:
-                # Ensure SVG has xmlns namespace
-                if 'xmlns=' not in svg_content:
+                # Robust SVG normalization: Ensure required XML namespaces are present
+                if 'xmlns=' not in svg_content.lower():
                     svg_content = svg_content.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"')
                 
+                # Add XML declaration if missing to ensure proper processing
+                if '<?xml' not in svg_content:
+                    svg_content = '<?xml version="1.0" encoding="UTF-8"?>' + svg_content
+
                 svg_base64 = base64.b64encode(svg_content.encode('utf-8')).decode('utf-8')
                 data_uri = f"data:image/svg+xml;base64,{svg_base64}"
+                
+                timestamp = int(time.time())
+                project_slug = result.get("title", "layout").lower().replace(" ", "_")[:20]
+                
+                print(f"🔄 Syncing Preview to Cloudinary: project={project_slug}, user={request.state.user.user_key[:8]}...")
                 
                 upload_res = cloudinary.uploader.upload(
                     data_uri,
                     folder=f"dreamlayout_projects/u_{request.state.user.user_key}",
-                    public_id=f"layout_{int(time.time())}",
+                    public_id=f"{project_slug}_prev_{timestamp}",
                     format="svg",
                     resource_type="image"
                 )
-                cloudinary_url = upload_res['secure_url']
+                
+                cloudinary_url = upload_res.get('secure_url')
+                print(f"✅ Cloudinary Preview Success: {cloudinary_url}")
             except Exception as ce:
-                print(f"Cloudinary upload error: {ce}")
+                print(f"❌ Cloudinary Preview Failed: {str(ce)}")
 
         # Save to database
         project_id = add_user_project(
@@ -67,7 +83,7 @@ async def api_generate_layout(request: Request):
             thumbnail=cloudinary_url,
             svg_content=svg_content,
             rooms=rooms_data,
-            design_philosophy=result.get("design_philosophy", "")
+            design_philosophy=result.get("conversational_response", "")
         )
         
         return {
@@ -92,7 +108,8 @@ async def index(request: Request):
 async def dashboard(request: Request):
     if not request.state.user:
         return RedirectResponse(url="/login")
-    projects = get_user_projects(request.state.user.id)
+    projects = get_user_projects(request.state.user.id, limit=100)
+    # The template will handle slicing for the grid
     return render_template(request, "dashboard.html", {"projects": projects})
 
 @main_router.get("/settings", response_class=HTMLResponse)
@@ -177,17 +194,16 @@ async def delete_account(request: Request):
 
 # Add dummy routes for other links in templates to avoid 404
 @main_router.get("/templates")
-async def templates_dummy(request: Request):
-    if not request.state.user:
-        flash(request, 'Please login to view templates.', 'error')
-        return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
-    return render_template(request, "templates.html")
+async def templates_page(request: Request):
+    public_projects = get_public_projects()
+    return render_template(request, "templates.html", {"public_projects": public_projects})
 
 @main_router.get("/profile", response_class=HTMLResponse)
 async def profile_page(request: Request):
     if not request.state.user:
         return RedirectResponse(url="/login")
-    return render_template(request, "profile.html")
+    projects = get_user_projects(request.state.user.id, limit=100)
+    return render_template(request, "profile.html", {"projects": projects})
 
 @main_router.post("/profile")
 async def profile_update(
@@ -214,8 +230,42 @@ async def profile_update(
 
 
 @main_router.get("/favourites")
-async def favourites_dummy(request: Request):
-    return render_template(request, "favourites.html")
+async def favourites_page(request: Request):
+    if not request.state.user:
+        return RedirectResponse(url="/login")
+    projects = get_favourite_projects(request.state.user.id)
+    return render_template(request, "favourites.html", {"projects": projects})
+
+@main_router.get("/my-projects")
+async def my_projects(request: Request):
+    if not request.state.user:
+        return RedirectResponse(url="/login")
+    projects = get_user_projects(request.state.user.id, limit=100)
+    return render_template(request, "my_projects.html", {"projects": projects})
+
+@main_router.post("/api/projects/bulk-action")
+async def bulk_action(request: Request):
+    if not request.state.user:
+        return {"success": False, "error": "Unauthorized"}
+    
+    try:
+        data = await request.json()
+        project_ids = data.get("project_ids", [])
+        action = data.get("action") # 'favourite' or 'public'
+        value = data.get("value", 1) # 1 for public/favourite, 0 for private/unfavourite
+        
+        if not project_ids or action not in ['favourite', 'public']:
+            return {"success": False, "error": "Invalid data"}
+            
+        field = "is_favourite" if action == "favourite" else "is_public"
+        success = update_project_status(project_ids, field, value, request.state.user.id)
+        
+        if not success:
+            return {"success": False, "error": "Access denied. You can only manage your own projects."}
+            
+        return {"success": True}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
 
 @main_router.get("/project/{project_id}")
 async def view_project(request: Request, project_id: int):
@@ -329,26 +379,38 @@ async def api_save_project(request: Request):
         cloudinary_url = None
         
         # Upload to Cloudinary
+        # Upload to Cloudinary
         if svg_content:
             try:
-                # IMPORTANT: Ensure SVG has xmlns namespace, otherwise it won't render
-                # correctly as an external source in an <img> tag.
-                if 'xmlns=' not in svg_content:
+                # Robust SVG normalization: Ensure required XML namespaces are present
+                if 'xmlns=' not in svg_content.lower():
                     svg_content = svg_content.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"')
                 
+                # Add XML declaration if missing to ensure proper processing
+                if '<?xml' not in svg_content:
+                    svg_content = '<?xml version="1.0" encoding="UTF-8"?>' + svg_content
+
                 svg_base64 = base64.b64encode(svg_content.encode('utf-8')).decode('utf-8')
                 data_uri = f"data:image/svg+xml;base64,{svg_base64}"
+                
+                timestamp = int(time.time())
+                project_slug = layout.get("title", "layout").lower().replace(" ", "_")[:20]
+                
+                print(f"🔄 Syncing to Cloudinary: project={project_slug}, user={request.state.user.user_key[:8]}...")
                 
                 upload_res = cloudinary.uploader.upload(
                     data_uri,
                     folder=f"dreamlayout_projects/u_{request.state.user.user_key}",
-                    public_id=f"layout_{int(time.time())}",
-                    format="svg", # Force SVG format
+                    public_id=f"{project_slug}_{timestamp}",
+                    format="svg",
                     resource_type="image"
                 )
-                cloudinary_url = upload_res['secure_url']
+                
+                cloudinary_url = upload_res.get('secure_url')
+                print(f"✅ Cloudinary Sync Success: {cloudinary_url}")
             except Exception as ce:
-                print(f"Cloudinary upload error: {ce}")
+                print(f"❌ Cloudinary Sync Failed: {str(ce)}")
+                # Continue saving the project even if upload fails
 
         # Save to database
         project_id = add_user_project(
@@ -358,7 +420,8 @@ async def api_save_project(request: Request):
             thumbnail=cloudinary_url,
             svg_content=svg_content,
             rooms=rooms_data,
-            design_philosophy=layout.get("design_philosophy", "")
+            design_philosophy=layout.get("conversational_response", ""),
+            design_code=layout.get("design_code")
         )
         
         return {
