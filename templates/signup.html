@@ -13,176 +13,206 @@
                 extend: {
                     fontFamily: {
                         sans: ['Outfit', 'Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
                     }
                 }
             }
         }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <style>
         body {
             font-family: 'Outfit', sans-serif;
         }
 
         .glass {
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
         }
 
         .dark .glass {
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(15, 23, 42, 0.8);
             border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .bg-auth {
+            background-image: url('/static/images/signup_bg.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
         }
     </style>
 </head>
 
 <body
-    class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col items-center py-12 px-6 relative transition-colors duration-300">
+    class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 md:h-screen md:overflow-hidden min-h-screen transition-colors duration-300">
 
-    <!-- Decorative Animated Background -->
-    <div class="absolute top-0 left-0 w-full min-h-full overflow-hidden pointer-events-none z-0">
-        <div
-            class="absolute -top-24 -right-24 w-96 h-96 bg-fuchsia-200/50 dark:bg-fuchsia-900/20 rounded-full blur-[100px] animate-pulse">
-        </div>
-        <div
-            class="absolute -bottom-24 -left-24 w-96 h-96 bg-violet-200/50 dark:bg-violet-900/20 rounded-full blur-[100px] animate-pulse delay-1000">
-        </div>
-    </div>
+    <div class="flex h-full w-full">
+        <!-- Left Side: Visual/Branding -->
+        <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-auth">
+            <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/20 to-fuchsia-900/40 mix-blend-multiply">
+            </div>
+            <div class="relative z-10 flex flex-col justify-between p-16 w-full animate-fade-in">
+                <a href="/" class="inline-flex items-center gap-3 group">
+                    <img src="/static/logo.png" alt="Logo"
+                        class="h-10 w-auto brightness-0 invert transition-transform group-hover:scale-110">
+                    <span class="text-2xl font-black text-white tracking-tight">DreamLayout</span>
+                </a>
 
-    <!-- Signup Card -->
-    <div
-        class="w-full max-w-lg relative z-10 glass border border-white dark:border-slate-800 rounded-[3.5rem] p-10 shadow-2xl shadow-slate-200/50 dark:shadow-none my-auto">
-
-        <div class="text-center mb-8">
-            <a href="/" class="inline-flex items-center gap-3 mb-6 group">
-                <img src="/static/logo.png" alt="Logo"
-                    class="h-10 w-auto group-hover:scale-110 transition dark:brightness-110">
-                <span
-                    class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-violet-700 to-indigo-700 dark:from-violet-400 dark:to-indigo-400">DreamLayout</span>
-            </a>
-            <h1 class="text-3xl font-extrabold text-slate-900 dark:text-slate-100 italic">Create your space.</h1>
-            <p class="text-slate-500 dark:text-slate-400 font-bold text-sm mt-2 uppercase tracking-widest">Join the
-                co-pilot revolution</p>
-        </div>
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, message in messages %}
-        <div
-            class="mb-6 p-4 rounded-2xl text-sm font-bold flex items-center gap-3 animate-fade-in-up border
-            {{ 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400' if category == 'success' else 'bg-rose-50 dark:bg-rose-900/20 border-rose-100 dark:border-rose-800 text-rose-600 dark:text-rose-400' }}">
-            <span>{{ '✅' if category == 'success' else '⚠️' }}</span> {{ message }}
-        </div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-
-        <form action="/signup" method="POST" class="space-y-5" onsubmit="return validatePasswords()">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div>
-                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-4">Full
-                        Name</label>
-                    <input type="text" name="name" required
-                        class="w-full px-6 py-4 rounded-[1.5rem] border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900 focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-900/20 focus:border-violet-500 focus:outline-none transition-all font-bold text-slate-900 dark:text-slate-100 placeholder:text-slate-400/30 dark:placeholder:text-slate-500/30"
-                        placeholder="John Doe">
+                <div class="max-w-md">
+                    <h2 class="text-5xl font-black text-white leading-tight mb-6">Create your architectural masterpiece.
+                    </h2>
+                    <p class="text-indigo-100 text-lg font-medium opacity-80">Join the co-pilot revolution and transform
+                        your design workflow today.</p>
                 </div>
-                <div>
-                    <label
-                        class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-4">Email</label>
-                    <input type="email" name="email" required
-                        class="w-full px-6 py-4 rounded-[1.5rem] border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900 focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-900/20 focus:border-violet-500 focus:outline-none transition-all font-bold text-slate-900 dark:text-slate-100 placeholder:text-slate-400/30 dark:placeholder:text-slate-500/30"
-                        placeholder="john@example.com">
+
+                <div class="flex items-center gap-4 text-white/60 text-sm font-semibold tracking-widest uppercase">
+                    <span>Collaborative</span>
+                    <span class="w-1 h-1 bg-white/40 rounded-full"></span>
+                    <span>AI-Powered</span>
+                    <span class="w-1 h-1 bg-white/40 rounded-full"></span>
+                    <span>Seamless</span>
                 </div>
             </div>
-
-            <div>
-                <label
-                    class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-4">Password</label>
-                <input type="password" id="password" name="password" required minlength="6"
-                    class="w-full px-6 py-4 rounded-[1.5rem] border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900 focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-900/20 focus:border-violet-500 focus:outline-none transition-all font-bold text-slate-900 dark:text-slate-100 placeholder:text-slate-400/30 dark:placeholder:text-slate-500/30"
-                    placeholder="••••••••">
-                <p class="text-[9px] text-slate-400 mt-2 px-4 uppercase font-bold tracking-tight">Minimum 6 characters
-                    with numbers & symbols</p>
-            </div>
-
-            <div>
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-4">Confirm
-                    Password</label>
-                <input type="password" id="confirm_password" name="confirm_password" required
-                    class="w-full px-6 py-4 rounded-[1.5rem] border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900 focus:ring-4 focus:ring-rose-100 dark:focus:ring-rose-900/20 focus:border-rose-300 focus:outline-none transition-all font-bold text-slate-900 dark:text-slate-100 placeholder:text-slate-400/30 dark:placeholder:text-slate-500/30"
-                    placeholder="••••••••">
-                <div id="password_match_msg"
-                    class="hidden text-[10px] font-bold text-rose-500 mt-2 px-4 uppercase tracking-widest">Passwords do
-                    not match</div>
-            </div>
-
-            <button type="submit"
-                class="w-full bg-violet-600 text-white py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-widest shadow-2xl shadow-violet-200 dark:shadow-none hover:bg-violet-700 transition-all transform hover:-translate-y-0.5 mt-4">
-                Create Account
-            </button>
-        </form>
-
-        <div class="mt-8 text-center">
-            <p class="text-sm font-bold text-slate-400">
-                Already have an account?
-                <a href="/login" class="text-violet-600 dark:text-violet-400 hover:underline">Log In</a>
-            </p>
         </div>
 
-        <!-- Theme Toggle Footer -->
-        <div class="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800 flex justify-center gap-4">
-            <button onclick="setTheme('light')"
-                class="theme-btn light w-8 h-8 rounded-full bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center shadow-sm">☀️</button>
-            <button onclick="setTheme('dark')"
-                class="theme-btn dark w-8 h-8 rounded-full bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center shadow-sm">🌙</button>
-            <button onclick="setTheme('system')"
-                class="theme-btn system w-8 h-8 rounded-full bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center shadow-sm text-xs">💻</button>
+        <!-- Right Side: Signup Form -->
+        <div
+            class="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 sm:p-12 lg:p-12 relative overflow-y-auto lg:overflow-hidden">
+            <!-- Decorative circle for mobile -->
+            <div class="lg:hidden absolute -top-24 -right-24 w-64 h-64 bg-fuchsia-500/10 rounded-full blur-3xl"></div>
+            <div class="lg:hidden absolute -bottom-24 -left-24 w-64 h-64 bg-violet-500/10 rounded-full blur-3xl"></div>
+
+            <div class="w-full max-w-lg space-y-6 animate-slide-up py-8 lg:py-0">
+                <div class="text-center lg:text-left">
+                    <div class="lg:hidden mb-6 flex justify-center">
+                        <a href="/" class="inline-flex items-center gap-3">
+                            <img src="/static/logo.png" alt="Logo" class="h-10 w-auto dark:brightness-110">
+                            <span
+                                class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-indigo-600 dark:from-violet-400 dark:to-indigo-400">DreamLayout</span>
+                        </a>
+                    </div>
+                    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2">Create
+                        Account</h1>
+                    <p class="text-slate-500 dark:text-slate-400 font-medium">Start your journey with DreamLayout today.
+                    </p>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="space-y-2">
+                    {% for category, message in messages %}
+                    <div
+                        class="p-3 rounded-xl text-xs font-bold flex items-center gap-3 border {{ 'bg-emerald-50/50 border-emerald-100 text-emerald-600 dark:bg-emerald-900/10 dark:border-emerald-800 dark:text-emerald-400' if category == 'success' else 'bg-rose-50/50 border-rose-100 text-rose-600 dark:bg-rose-900/10 dark:border-rose-800 dark:text-rose-400' }}">
+                        <span>{{ '✓' if category == 'success' else '!' }}</span> {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                <form action="/signup" method="POST" class="space-y-4" onsubmit="return validatePasswords()">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label
+                                class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Full
+                                Name</label>
+                            <input type="text" name="name" required
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 focus:outline-none transition-all font-semibold text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                                placeholder="John Doe">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label
+                                class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Email</label>
+                            <input type="email" name="email" required
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 focus:outline-none transition-all font-semibold text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                                placeholder="john@example.com">
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label
+                            class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Password</label>
+                        <input type="password" id="password" name="password" required minlength="6"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 focus:outline-none transition-all font-semibold text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                            placeholder="••••••••">
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Confirm
+                            Password</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 focus:outline-none transition-all font-semibold text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                            placeholder="••••••••">
+                        <div id="password_match_msg"
+                            class="hidden text-[10px] font-bold text-rose-500 px-1 uppercase tracking-widest">Passwords
+                            do not match</div>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-violet-600 text-white py-3.5 rounded-xl font-bold text-sm uppercase tracking-widest hover:bg-violet-700 transition-all transform active:scale-[0.98] shadow-lg shadow-violet-500/20">
+                        Create Account
+                    </button>
+                </form>
+
+                <div class="pt-4 text-center">
+                    <p class="text-sm font-semibold text-slate-400">
+                        Already have an account?
+                        <a href="/login" class="text-violet-600 dark:text-violet-400 hover:underline font-bold">Log
+                            In</a>
+                    </p>
+                </div>
+
+                <!-- Theme Toggle -->
+                <div class="flex justify-center gap-3 pt-4">
+                    <button onclick="setTheme('light')"
+                        class="theme-btn light p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:scale-105 transition-all">☀️</button>
+                    <button onclick="setTheme('dark')"
+                        class="theme-btn dark p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:scale-105 transition-all">🌙</button>
+                    <button onclick="setTheme('system')"
+                        class="theme-btn system p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-[10px] font-bold hover:scale-105 transition-all">AUTO</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-            // Init Theme
-            (function () {
-                const saved = localStorage.getItem('theme') || 'system';
-                applyTheme(saved);
-            })();
-
-        function applyTheme(theme) {
-            const html = document.documentElement;
-            const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
-            if (theme === 'dark' || (theme === 'system' && darkQuery.matches)) {
-                html.classList.add('dark');
-            } else {
-                html.classList.remove('dark');
-            }
-            localStorage.setItem('theme', theme);
-            updateThemeUI(theme);
+            (function () { applyTheme(localStorage.getItem('theme') || 'system'); })();
+        function applyTheme(t) {
+            const h = document.documentElement;
+            const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (t === 'dark' || (t === 'system' && dark)) h.classList.add('dark');
+            else h.classList.remove('dark');
+            localStorage.setItem('theme', t);
+            updateThemeUI(t);
         }
-
-        function setTheme(theme) { applyTheme(theme); }
-
-        function updateThemeUI(theme) {
-            document.querySelectorAll('.theme-btn').forEach(btn => {
-                btn.classList.remove('ring-2', 'ring-violet-500', 'border-violet-500');
-                if (btn.classList.contains(theme)) {
-                    btn.classList.add('ring-2', 'ring-violet-500', 'border-violet-500');
-                }
+        function setTheme(t) { applyTheme(t); }
+        function updateThemeUI(t) {
+            document.querySelectorAll('.theme-btn').forEach(b => {
+                b.classList.remove('ring-2', 'ring-violet-500');
+                if (b.classList.contains(t)) b.classList.add('ring-2', 'ring-violet-500');
             });
         }
-
         function validatePasswords() {
             const p = document.getElementById('password').value;
             const cp = document.getElementById('confirm_password').value;
             const msg = document.getElementById('password_match_msg');
-            if (p !== cp) {
-                msg.classList.remove('hidden');
-                return false;
-            }
-            msg.classList.add('hidden');
-            return true;
+            if (p !== cp) { msg.classList.remove('hidden'); return false; }
+            msg.classList.add('hidden'); return true;
         }
     </script>
-
 </body>
 
 </html>

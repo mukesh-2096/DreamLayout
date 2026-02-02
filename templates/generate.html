@@ -18,6 +18,12 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-dark: #6d28d9;
+            --accent: #f472b6;
+        }
+
         .glass {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(12px);
@@ -29,26 +35,115 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        .glass-card {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
         .step-transition {
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .pulse-border {
-            animation: pulse 2s infinite;
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        @keyframes pulse {
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
             0% {
-                border-color: rgba(139, 92, 246, 0.3);
+                transform: translateY(0px);
             }
 
             50% {
-                border-color: rgba(139, 92, 246, 0.7);
+                transform: translateY(-10px);
             }
 
             100% {
-                border-color: rgba(139, 92, 246, 0.3);
+                transform: translateY(0px);
             }
+        }
+
+        .animate-fade-in-down {
+            animation: fadeInDown 0.6s ease-out forwards;
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
+        .select-wrapper::after {
+            content: '▼';
+            font-size: 10px;
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #94a3b8;
+            transition: all 0.3s ease;
+        }
+
+        .select-wrapper:focus-within::after {
+            color: #8b5cf6;
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        select option {
+            background: white;
+            color: #1e293b;
+            padding: 20px;
+        }
+
+        .dark select option {
+            background: #0f172a;
+            color: #f1f5f9;
         }
     </style>
     <script>
@@ -67,23 +162,158 @@
 
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen transition-all duration-300">
 
-    <!-- Navbar -->
+    <!-- ================= NAVBAR ================= -->
     <nav class="fixed top-0 left-0 w-full z-50 px-6 py-4">
-        <div class="max-w-7xl mx-auto glass rounded-full px-6 py-3 flex items-center justify-between shadow-xl">
-            <div class="flex items-center gap-3">
+        <div
+            class="max-w-7xl mx-auto glass border border-white/40 rounded-full px-6 py-3 flex items-center justify-between shadow-xl shadow-slate-200/40">
+
+            <a href="/dashboard" class="flex items-center gap-3 group">
+                <img src="/static/logo.png" alt="DreamLayout"
+                    class="h-10 w-auto group-hover:scale-110 transition dark:brightness-110">
                 <span
-                    class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-700 to-indigo-700">Generation
-                    Workspace</span>
-            </div>
-            <div class="flex items-center gap-4">
-                <div id="step-indicator" class="hidden sm:flex items-center gap-2">
-                    <div class="h-2 w-12 rounded-full bg-violet-600 transition-all duration-500" id="progress-bar">
+                    class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-700 to-indigo-700 dark:from-violet-400 dark:to-indigo-400">DreamLayout</span>
+            </a>
+
+            <div class="flex items-center space-x-4">
+                <div id="step-indicator"
+                    class="flex items-center gap-2 md:gap-4 mr-2 md:mr-4 border-r border-slate-200 dark:border-slate-800 pr-4 md:pr-6">
+                    <div
+                        class="hidden xs:block h-2 w-8 md:w-12 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                        <div id="progress-bar" class="h-full bg-violet-600 transition-all duration-500"
+                            style="width: 33.3%"></div>
                     </div>
-                    <span class="text-[10px] font-black uppercase text-slate-400">Phase <span
-                            id="current-phase">1</span>/3</span>
+                    <span class="text-[9px] md:text-[10px] font-black uppercase text-slate-400 whitespace-nowrap"><span
+                            class="hidden md:inline">Phase</span> <span id="current-phase">1</span>/3</span>
                 </div>
-                <button onclick="window.history.back()"
-                    class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition">✕</button>
+
+                <!-- Mobile Menu Toggle -->
+                <button id="mobile-menu-btn"
+                    class="md:hidden p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+
+                <!-- Profile + Dropdown (Desktop) -->
+                <div id="profile-menu-wrapper" class="hidden md:block relative group">
+                    <button id="profile-toggle"
+                        class="flex items-center gap-3 focus:outline-none pl-2 pr-1 py-1 rounded-full border border-white dark:border-slate-800 bg-white/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md transition-all">
+                        <div
+                            class="hidden md:block text-right text-[10px] font-black uppercase text-slate-400 tracking-tighter mr-1">
+                            {{ current_user.name.split(' ')[0] }}
+                        </div>
+                        <div
+                            class="w-9 h-9 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-full flex items-center justify-center text-white font-bold shadow-sm overflow-hidden shrink-0">
+                            {% if current_user.profile_pic %}
+                            <img src="{{ (current_user.profile_pic if 'http' in current_user.profile_pic else '/static/' + current_user.profile_pic) + '?v=' + current_user.user_key[:8] }}"
+                                alt="Profile" class="w-full h-full object-cover">
+                            {% else %}
+                            {{ current_user.name[0].upper() }}
+                            {% endif %}
+                        </div>
+
+                    </button>
+
+                    <!-- Dropdown menu -->
+                    <div id="profile-dropdown"
+                        class="hidden absolute right-0 mt-4 w-64 bg-white dark:bg-slate-950 backdrop-blur-2xl rounded-[2rem] shadow-2xl border border-white/50 dark:border-slate-800 p-3 z-50 animate-fade-in-up">
+                        <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-800 mb-2">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Account</p>
+                            <p class="text-sm font-bold text-slate-900 dark:text-slate-200 truncate">{{
+                                current_user.email }}</p>
+                        </div>
+
+                        <!-- Theme Toggle Section -->
+                        <div class="px-2 mb-2">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 px-2">
+                                Appearance</p>
+                            <div class="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl">
+                                <button onclick="setTheme('light')"
+                                    class="theme-btn light flex flex-col items-center justify-center py-2 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
+                                    <span class="text-sm">☀️</span>
+                                    <span class="text-[9px] font-bold mt-1">Light</span>
+                                </button>
+                                <button onclick="setTheme('dark')"
+                                    class="theme-btn dark flex flex-col items-center justify-center py-2 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
+                                    <span class="text-sm">🌙</span>
+                                    <span class="text-[9px] font-bold mt-1">Dark</span>
+                                </button>
+                                <button onclick="setTheme('system')"
+                                    class="theme-btn system flex flex-col items-center justify-center py-2 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
+                                    <span class="text-sm">💻</span>
+                                    <span class="text-[9px] font-bold mt-1">Auto</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="h-px bg-slate-100 dark:bg-slate-800 my-2 mx-4"></div>
+
+                        <a href="/profile"
+                            class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-slate-600 dark:text-slate-400 hover:text-violet-700 dark:hover:text-violet-400 transition font-bold text-sm">
+                            <span
+                                class="bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 p-2 rounded-xl text-xs">👤</span>
+                            My Profile
+                        </a>
+                        <a href="/logout"
+                            class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 transition font-bold text-sm">
+                            <span
+                                class="bg-red-100 dark:bg-red-900/50 text-red-500 dark:text-red-400 p-2 rounded-xl text-xs">⏻</span>
+                            Log out
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Overlay -->
+                <div id="mobile-menu"
+                    class="hidden md:hidden absolute top-24 left-6 right-6 bg-white dark:bg-slate-950 backdrop-blur-2xl border border-white/50 dark:border-slate-800 rounded-[2rem] p-6 shadow-2xl animate-fade-in-up z-50">
+                    <nav class="flex flex-col space-y-2">
+                        <a href="/dashboard"
+                            class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-slate-600 dark:text-slate-400 hover:text-violet-700 dark:hover:text-violet-400 border border-transparent transition font-bold">
+                            <span class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs">📊</span> Dashboard
+                        </a>
+                        <a href="/templates"
+                            class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-slate-600 dark:text-slate-400 hover:text-violet-700 dark:hover:text-violet-400 border border-transparent transition font-bold">
+                            <span class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs">🏗️</span> Templates
+                        </a>
+                        <a href="/settings"
+                            class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-slate-600 dark:text-slate-400 hover:text-violet-700 dark:hover:text-violet-400 border border-transparent transition font-bold">
+                            <span class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs">⚙️</span> Settings
+                        </a>
+                        <div class="h-px bg-slate-100 dark:bg-slate-800 my-2"></div>
+                        <a href="/profile"
+                            class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-slate-600 dark:text-slate-400 hover:text-violet-700 dark:hover:text-violet-400 border border-transparent transition font-bold">
+                            <span class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs">👤</span> Profile
+                        </a>
+
+                        <div class="h-px bg-slate-100 dark:bg-slate-800 my-2"></div>
+
+                        <!-- Theme Toggle (Mobile) -->
+                        <div class="px-5 py-2">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Appearance
+                            </p>
+                            <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl w-full">
+                                <button onclick="setTheme('light')"
+                                    class="theme-btn light flex-1 flex items-center justify-center gap-2 py-3 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
+                                    <span class="text-sm">☀️</span>
+                                    <span class="text-xs font-bold">Light</span>
+                                </button>
+                                <button onclick="setTheme('dark')"
+                                    class="theme-btn dark flex-1 flex items-center justify-center gap-2 py-3 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
+                                    <span class="text-sm">🌙</span>
+                                    <span class="text-xs font-bold">Dark</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="h-px bg-slate-100 dark:bg-slate-800 my-2"></div>
+
+                        <a href="/logout"
+                            class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 transition font-bold">
+                            <span class="p-2 bg-red-100 dark:bg-red-900/50 rounded-xl text-xs">⏻</span> Log Out
+                        </a>
+                    </nav>
+                </div>
             </div>
         </div>
     </nav>
@@ -100,150 +330,280 @@
 
             <!-- Step 1: Base Info -->
             <div id="step-1" class="step-transition">
-                <div class="text-center mb-10">
-                    <span
-                        class="inline-block px-4 py-1 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400 text-xs font-black uppercase tracking-widest mb-4">Foundation</span>
-                    <h1 class="text-4xl font-extrabold mb-2">What are we building today?</h1>
-                    <p class="text-slate-500">Let's start with the basic parameters of your layout.</p>
-                </div>
-
-                <div
-                    class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white dark:bg-slate-900 p-10 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-800">
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-sm font-bold mb-3 px-1">Venture Type</label>
-                            <select id="venture_type"
-                                class="w-full px-6 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-violet-500/10 transition">
-                                <option>Modern Cafe</option>
-                                <option>Tech Office</option>
-                                <option>Residential Apartment</option>
-                                <option>Retail Boutique</option>
-                                <option>Restaurant</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold mb-3 px-1">Available Area (sq ft)</label>
-                            <input type="number" id="area" placeholder="e.g. 1500"
-                                class="w-full px-6 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-violet-500/10 transition">
-                        </div>
-                    </div>
+                <div class="flex flex-col items-center mb-12">
                     <div
-                        class="flex items-center justify-center p-8 bg-slate-50 dark:bg-slate-800 rounded-3xl border border-dashed border-slate-200 dark:border-slate-700">
-                        <div class="text-center">
-                            <span class="text-4xl block mb-4">🏗️</span>
-                            <p class="text-xs font-medium text-slate-400">These details define the<br>scale of our
-                                generation.</p>
+                        class="glass px-8 py-3 rounded-full mb-8 border border-violet-200 dark:border-violet-700/30 shadow-sm animate-fade-in-down">
+                        <h2
+                            class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-indigo-600">
+                            New Generation Layout</h2>
+                    </div>
+
+                    <div
+                        class="flex items-center gap-2 text-slate-400 font-bold text-sm tracking-widest uppercase mb-4 animate-fade-in-up">
+                        <span class="text-violet-600">Step 1</span>
+                        <span class="mx-2">❯</span>
+                        <span>Foundation</span>
+                    </div>
+                </div>
+
+                <div class="max-w-2xl mx-auto">
+                    <div class="space-y-10">
+                        <!-- Venture Type -->
+                        <div class="space-y-4">
+                            <label class="block text-base font-bold text-slate-700 dark:text-slate-300 px-1">Venture
+                                Type</label>
+                            <div class="relative group select-wrapper">
+                                <select id="venture_type" onchange="checkOtherVenture(this)"
+                                    class="w-full px-8 py-5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-violet-500/20 transition-all appearance-none cursor-pointer text-lg font-medium">
+                                    <option value="Residential Villa">Residential Villa</option>
+                                    <option value="Commercial Office">Commercial Office</option>
+                                    <option value="Retail Boutique">Retail Boutique</option>
+                                    <option value="Modern Cafe">Modern Cafe</option>
+                                    <option value="Warehouse">Warehouse/Industrial</option>
+                                    <option value="Other">Other (Custom)</option>
+                                </select>
+                            </div>
+                            <div id="other_venture_container" class="hidden mt-4 animate-fade-in">
+                                <input type="text" id="other_venture" placeholder="Enter custom venture type..."
+                                    class="w-full px-8 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 focus:outline-none focus:ring-4 focus:ring-violet-500/20 transition-all">
+                            </div>
+                        </div>
+
+                        <!-- Available Area -->
+                        <div class="space-y-4">
+                            <label class="block text-base font-bold text-slate-700 dark:text-slate-300 px-1">Available
+                                Area</label>
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <div class="flex-1 relative">
+                                    <input type="number" id="area" placeholder="e.g. 1500"
+                                        class="w-full px-8 py-5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-violet-500/20 transition-all text-lg font-medium">
+                                </div>
+                                <div class="w-full sm:w-48 relative group select-wrapper">
+                                    <select id="area_units"
+                                        class="w-full px-8 py-5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-violet-500/20 transition-all appearance-none cursor-pointer text-lg font-medium">
+                                        <option value="Sq Ft">Sq Ft</option>
+                                        <option value="Sq Yards">Sq Yards</option>
+                                        <option value="Acres">Acres</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-10 flex justify-center">
+                <div class="mt-12 flex justify-center">
                     <button onclick="nextStep(2)"
-                        class="px-10 py-5 rounded-full bg-violet-600 text-white font-black hover:scale-105 hover:shadow-2xl transition-all shadow-xl shadow-violet-600/20">Continue
-                        to Sketch</button>
+                        class="group flex items-center gap-3 px-12 py-6 rounded-full bg-gradient-to-r from-violet-600 to-indigo-700 text-white font-black hover:scale-105 hover:shadow-[0_20px_50px_rgba(139,92,246,0.3)] transition-all duration-300 shadow-xl shadow-violet-600/20">
+                        <span>Continue to Sketch</span>
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                    </button>
                 </div>
             </div>
 
             <!-- Step 2: Drawing -->
             <div id="step-2" class="hidden step-transition">
-                <div class="text-center mb-8">
-                    <span
-                        class="inline-block px-4 py-1 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400 text-xs font-black uppercase tracking-widest mb-4">Geometry</span>
-                    <h1 class="text-4xl font-extrabold mb-2">Sketch the site outline</h1>
-                    <p class="text-slate-500">Draw the perimeter on the grid below. Rough lines will be rectified.</p>
+                <div class="flex flex-col items-center mb-12">
+                    <div
+                        class="glass px-8 py-3 rounded-full mb-8 border border-violet-200 dark:border-violet-700/30 shadow-sm animate-fade-in-down">
+                        <h2
+                            class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-indigo-600">
+                            Site Geometry</h2>
+                    </div>
+
+                    <div
+                        class="flex items-center gap-2 text-slate-400 font-bold text-sm tracking-widest uppercase mb-4 animate-fade-in-up">
+                        <span>Step 1</span>
+                        <span class="mx-2">❯</span>
+                        <span class="text-violet-600">Step 2</span>
+                        <span class="mx-2">❯</span>
+                        <span>Outline</span>
+                    </div>
                 </div>
 
-                <div
-                    class="bg-white dark:bg-slate-900 rounded-[3rem] p-4 shadow-2xl border border-slate-100 dark:border-slate-800">
-                    <div class="relative group">
-                        <canvas id="sketch-canvas" width="800" height="400"
-                            class="w-full h-auto bg-slate-50 dark:bg-slate-950 rounded-[2.5rem] cursor-crosshair border border-transparent hover:border-violet-500/20 transition-all"></canvas>
-                        <div class="absolute bottom-6 right-6 flex gap-2">
-                            <button onclick="clearCanvas()"
-                                class="px-6 py-3 rounded-full bg-white dark:bg-slate-900 shadow-xl border border-slate-100 dark:border-slate-700 text-xs font-bold hover:bg-red-50 hover:text-red-500 transition">Clear
-                                Sketch</button>
+                <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                    <!-- Left: Sketch Area (8 columns) -->
+                    <div class="lg:col-span-8 space-y-6">
+                        <label class="block text-base font-bold text-slate-700 dark:text-slate-300 px-1">Rough Sketch of
+                            Site Outline</label>
+                        <div class="relative group">
+                            <canvas id="sketch-canvas" width="800" height="400"
+                                class="w-full h-auto bg-slate-50 dark:bg-slate-950 rounded-[2.5rem] cursor-crosshair border border-slate-200 dark:border-slate-800 hover:border-violet-500/20 transition-all"></canvas>
+                            <div class="absolute bottom-6 left-6 flex gap-4">
+                                <div
+                                    class="glass px-4 py-2 rounded-xl text-xs font-bold text-slate-500 flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-violet-500 animate-pulse"></span>
+                                    Draw perimeter
+                                </div>
+                            </div>
+                            <div class="absolute bottom-6 right-6 flex gap-2">
+                                <button onclick="clearCanvas()"
+                                    class="px-6 py-3 rounded-full bg-white dark:bg-slate-900 shadow-xl border border-slate-100 dark:border-slate-700 text-xs font-bold hover:bg-red-50 hover:text-red-500 transition-all transform active:scale-95">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Dynamic Side Measurements (4 columns) -->
+                    <div class="lg:col-span-4 space-y-8 pt-2">
+                        <div>
+                            <label class="block text-base font-bold text-slate-700 dark:text-slate-300 px-1 mb-6">Side
+                                Measurements</label>
+
+                            <div id="no-sketch-hint"
+                                class="flex flex-col items-center justify-center p-12 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-dashed border-slate-200 dark:border-slate-700 text-center animate-fade-in">
+                                <span class="text-3xl mb-4">✍️</span>
+                                <p class="text-sm text-slate-400">Draw a outline to view<br>individual side
+                                    measurements.</p>
+                            </div>
+
+                            <div id="sides-input-container" class="hidden space-y-6 animate-fade-in">
+                                <div id="sides-list"
+                                    class="space-y-4 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
+                                    <!-- Dynamic inputs go here -->
+                                </div>
+
+                                <div class="pt-6 border-t border-slate-100 dark:border-slate-800">
+                                    <label
+                                        class="block text-[10px] font-black text-slate-400 uppercase mb-3 px-1">Selected
+                                        Units</label>
+                                    <div class="relative group select-wrapper">
+                                        <select id="dim_units"
+                                            class="w-full px-6 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 appearance-none cursor-pointer focus:outline-none focus:ring-4 focus:ring-violet-500/20 transition-all font-bold">
+                                            <option value="Feet">Feet</option>
+                                            <option value="Meters">Meters</option>
+                                            <option value="Yards">Yards</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-8 flex justify-center gap-4">
+                <div class="mt-12 flex justify-center gap-6">
                     <button onclick="nextStep(1)"
-                        class="px-10 py-5 rounded-full bg-slate-100 dark:bg-slate-800 font-bold">Back</button>
+                        class="px-10 py-5 rounded-full bg-slate-100 dark:bg-slate-800 font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">Back</button>
                     <button onclick="nextStep(3)"
-                        class="px-10 py-5 rounded-full bg-violet-600 text-white font-black hover:scale-105 hover:shadow-2xl transition-all shadow-xl shadow-violet-600/20">Finalize
-                        Details</button>
+                        class="group flex items-center gap-3 px-12 py-6 rounded-full bg-gradient-to-r from-violet-600 to-indigo-700 text-white font-black hover:scale-105 hover:shadow-[0_20px_50px_rgba(139,92,246,0.3)] transition-all duration-300 shadow-xl shadow-violet-600/20">
+                        <span>Continue to Details</span>
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                    </button>
                 </div>
             </div>
 
             <!-- Step 3: Prompting -->
             <div id="step-3" class="hidden step-transition">
-                <div class="text-center mb-8">
-                    <span
-                        class="inline-block px-4 py-1 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400 text-xs font-black uppercase tracking-widest mb-4">Vision</span>
-                    <h1 class="text-4xl font-extrabold mb-2">Final Requirements</h1>
-                    <p class="text-slate-500">Mention any special rooms, styles (modern, industrial), or specific zones
-                        you need.</p>
+                <div class="flex flex-col items-center mb-12">
+                    <div
+                        class="glass px-8 py-3 rounded-full mb-8 border border-violet-200 dark:border-violet-700/30 shadow-sm animate-fade-in-down">
+                        <h2
+                            class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-indigo-600">
+                            Design Vision</h2>
+                    </div>
+
+                    <div
+                        class="flex items-center gap-2 text-slate-400 font-bold text-sm tracking-widest uppercase mb-4 animate-fade-in-up">
+                        <span>Step 1</span>
+                        <span class="mx-2">❯</span>
+                        <span>Step 2</span>
+                        <span class="mx-2">❯</span>
+                        <span class="text-violet-600">Step 3</span>
+                    </div>
                 </div>
 
-                <div
-                    class="bg-white dark:bg-slate-900 p-10 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-800">
-                    <textarea id="prompt_reqs" rows="6"
-                        placeholder="e.g. Industrial style with a large open pantry, Two private meeting rooms near the entrance..."
-                        class="w-full px-8 py-8 rounded-[2rem] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-violet-500/10 transition text-lg"></textarea>
-                </div>
+                <div class="max-w-3xl mx-auto space-y-10">
+                    <h1
+                        class="text-4xl font-extrabold text-center bg-clip-text text-transparent bg-gradient-to-b from-slate-900 to-slate-500 dark:from-white dark:to-slate-400">
+                        Share your thoughts</h1>
 
-                <div class="mt-10 flex justify-center gap-4">
-                    <button onclick="nextStep(2)"
-                        class="px-10 py-5 rounded-full bg-slate-100 dark:bg-slate-800 font-bold">Back</button>
-                    <button onclick="startGeneration()"
-                        class="px-16 py-5 rounded-full bg-gradient-to-r from-violet-600 to-indigo-700 text-white font-black hover:scale-105 hover:shadow-2xl transition-all shadow-xl shadow-violet-600/20">Execute
-                        Generation</button>
+                    <div class="relative">
+                        <textarea id="prompt_reqs" rows="8"
+                            placeholder="e.g. Modern industrial style with an open floor plan, three private cabins, and a central relaxation zone..."
+                            class="w-full px-10 py-10 rounded-[3rem] border border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-slate-900/40 backdrop-blur-xl focus:outline-none focus:ring-4 focus:ring-violet-500/20 transition-all text-xl custom-scrollbar shadow-inner"></textarea>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <button onclick="nextStep(2)"
+                            class="px-10 py-5 rounded-full bg-slate-100 dark:bg-slate-800 font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">Back</button>
+
+                        <button onclick="startGeneration()"
+                            class="group flex items-center gap-3 px-16 py-6 rounded-full bg-gradient-to-r from-violet-600 to-indigo-700 text-white font-black hover:scale-105 hover:shadow-[0_20px_50px_rgba(139,92,246,0.3)] transition-all duration-300 shadow-xl shadow-violet-600/20">
+                            <span>Generate</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 animate-pulse" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
+        </div>
 
         <!-- Loading & Progress Screen -->
-        <div id="generation-ui" class="hidden w-full min-h-full flex items-start justify-center py-10">
-            <div class="flex flex-col lg:flex-row w-full max-w-7xl min-h-[80vh] gap-10">
-
-                <!-- Sidebar Snapshot -->
+        <div id="generation-ui" class="hidden w-full min-h-full flex flex-col items-center py-10">
+            <!-- Title Capsule for Loader -->
+            <div class="flex flex-col items-center mb-16">
                 <div
-                    class="w-full lg:w-80 glass rounded-[3rem] p-10 flex flex-col justify-between animate-fade-in lg:sticky lg:top-28 h-fit">
-                    <div>
-                        <h2 class="text-xs font-black uppercase text-violet-600 tracking-widest mb-8">Design Context
-                        </h2>
-                        <div class="space-y-8">
-                            <div>
-                                <label
-                                    class="text-[10px] font-black uppercase text-slate-400 block mb-1">Venture</label>
-                                <p id="summary-venture" class="font-bold"></p>
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-black uppercase text-slate-400 block mb-1">Approx.
-                                    Area</label>
-                                <p id="summary-area" class="font-bold"></p>
-                            </div>
-                            <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">
-                                <label class="text-[10px] font-black uppercase text-slate-400 block mb-3">Site
-                                    Outline</label>
-                                <canvas id="summary-canvas" width="200" height="100"
-                                    class="w-full h-auto opacity-50"></canvas>
+                    class="glass px-10 py-4 rounded-full border border-violet-200 dark:border-violet-700/30 shadow-xl animate-fade-in-down">
+                    <h2
+                        class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-indigo-600">
+                        Design Workspace</h2>
+                </div>
+            </div>
+
+            <div class="flex flex-col lg:flex-row w-full max-w-6xl min-h-[60vh] gap-16 items-center">
+
+                <!-- Left: Design Context -->
+                <div class="w-full lg:w-1/2 space-y-12 animate-fade-in-up">
+                    <div class="space-y-8">
+                        <div>
+                            <span
+                                class="text-[10px] font-black uppercase text-violet-500 tracking-[0.2em] mb-4 block">Project
+                                Configuration</span>
+                            <div class="grid grid-cols-2 gap-8">
+                                <div>
+                                    <label class="text-[10px] font-black uppercase text-slate-400 block mb-2">Venture
+                                        Type</label>
+                                    <p id="summary-venture" class="text-2xl font-black italic"></p>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-black uppercase text-slate-400 block mb-2">Total
+                                        Area</label>
+                                    <p id="summary-area" class="text-2xl font-black italic"></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div id="generation-status" class="space-y-4">
-                        <div class="flex items-center gap-3">
-                            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                            <span class="text-xs font-bold text-slate-500">AI rectifying geometry...</span>
+
+                        <div class="pt-8 border-t border-slate-200 dark:border-slate-800">
+                            <label class="text-[10px] font-black uppercase text-slate-400 block mb-6">Site Geometry
+                                Analysis</label>
+                            <div
+                                class="relative h-48 w-full bg-slate-50 dark:bg-slate-950 rounded-[3rem] border border-slate-100 dark:border-slate-800 p-8 flex items-center justify-center overflow-hidden">
+                                <canvas id="summary-canvas" width="400" height="200"
+                                    class="w-full h-full object-contain opacity-80"></canvas>
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-slate-50 dark:from-slate-950 to-transparent pointer-events-none">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Main Content Area -->
-                <div
-                    class="flex-1 bg-white dark:bg-slate-900 rounded-[4rem] shadow-2xl border border-slate-100 dark:border-slate-800 p-12 flex flex-col">
-
-                    <div id="loader-view" class="flex-1 flex flex-col items-center justify-center text-center">
+                <!-- Right: Loading Animation -->
+                <div class="flex-1 w-full lg:w-1/2 flex flex-col items-center justify-center text-center animate-fade-in-up"
+                    style="animation-delay: 0.2s">
+                    <div id="loader-view" class="flex flex-col items-center justify-center">
                         <div class="w-32 h-32 relative mb-10">
                             <div
                                 class="absolute inset-0 border-4 border-violet-100 dark:border-violet-900/30 rounded-full">
@@ -255,7 +615,7 @@
                                 class="absolute inset-4 bg-violet-600 rounded-full animate-pulse flex items-center justify-center text-white text-2xl">
                                 🪄</div>
                         </div>
-                        <h2 class="text-3xl font-extrabold mb-4">Gemini is sketching...</h2>
+                        <h2 class="text-3xl font-extrabold mb-4 italic">Loading design...</h2>
                         <p class="text-slate-500 max-w-sm">Designing rooms, interior flow, and architectural
                             distribution based on your vision.</p>
                     </div>
@@ -294,8 +654,29 @@
         let points = [];
         let drawing = false;
         let generatedLayout = null;
+        let detectedVertices = [];
 
         function nextStep(step) {
+            // Validate Step 1
+            if (currentStep === 1 && step > 1) {
+                const area = document.getElementById('area').value;
+                const ventureType = document.getElementById('venture_type').value;
+                const otherVenture = document.getElementById('other_venture').value;
+
+                if (!area) { alert('Please specify the total area.'); return; }
+                if (ventureType === 'Other' && !otherVenture.trim()) { alert('Please specify your custom venture type.'); return; }
+            }
+
+            // Validate Step 2
+            if (currentStep === 2 && step > 2) {
+                if (detectedVertices.length < 2) { alert('Please draw the site outline first.'); return; }
+
+                const sideInputs = document.querySelectorAll('.side-input');
+                let allFilled = true;
+                sideInputs.forEach(input => { if (!input.value) allFilled = false; });
+                if (!allFilled) { alert('Please provide measurements for all sides of your sketch.'); return; }
+            }
+
             document.getElementById(`step-${currentStep}`).classList.add('hidden');
             document.getElementById(`step-${step}`).classList.remove('hidden');
             currentStep = step;
@@ -308,10 +689,14 @@
         }
 
         function initCanvas() {
-            ctx.strokeStyle = '#8b5cf6';
-            ctx.lineWidth = 3;
+            const isDark = document.documentElement.classList.contains('dark');
+            ctx.strokeStyle = isDark ? '#a78bfa' : '#7c3aed'; // More vibrant violet
+            ctx.lineWidth = 4;
             ctx.lineJoin = 'round';
             ctx.lineCap = 'round';
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = isDark ? 'rgba(139, 92, 246, 0.4)' : 'rgba(124, 58, 237, 0.2)';
+
             drawGrid();
 
             canvas.onmousedown = (e) => {
@@ -321,7 +706,7 @@
                 const scaleY = canvas.height / rect.height;
                 const x = (e.clientX - rect.left) * scaleX;
                 const y = (e.clientY - rect.top) * scaleY;
-                points.push({ x, y });
+                points = [{ x, y }];
                 ctx.beginPath();
                 ctx.moveTo(x, y);
             };
@@ -338,7 +723,141 @@
                 ctx.stroke();
             };
 
-            canvas.onmouseup = () => drawing = false;
+            canvas.onmouseup = () => {
+                drawing = false;
+                detectSides();
+            };
+        }
+
+        // Ramer-Douglas-Peucker Algorithm for path simplification
+        function getSqDist(p1, p2) {
+            return (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y);
+        }
+
+        function getSqSegDist(p, p1, p2) {
+            let x = p1.x, y = p1.y, dx = p2.x - x, dy = p2.y - y;
+            if (dx !== 0 || dy !== 0) {
+                let t = ((p.x - x) * dx + (p.y - y) * dy) / (dx * dx + dy * dy);
+                if (t > 1) { x = p2.x; y = p2.y; }
+                else if (t > 0) { x += dx * t; y += dy * t; }
+            }
+            dx = p.x - x; dy = p.y - y;
+            return dx * dx + dy * dy;
+        }
+
+        function simplifyStep(points, first, last, sqTolerance, simplified) {
+            let maxSqDist = sqTolerance, index;
+            for (let i = first + 1; i < last; i++) {
+                let sqDist = getSqSegDist(points[i], points[first], points[last]);
+                if (sqDist > maxSqDist) { index = i; maxSqDist = sqDist; }
+            }
+            if (maxSqDist > sqTolerance) {
+                if (index - first > 1) simplifyStep(points, first, index, sqTolerance, simplified);
+                simplified.push(points[index]);
+                if (last - index > 1) simplifyStep(points, index, last, sqTolerance, simplified);
+            }
+        }
+
+        function simplifyPath(points, tolerance) {
+            if (points.length <= 2) return points;
+            let sqTolerance = tolerance !== undefined ? tolerance * tolerance : 1;
+            let last = points.length - 1;
+            let simplified = [points[0]];
+            simplifyStep(points, 0, last, sqTolerance, simplified);
+            simplified.push(points[last]);
+            return simplified;
+        }
+
+        function detectSides() {
+            if (points.length < 5) return;
+
+            // Use RDP simplification. 15-20 is a good tolerance for hand-drawn sketches.
+            // This naturally breaks curves into meaningful segments.
+            detectedVertices = simplifyPath(points, 20);
+
+            // If the user drew almost back to the start, close the loop
+            const start = detectedVertices[0];
+            const end = detectedVertices[detectedVertices.length - 1];
+            const dist = Math.sqrt(getSqDist(start, end));
+            if (dist < 50 && detectedVertices.length > 3) {
+                detectedVertices[detectedVertices.length - 1] = start;
+            }
+
+            updateUIWithSides();
+            drawOutline();
+        }
+
+        function updateUIWithSides() {
+            const container = document.getElementById('sides-input-container');
+            const hint = document.getElementById('no-sketch-hint');
+            const list = document.getElementById('sides-list');
+
+            if (detectedVertices.length < 2) {
+                container.classList.add('hidden');
+                hint.classList.remove('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+            hint.classList.add('hidden');
+            list.innerHTML = '';
+
+            for (let i = 0; i < detectedVertices.length - 1; i++) {
+                const div = document.createElement('div');
+                div.className = 'space-y-2 group animate-fade-in-up';
+                div.style.animationDelay = `${i * 0.05}s`;
+                div.innerHTML = `
+                    <div class="flex items-center justify-between px-1">
+                        <span class="text-[10px] uppercase font-black text-slate-400">Side ${i + 1}</span>
+                    </div>
+                    <input type="number" step="0.1" data-side="${i}" placeholder="Length..." 
+                        onfocus="drawOutline(${i})" onblur="drawOutline(-1)"
+                        class="side-input w-full px-6 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 focus:outline-none focus:ring-4 focus:ring-violet-500/20 transition-all font-medium">
+                `;
+                list.appendChild(div);
+            }
+        }
+
+        function drawOutline(activeSideIndex = -1) {
+            drawGrid();
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#8b5cf6';
+            ctx.lineWidth = 1;
+            ctx.globalAlpha = 0.2;
+            points.forEach((p, i) => {
+                if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+            });
+            ctx.stroke();
+            ctx.globalAlpha = 1.0;
+
+            for (let i = 0; i < detectedVertices.length - 1; i++) {
+                const p1 = detectedVertices[i];
+                const p2 = detectedVertices[i + 1];
+
+                ctx.beginPath();
+                ctx.lineWidth = (i === activeSideIndex) ? 8 : 4;
+                ctx.strokeStyle = (i === activeSideIndex) ? '#f472b6' : '#8b5cf6';
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.stroke();
+
+                const midX = (p1.x + p2.x) / 2;
+                const midY = (p1.y + p2.y) / 2;
+                ctx.fillStyle = (i === activeSideIndex) ? '#f472b6' : '#8b5cf6';
+                ctx.font = 'bold 14px Outfit';
+                ctx.fillText(`${i + 1}`, midX + 12, midY - 12);
+            }
+
+            detectedVertices.forEach(v => {
+                ctx.beginPath();
+                ctx.arc(v.x, v.y, 5, 0, Math.PI * 2);
+                ctx.fillStyle = '#8b5cf6';
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
         }
 
         function drawGrid() {
@@ -351,42 +870,73 @@
             for (let i = 0; i < canvas.height; i += 40) {
                 ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
             }
-            ctx.strokeStyle = '#8b5cf6';
-            ctx.lineWidth = 3;
         }
 
-        function clearCanvas() { points = []; drawGrid(); }
+        function clearCanvas() {
+            points = [];
+            detectedVertices = [];
+            updateUIWithSides();
+            drawGrid();
+        }
+
+        function checkOtherVenture(select) {
+            const container = document.getElementById('other_venture_container');
+            if (select.value === 'Other') {
+                container.classList.remove('hidden');
+                container.classList.add('animate-fade-in-up');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
 
         async function startGeneration() {
-            const venture = document.getElementById('venture_type').value;
-            const area = document.getElementById('area').value;
+            let venture = document.getElementById('venture_type').value;
+            if (venture === 'Other') {
+                venture = document.getElementById('other_venture').value || 'Custom Project';
+            }
+
+            const areaValue = document.getElementById('area').value;
+            const units = document.getElementById('area_units').value;
             const prompt = document.getElementById('prompt_reqs').value;
 
-            if (!area) { alert('Please specify the area.'); return; }
+            if (!areaValue) { alert('Please specify the area.'); return; }
+            if (!prompt.trim()) { alert('Please share your thoughts or requirements for the layout.'); return; }
 
-            // Switch UI
+            const fullArea = `${areaValue} ${units}`;
+
             document.getElementById('survey-container').classList.add('hidden');
             document.getElementById('generation-ui').classList.remove('hidden');
             document.getElementById('step-indicator').classList.add('hidden');
 
-            // Set Summary
             document.getElementById('summary-venture').innerText = venture;
-            document.getElementById('summary-area').innerText = area + ' sq ft';
+            document.getElementById('summary-area').innerText = fullArea;
 
-            // Draw thumbnail on summary canvas
             const sCanvas = document.getElementById('summary-canvas');
             const sCtx = sCanvas.getContext('2d');
             sCtx.strokeStyle = '#8b5cf6';
             sCtx.lineWidth = 2;
             sCtx.beginPath();
-            points.forEach((p, i) => {
+            detectedVertices.forEach((p, i) => {
                 const x = (p.x / canvas.width) * sCanvas.width;
                 const y = (p.y / canvas.height) * sCanvas.height;
                 if (i === 0) sCtx.moveTo(x, y); else sCtx.lineTo(x, y);
             });
             sCtx.stroke();
 
-            // AI Call
+            const sideInputs = document.querySelectorAll('.side-input');
+            let sideMeasurements = [];
+            let dimUnits = document.getElementById('dim_units').value;
+
+            sideInputs.forEach(input => {
+                const val = input.value || 'not specified';
+                const sideIdx = parseInt(input.dataset.side) + 1;
+                sideMeasurements.push(`Side ${sideIdx}: ${val} ${dimUnits}`);
+            });
+
+            const finalPrompt = prompt + (sideMeasurements.length > 0
+                ? `\n\nDetailed Side Measurements:\n${sideMeasurements.join('\n')}`
+                : '');
+
             const simplifiedPoints = points.filter((_, i) => i % 5 === 0);
             try {
                 const response = await fetch('/api/generate-preview', {
@@ -394,9 +944,9 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         venture_type: venture,
-                        area: area,
+                        area: fullArea,
                         dimensions: simplifiedPoints,
-                        prompt: prompt
+                        prompt: finalPrompt
                     })
                 });
                 const data = await response.json();
@@ -421,7 +971,6 @@
             document.getElementById('result-desc').innerText = layout.description;
             document.getElementById('svg-container').innerHTML = layout.svg;
 
-            // Transform internal texts for color if needed, but the layout_generator already handles it
             document.querySelectorAll('#svg-container svg text').forEach(t => t.style.fontFamily = 'Outfit');
         }
 
@@ -451,6 +1000,76 @@
                 btn.disabled = false;
             }
         }
+
+        // Profile Menu Logic
+        (function () {
+            const wrapper = document.getElementById('profile-menu-wrapper');
+            const toggle = document.getElementById('profile-toggle');
+            const dropdown = document.getElementById('profile-dropdown');
+            if (!wrapper || !toggle || !dropdown) return;
+
+            let leaveTimeout;
+            function show() {
+                clearTimeout(leaveTimeout);
+                dropdown.classList.remove('hidden');
+            }
+            function hide() { leaveTimeout = setTimeout(() => { dropdown.classList.add('hidden'); }, 300); }
+
+            wrapper.addEventListener('mouseenter', show);
+            wrapper.addEventListener('mouseleave', hide);
+
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                dropdown.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!wrapper.contains(e.target)) dropdown.classList.add('hidden');
+            });
+        })();
+
+        // Global Theme Functions (referenced by navbar)
+        function setTheme(theme) {
+            const html = document.documentElement;
+            const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+            if (theme === 'dark' || (theme === 'system' && darkQuery.matches)) {
+                html.classList.add('dark');
+            } else {
+                html.classList.remove('dark');
+            }
+
+            localStorage.setItem('theme', theme);
+            updateThemeUI(theme);
+        }
+
+        function updateThemeUI(theme) {
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'dark:bg-slate-700', 'shadow-sm', 'text-violet-600');
+                if (btn.classList.contains(theme)) {
+                    btn.classList.add('bg-white', 'dark:bg-slate-700', 'shadow-sm', 'text-violet-600');
+                }
+            });
+        }
+
+        // Mobile Menu Logic
+        (function () {
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('menu-icon');
+            if (!btn || !menu || !icon) return;
+
+            btn.onclick = () => {
+                const isHidden = menu.classList.contains('hidden');
+                if (isHidden) {
+                    menu.classList.remove('hidden');
+                    icon.setAttribute('d', 'M6 18L18 6M6 6l12 12');
+                } else {
+                    menu.classList.add('hidden');
+                    icon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+                }
+            };
+        })();
     </script>
 </body>
 

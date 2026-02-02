@@ -14,12 +14,13 @@ async def login_page(request: Request):
     return render_template(request, "login.html")
 
 @auth_router.post("/login")
-async def login(request: Request, email: str = Form(...), password: str = Form(...)):
+async def login(request: Request, email: str = Form(...), password: str = Form(...), remember: str = Form(None)):
     user_data = get_user_by_email(email)
     
     if user_data and check_password_hash(user_data[3], password):
         # user_data: (id, name, email, password_hash, about, profile_pic, location, user_key)
         request.state.session["user_id"] = user_data[0]
+        request.state.session["_permanent"] = (remember == "on")
         flash(request, 'Login successful!', 'success')
         return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
     else:
@@ -63,4 +64,6 @@ async def signup(
 async def logout(request: Request):
     request.state.session.clear()
     flash(request, 'Logged out successfully', 'success')
-    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+    response = RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+    response.delete_cookie("session_id")
+    return response

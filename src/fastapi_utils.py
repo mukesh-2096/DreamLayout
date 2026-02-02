@@ -20,13 +20,19 @@ class SessionManager:
 
     def save_session(self, response: Response, session_data: dict):
         token = self.serializer.dumps(session_data)
-        response.set_cookie(
-            key="session_id",
-            value=token,
-            httponly=True,
-            max_age=3600 * 24 * 7, # 7 days
-            samesite="lax"
-        )
+        is_permanent = session_data.get("_permanent", False)
+        
+        cookie_params = {
+            "key": "session_id",
+            "value": token,
+            "httponly": True,
+            "samesite": "lax"
+        }
+        
+        if is_permanent:
+            cookie_params["max_age"] = 3600 * 24 * 7 # 7 days
+            
+        response.set_cookie(**cookie_params)
 
 def flash(request: Request, message: str, category: str = "info"):
     """Mimic Flask's flash() functionality"""

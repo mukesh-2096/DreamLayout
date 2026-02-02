@@ -85,11 +85,12 @@
         <nav
             class="max-w-7xl mx-auto glass border border-white/20 rounded-full px-6 py-3 flex items-center justify-between shadow-lg shadow-slate-200/50 dark:shadow-none">
             <div class="flex items-center space-x-3">
-                <img src="/static/logo.png" alt="DreamLayout" class="h-10 dark:brightness-110">
+                <img src="/static/logo.png" alt="DreamLayout" class="h-8 md:h-10 dark:brightness-110">
                 <span
-                    class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-700 to-indigo-700 dark:from-violet-400 dark:to-indigo-400">DreamLayout</span>
+                    class="text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-700 to-indigo-700 dark:from-violet-400 dark:to-indigo-400">DreamLayout</span>
             </div>
 
+            <!-- Desktop Links -->
             <div class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-600 dark:text-slate-400">
                 <a href="#features" class="hover:text-violet-600 dark:hover:text-violet-400 transition">Features</a>
                 <a href="#how-it-works" class="hover:text-violet-600 dark:hover:text-violet-400 transition">How it
@@ -97,24 +98,76 @@
                 <a href="/templates" class="hover:text-violet-600 dark:hover:text-violet-400 transition">Templates</a>
             </div>
 
-            <div class="flex items-center space-x-4">
-                <!-- Mini Theme Toggle -->
-                <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-full items-center">
+            <div class="flex items-center space-x-2 md:space-x-4">
+                <!-- Theme Toggle (Desktop) -->
+                <div class="hidden md:flex bg-slate-100 dark:bg-slate-800 p-1 rounded-full items-center">
                     <button onclick="setTheme('light')"
                         class="theme-btn light w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all hover:bg-white dark:hover:bg-slate-700">☀️</button>
                     <button onclick="setTheme('dark')"
                         class="theme-btn dark w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all hover:bg-white dark:hover:bg-slate-700">🌙</button>
                 </div>
 
-                <div class="flex items-center space-x-1 lg:space-x-2">
+                <!-- Auth Buttons -->
+                <div class="hidden sm:flex items-center space-x-1">
                     <a href="/login"
                         class="px-4 py-2.5 rounded-full text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 transition">Login</a>
                     <a href="/signup"
-                        class="bg-violet-600 hover:bg-violet-700 text-white px-5 lg:px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-violet-200 dark:shadow-none transition">Get
+                        class="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-violet-200 dark:shadow-none transition">Get
                         Started</a>
                 </div>
+
+                <!-- Mobile Menu Toggle -->
+                <button id="mobile-menu-btn"
+                    class="md:hidden p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
             </div>
         </nav>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu"
+            class="hidden md:hidden absolute top-24 left-6 right-6 glass border border-white/20 rounded-3xl p-6 shadow-2xl animate-fade-in-up z-50">
+            <nav class="flex flex-col space-y-4">
+                <a href="#features"
+                    class="px-4 py-3 rounded-xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-lg font-bold text-slate-700 dark:text-slate-300 transition">Features</a>
+                <a href="#how-it-works"
+                    class="px-4 py-3 rounded-xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-lg font-bold text-slate-700 dark:text-slate-300 transition">How
+                    it Works</a>
+                <a href="/templates"
+                    class="px-4 py-3 rounded-xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-lg font-bold text-slate-700 dark:text-slate-300 transition">Templates</a>
+
+                <div class="h-px bg-slate-100 dark:bg-slate-800 my-2"></div>
+
+                <!-- Theme Toggle (Mobile) -->
+                <div class="px-4 py-2">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Appearance</p>
+                    <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl w-full">
+                        <button onclick="setTheme('light')"
+                            class="theme-btn light flex-1 flex items-center justify-center gap-2 py-3 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
+                            <span class="text-sm">☀️</span>
+                            <span class="text-xs font-bold">Light</span>
+                        </button>
+                        <button onclick="setTheme('dark')"
+                            class="theme-btn dark flex-1 flex items-center justify-center gap-2 py-3 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
+                            <span class="text-sm">🌙</span>
+                            <span class="text-xs font-bold">Dark</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="h-px bg-slate-100 dark:bg-slate-800 my-2"></div>
+                <div class="flex flex-col space-y-2">
+                    <a href="/login"
+                        class="px-4 py-3 rounded-xl text-center font-bold text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition">Login</a>
+                    <a href="/signup"
+                        class="px-4 py-3 rounded-xl text-center font-bold text-white bg-violet-600 transition">Get
+                        Started Free</a>
+                </div>
+            </nav>
+        </div>
     </header>
 
     <!-- Flash Messages -->
@@ -155,7 +208,8 @@
                     Architectural Co-pilot</span>
             </div>
 
-            <h1 class="text-6xl md:text-8xl font-extrabold leading-[1.1] text-slate-900 dark:text-slate-100 mb-8">
+            <h1
+                class="text-4xl sm:text-6xl md:text-8xl font-extrabold leading-[1.1] text-slate-900 dark:text-slate-100 mb-8">
                 Build your dream <br />
                 <span class="text-violet-600 dark:text-violet-400 italic">intelligently.</span>
             </h1>
@@ -176,18 +230,7 @@
                 </a>
             </div>
 
-            <!-- Dashboard Mockup -->
-            <div class="mt-24 relative max-w-5xl mx-auto animate-float">
-                <div
-                    class="relative z-10 rounded-3xl overflow-hidden border border-white/50 dark:border-slate-800 shadow-2xl shadow-indigo-200/50 dark:shadow-none">
-                    <img src="/static/architectural_ai_dashboard_mockup_1769701086808.png" alt="DreamLayout Dashboard"
-                        class="w-full h-auto dark:opacity-80">
-                </div>
-                <!-- Accent Gradients behind image -->
-                <div
-                    class="absolute -inset-4 bg-gradient-to-tr from-violet-500 to-indigo-500 rounded-[2.5rem] blur-2xl opacity-10">
-                </div>
-            </div>
+
         </div>
     </section>
 
@@ -315,7 +358,8 @@
             <div
                 class="bg-slate-900 dark:bg-slate-900/50 border border-white/10 rounded-[3rem] py-24 px-10 shadow-2xl relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-96 h-96 bg-violet-600/20 rounded-full blur-3xl"></div>
-                <h2 class="text-5xl font-extrabold text-white mb-8">Ready to design your next masterpiece?</h2>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-8">Ready to design your next
+                    masterpiece?</h2>
                 <p class="text-xl text-slate-400 max-w-2xl mx-auto mb-12">Join hundreds of architects and home-builders
                     using DreamLayout's AI to plan their projects.</p>
                 <a href="/login"
@@ -371,6 +415,30 @@
                 }
             });
         }
+
+        // Mobile Menu Logic
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+
+        mobileMenuBtn.onclick = () => {
+            const isHidden = mobileMenu.classList.contains('hidden');
+            if (isHidden) {
+                mobileMenu.classList.remove('hidden');
+                menuIcon.setAttribute('d', 'M6 18L18 6M6 6l12 12'); // X icon
+            } else {
+                mobileMenu.classList.add('hidden');
+                menuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16'); // Burger icon
+            }
+        };
+
+        // Close menu on link click
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.onclick = () => {
+                mobileMenu.classList.add('hidden');
+                menuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+            };
+        });
     </script>
 
 </body>
