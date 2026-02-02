@@ -436,7 +436,6 @@
     </div>
 
     <!-- ================= SCRIPT ================= -->
-    <!-- ================= THEME SCRIPT & UTILS ================= -->
     <script>
             // Init Theme
             (function () {
@@ -575,173 +574,72 @@
             });
         })();
 
-        /* ================= PROPOSAL FLOW JS ================= */
-        let currentStep = 1;
-        const modal = document.getElementById('proposal-modal');
-        const canvas = document.getElementById('sketch-canvas');
-        const ctx = canvas.getContext('2d');
-        let drawing = false;
-        let points = [];
-
-        function openProposalModal() {
-            modal.classList.remove('hidden');
-            currentStep = 1;
-            goToStep(1);
-            initCanvas();
-        }
-
-        function closeProposalModal() {
-            modal.classList.add('hidden');
-        }
-
-        function goToStep(step) {
-            document.querySelectorAll('.step-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`step-${step}`).classList.remove('hidden');
-
-            // Update dots
-            for (let i = 1; i <= 3; i++) {
-                const dot = document.getElementById(`step-dot-${i}`);
-                if (i <= step) {
-                    dot.classList.add('bg-violet-600', 'text-white');
-                    dot.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-400');
-                } else {
-                    dot.classList.remove('bg-violet-600', 'text-white');
-                    dot.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-400');
-                }
-
-                if (i < step) {
-                    document.getElementById(`step-bar-${i}`).style.width = '100%';
-                } else {
-                    if (document.getElementById(`step-bar-${i}`))
-                        document.getElementById(`step-bar-${i}`).style.width = '0%';
-                }
-            }
-            currentStep = step;
-        }
-
-        function initCanvas() {
-            ctx.strokeStyle = '#8b5cf6';
-            ctx.lineWidth = 3;
-            ctx.lineJoin = 'round';
-            ctx.lineCap = 'round';
-
-            // Draw grid
-            drawGrid();
-
-            canvas.onmousedown = (e) => {
-                drawing = true;
-                const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                points.push({ x, y });
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-            };
-
-            canvas.onmousemove = (e) => {
-                if (!drawing) return;
-                const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                points.push({ x, y });
-                ctx.lineTo(x, y);
-                ctx.stroke();
-            };
-
-            canvas.onmouseup = () => {
-                drawing = false;
-            };
-        }
-
-        function drawGrid() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 0.5;
-            for (let i = 0; i < canvas.width; i += 20) {
-                ctx.beginPath();
-                ctx.moveTo(i, 0);
-                ctx.lineTo(i, canvas.height);
-                ctx.stroke();
-            }
-            for (let i = 0; i < canvas.height; i += 20) {
-                ctx.beginPath();
-                ctx.moveTo(0, i);
-                ctx.lineTo(canvas.width, i);
-                ctx.stroke();
-            }
-            ctx.strokeStyle = '#8b5cf6';
-            ctx.lineWidth = 3;
-        }
-
-        function clearCanvas() {
-            points = [];
-            drawGrid();
-        }
-
-        async function generateProposal() {
-            const venture = document.getElementById('venture_type').value;
-            const area = document.getElementById('area').value;
-            const prompt = document.getElementById('prompt_reqs').value;
-
-            if (!area) {
-                alert('Please enter the area.');
-                return;
-            }
-
-            document.getElementById('generating-state').classList.remove('hidden');
-            document.getElementById('result-actions').classList.add('hidden');
-
-            // Simplify points to reduce noise for Gemini
-            const simplifiedPoints = points.filter((_, i) => i % 5 === 0);
-
-            const payload = {
-                venture_type: venture,
-                area: area,
-                dimensions: simplifiedPoints,
-                prompt: prompt
-            };
-
-            try {
-                const response = await fetch('/api/generate-layout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    window.location.reload(); // Simple reload to show the new project
-                } else {
-                    alert('Error: ' + data.error);
-                }
-            } catch (err) {
-                alert('An error occurred.');
-                console.error(err);
-            } finally {
-                document.getElementById('generating-state').classList.add('hidden');
-                document.getElementById('result-actions').classList.remove('hidden');
-            }
-        }
-
         async function deleteProject(event, id) {
             event.preventDefault();
             event.stopPropagation();
-            if (!confirm('Move this layout to Archive? It will be permanently deleted after 5 days.')) return;
 
-            try {
-                const response = await fetch(`/api/project/${id}/delete`, { method: 'POST' });
-                const data = await response.json();
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                    alert('Error: ' + data.error);
+            showCustomConfirm({
+                title: 'Archive Layout',
+                message: 'Move this layout to Archive? It will be permanently deleted after 5 days.',
+                icon: '🗑️',
+                confirmText: 'Archive Project',
+                onConfirm: async () => {
+                    try {
+                        const response = await fetch(`/api/project/${id}/delete`, { method: 'POST' });
+                        const data = await response.json();
+                        if (data.success) {
+                            window.location.reload();
+                        } else {
+                            alert('Error: ' + data.error);
+                        }
+                    } catch (err) {
+                        alert('An error occurred.');
+                    }
                 }
-            } catch (err) {
-                alert('An error occurred.');
-            }
+            });
         }
     </script>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="custom-confirm-modal"
+        class="fixed inset-0 z-[100] hidden flex items-center justify-center p-6 overflow-hidden">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-md opacity-0 transition-opacity duration-300"
+            id="modal-overlay"></div>
+        <div class="glass-card-modal max-w-sm w-full rounded-[3rem] p-10 shadow-2xl border border-white/50 dark:border-slate-800 transform scale-90 opacity-0 transition-all duration-300 relative z-10 text-center"
+            id="modal-content">
+            <div class="w-20 h-20 bg-violet-100 dark:bg-violet-900/30 rounded-[2rem] flex items-center justify-center mx-auto mb-8 text-3xl shadow-inner"
+                id="modal-icon">
+                🗑️
+            </div>
+            <h3 class="text-2xl font-black text-slate-900 dark:text-slate-100 mb-3 tracking-tight" id="modal-title">
+                Archive Layout</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-10" id="modal-message">
+                Move this layout to Archive? It will be permanently deleted after 5 days.
+            </p>
+            <div class="flex flex-col gap-3">
+                <button id="modal-confirm"
+                    class="w-full py-5 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-700 text-white font-black shadow-xl shadow-violet-600/20 hover:scale-105 transition-all active:scale-95 uppercase tracking-widest text-xs">
+                    Confirm Move
+                </button>
+                <button id="modal-cancel"
+                    class="w-full py-4 rounded-2xl text-slate-400 dark:text-slate-500 font-bold hover:text-slate-900 dark:hover:text-slate-100 transition-colors text-xs uppercase tracking-widest">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
     <style>
+        .glass-card-modal {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        }
+
+        .dark .glass-card-modal {
+            background: rgba(15, 23, 42, 0.8);
+        }
+
         .animate-fade-in-up {
             animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -759,6 +657,39 @@
         }
     </style>
 
+    <script>
+        function showCustomConfirm({ title, message, icon, confirmText, onConfirm }) {
+            const modal = document.getElementById('custom-confirm-modal');
+            const overlay = document.getElementById('modal-overlay');
+            const content = document.getElementById('modal-content');
+
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            document.getElementById('modal-icon').innerText = icon || '⚠️';
+            document.getElementById('modal-confirm').innerText = confirmText || 'Confirm';
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                overlay.classList.replace('opacity-0', 'opacity-100');
+                content.classList.replace('opacity-0', 'opacity-100');
+                content.classList.replace('scale-90', 'scale-100');
+            }, 10);
+
+            const close = () => {
+                overlay.classList.replace('opacity-100', 'opacity-0');
+                content.classList.replace('opacity-100', 'opacity-0');
+                content.classList.replace('scale-100', 'scale-90');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            };
+
+            document.getElementById('modal-confirm').onclick = () => {
+                close();
+                onConfirm();
+            };
+            document.getElementById('modal-cancel').onclick = close;
+            overlay.onclick = close;
+        }
+    </script>
 </body>
 
 </html>
