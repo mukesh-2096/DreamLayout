@@ -34,13 +34,24 @@ class LayoutGenerator:
         2. ROOM PLANNING: Distribute rooms logically within this rectified boundary based on the {venture_type} and {area}. Ensure efficient circulation and logical flow.
         3. MULTI-FLOOR/PAGE SUPPORT: If the user requirements suggest multiple floors, you MUST provide separate layouts for EACH floor.
         4. AREA ANALYSIS: Carefully consider if the requested {area} is sufficient for the {venture_type} and user requirements. 
-        5. CONVERSATIONAL RESPONSE: Provide a detailed, professional summary of your architectural decisions, advice, and any potential issues (e.g., if the area is too small for the requested rooms). Speak like an expert consultant (ChatGPT style).
-        6. SVG STYLING:
+        5. CONVERSATIONAL RESPONSE:
+           - Start with a friendly confirmation like: "Great news! I've successfully crafted a custom architectural layout that perfectly aligns with your requirements."
+           - Provide a professional summary of your design decisions and mention if the area is sufficient.
+           - CRITICAL: Provide a CLEAR LEGEND of all rooms/components with their corresponding numbers (from the SVG) and exact dimensions. 
+             Example:
+             1. Master Bedroom: 15'x12'
+             2. Modular Kitchen: 10'x12'
+        6. SVG STYLING & LABELING (CRITICAL FOR READABILITY):
            - Use thick, dark lines (2px or 3px) for outer and internal walls.
            - Use light, professional pastel fill colors for different room types (e.g., #EBF4FF for living, #F0FFF4 for kitchen).
-           - Labels should be neatly centered in each room with an elegant font-family like 'Outfit' or 'Inter'.
+           - LABEL CLARITY & NUMBERING: 
+             * Do NOT place long text names inside rooms as they often overlap.
+             * Instead, assign a unique NUMBER (1, 2, 3...) to each room.
+             * Place a small circle with the number inside it at the center of the room.
+             * If the room is too small, place a dot in the room and draw a thin leader line (line) to the number placed just outside the room outline.
+             * Ensure numbers are bold and legible (font-size: 14px).
            - Add subtle 1px dashed lines for furniture or area suggestions.
-           - Ensure the SVG viewBox is set correctly to show the entire rectified layout.
+           - Ensure the SVG viewBox is set correctly to show the entire rectified layout with a 50px padding.
         
         User's specific requirements: {user_prompt}
 
@@ -48,13 +59,12 @@ class LayoutGenerator:
         {{
             "title": "Professional Project Name",
             "description": "Architectural summary",
-            "conversational_response": "Expert architectural advice and feedback on your project requirements (ChatGPT style). Mention if the area is sufficient or not.",
-            "design_philosophy": "Explanation of the rectified shape and room distribution",
+            "conversational_response": "A friendly confirmation followed by expert architectural advice and a numbered legend of components. (ChatGPT style)",
             "floors": [
                 {{
                     "floor_name": "e.g., Ground Floor",
                     "rooms": [
-                        {{"name": "Room Name", "size": "e.g., 12' x 15'", "position": "Description of location"}}
+                        {{"id": 1, "name": "Room Name", "size": "e.g., 12' x 15'", "position": "Description of location"}}
                     ],
                     "svg": "<svg ...>...</svg>"
                 }}

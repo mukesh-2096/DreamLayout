@@ -6,7 +6,18 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from itsdangerous import URLSafeSerializer
 
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
 from src.config import Config
+
+cloudinary.config(
+    cloud_name=Config.CLOUDINARY_CLOUD_NAME,
+    api_key=Config.CLOUDINARY_API_KEY,
+    api_secret=Config.CLOUDINARY_API_SECRET,
+    secure=True
+)
 from src.database import get_user_by_id, init_db, init_faiss
 from src.models import User
 from src.fastapi_utils import SessionManager, get_flashed_messages, current_user_func, url_for
@@ -29,6 +40,8 @@ def create_app():
     templates.env.globals['get_flashed_messages'] = get_flashed_messages
     templates.env.globals['current_user'] = current_user_func
     templates.env.globals['url_for'] = url_for
+    import json
+    templates.env.filters['tojson'] = lambda d: json.dumps(d, default=str)
 
     @app.middleware("http")
     async def session_middleware(request: Request, call_next):
