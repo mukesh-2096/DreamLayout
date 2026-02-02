@@ -30,7 +30,13 @@ class Config:
     CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET', 'EpzRI8Q9EyACpEugEFd97id3XIY')
     
     # Gemini Settings
-    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+    _raw_gemini_key = os.getenv('GEMINI_API_KEY', '')
+    GEMINI_API_KEY = _raw_gemini_key.strip().strip('"').strip("'")
+    
+    if not GEMINI_API_KEY:
+        print("⚠️  WARNING: GEMINI_API_KEY is empty or missing in .env")
+    else:
+        print(f"✅ GEMINI_API_KEY loaded successfully ({len(GEMINI_API_KEY)} chars)")
     
 
 

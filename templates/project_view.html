@@ -89,6 +89,7 @@
                                 class="text-xs font-black text-violet-600 uppercase tracking-widest block mb-1">Generated
                                 Blueprint</span>
                             <h1 class="text-3xl font-extrabold">{{ project.title }}</h1>
+                            <p id="current-floor-label" class="text-sm font-bold text-slate-400 mt-1"></p>
                         </div>
                         <div class="flex gap-2">
                             <button onclick="window.print()"
@@ -98,10 +99,17 @@
                         </div>
                     </div>
 
-                    <div
+                    <!-- Floor Selector (Tabs) -->
+                    <div id="floor-selector" class="flex flex-wrap gap-2 mb-6 hidden">
+                        <!-- Dynamic floor tabs will be injected here -->
+                    </div>
+
+                    <div id="main-svg-container"
                         class="aspect-[4/3] bg-slate-50 dark:bg-slate-950 rounded-[2rem] p-8 flex items-center justify-center border border-slate-100 dark:border-slate-800 overflow-hidden">
                         {% if project.svg_content %}
-                        {{ project.svg_content | safe }}
+                        <div id="svg-render-area" class="w-full h-full flex items-center justify-center">
+                            {{ project.svg_content | safe }}
+                        </div>
                         {% elif project.thumbnail %}
                         <img src="{{ project.thumbnail }}" class="w-full h-full object-contain" alt="Plan">
                         {% else %}
@@ -126,21 +134,88 @@
             <div class="space-y-8">
                 <div class="glass border border-white rounded-[2.5rem] p-8 shadow-xl">
                     <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Room Breakdown</h3>
-                    <div class="space-y-4">
-                        {% for room in project.rooms %}
-                        <div
-                            class="p-4 rounded-2xl bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 group hover:border-violet-300 transition">
-                            <div class="flex items-center justify-between mb-1">
-                                <span class="font-bold text-sm">{{ room.name }}</span>
-                                <span
-                                    class="text-[10px] bg-violet-100 dark:bg-violet-900 text-violet-600 px-2 py-0.5 rounded-lg">{{
-                                    room.size }}</span>
+                    <div id="rooms-container" class="space-y-4">
+                        {% if project.rooms and project.rooms[0] is mapping and 'floor_name' not in project.rooms[0] %}
+                            {% for room in project.rooms %}
+                            <div
+                                class="p-4 rounded-2xl bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 group hover:border-violet-300 transition">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="font-bold text-sm">{{ room.name }}</span>
+                                    <span
+                                        class="text-[10px] bg-violet-100 dark:bg-violet-900 text-violet-600 px-2 py-0.5 rounded-lg">{{
+                                        room.size }}</span>
+                                </div>
+                                <p class="text-[10px] text-slate-400 font-medium">{{ room.position }}</p>
                             </div>
-                            <p class="text-[10px] text-slate-400 font-medium">{{ room.position }}</p>
-                        </div>
-                        {% endfor %}
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-xs text-slate-400">Select a floor to see room breakdown.</p>
+                        {% endif %}
                     </div>
                 </div>
+
+                <script>
+                    const projectData = {
+                        rooms: {{ project.rooms | tojson | safe }}
+                    };
+
+                    document.addEventListener('DOMContentLoaded', () => {
+                        if (Array.isArray(projectData.rooms) && projectData.rooms.length > 0 && projectData.rooms[0].floor_name) {
+                            initMultiFloorView(projectData.rooms);
+                        }
+                    });
+
+                    function initMultiFloorView(floors) {
+                        const selector = document.getElementById('floor-selector');
+                        const label = document.getElementById('current-floor-label');
+                        selector.classList.remove('hidden');
+                        
+                        floors.forEach((floor, idx) => {
+                            const btn = document.createElement('button');
+                            btn.className = `px-6 py-2 rounded-xl text-xs font-bold transition-all ${idx === 0 ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/20' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200'}`;
+                            btn.innerText = floor.floor_name;
+                            btn.onclick = () => switchFloor(idx, btn, floors);
+                            selector.appendChild(btn);
+                        });
+
+                        if (floors.length > 0) {
+                            label.innerText = floors[0].floor_name;
+                        }
+                    }
+
+                    function switchFloor(index, btn, floors) {
+                        // Update buttons
+                        document.querySelectorAll('#floor-selector button').forEach(b => {
+                            b.className = 'px-6 py-2 rounded-xl text-xs font-bold transition-all bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200';
+                        });
+                        btn.className = 'px-6 py-2 rounded-xl text-xs font-bold transition-all bg-violet-600 text-white shadow-lg shadow-violet-600/20';
+
+                        const floor = floors[index];
+                        document.getElementById('current-floor-label').innerText = floor.floor_name;
+
+                        // Update SVG
+                        const svgArea = document.getElementById('svg-render-area');
+                        if (svgArea) {
+                            svgArea.innerHTML = floor.svg;
+                        }
+
+                        // Update Rooms
+                        const roomsContainer = document.getElementById('rooms-container');
+                        roomsContainer.innerHTML = '';
+                        floor.rooms.forEach(room => {
+                            const div = document.createElement('div');
+                            div.className = 'p-4 rounded-2xl bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 group hover:border-violet-300 transition';
+                            div.innerHTML = `
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="font-bold text-sm">${room.name}</span>
+                                    <span class="text-[10px] bg-violet-100 dark:bg-violet-900 text-violet-600 px-2 py-0.5 rounded-lg">${room.size}</span>
+                                </div>
+                                <p class="text-[10px] text-slate-400 font-medium">${room.position}</p>
+                            `;
+                            roomsContainer.appendChild(div);
+                        });
+                    }
+                </script>
 
                 <div class="bg-gradient-to-br from-violet-600 to-indigo-700 rounded-[2.5rem] p-8 text-white shadow-2xl">
                     <h3 class="font-bold mb-2">Need changes?</h3>

@@ -28,11 +28,23 @@ async def api_generate_layout(request: Request):
     try:
         result = layout_generator.generate_layout(venture_type, area, dimensions, user_prompt)
         
+        # Handle multiple floors if present
+        floors = result.get("floors", [])
+        if floors:
+            svg_content = floors[0].get("svg", "")
+            rooms_data = json.dumps(floors) # Store all floors in rooms column
+        else:
+            svg_content = result.get("svg", "")
+            rooms_data = json.dumps(result.get("rooms", []))
+
         # Upload SVG to Cloudinary
-        svg_content = result.get("svg", "")
         cloudinary_url = None
         if svg_content:
             try:
+                # Ensure SVG has xmlns namespace
+                if 'xmlns=' not in svg_content:
+                    svg_content = svg_content.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"')
+                
                 svg_base64 = base64.b64encode(svg_content.encode('utf-8')).decode('utf-8')
                 data_uri = f"data:image/svg+xml;base64,{svg_base64}"
                 
@@ -40,6 +52,7 @@ async def api_generate_layout(request: Request):
                     data_uri,
                     folder=f"dreamlayout_projects/u_{request.state.user.user_key}",
                     public_id=f"layout_{int(time.time())}",
+                    format="svg",
                     resource_type="image"
                 )
                 cloudinary_url = upload_res['secure_url']
@@ -51,9 +64,9 @@ async def api_generate_layout(request: Request):
             user_id=request.state.user.id,
             title=result.get("title", "New Proposal"),
             description=result.get("description", ""),
-            thumbnail=cloudinary_url, # Now storing Cloudinary URL
+            thumbnail=cloudinary_url,
             svg_content=svg_content,
-            rooms=json.dumps(result.get("rooms", [])),
+            rooms=rooms_data,
             design_philosophy=result.get("design_philosophy", "")
         )
         
@@ -304,7 +317,15 @@ async def api_save_project(request: Request):
         return {"error": "No layout data provided"}, 400
         
     try:
-        svg_content = layout.get("svg", "")
+        # Handle multiple floors if present
+        floors = layout.get("floors", [])
+        if floors:
+            svg_content = floors[0].get("svg", "")
+            rooms_data = json.dumps(floors) # Store all floors in rooms column
+        else:
+            svg_content = layout.get("svg", "")
+            rooms_data = json.dumps(layout.get("rooms", []))
+
         cloudinary_url = None
         
         # Upload to Cloudinary
@@ -336,7 +357,7 @@ async def api_save_project(request: Request):
             description=layout.get("description", ""),
             thumbnail=cloudinary_url,
             svg_content=svg_content,
-            rooms=json.dumps(layout.get("rooms", [])),
+            rooms=rooms_data,
             design_philosophy=layout.get("design_philosophy", "")
         )
         
