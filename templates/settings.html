@@ -19,6 +19,7 @@
         }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body {
             font-family: 'Outfit', sans-serif;
@@ -98,24 +99,24 @@
                     </button>
 
                     <div id="profile-dropdown"
-                        class="hidden absolute right-0 mt-4 w-64 bg-white dark:bg-slate-950 backdrop-blur-2xl rounded-[2rem] shadow-2xl border border-white/50 dark:border-slate-800 p-3 z-50 animate-fade-in-up">
+                        class="hidden absolute right-0 mt-4 w-64 bg-white dark:bg-slate-950 backdrop-blur-2xl rounded-[2rem] shadow-2xl border border-white/50 dark:border-800 p-3 z-50 animate-fade-in-up">
                         <div class="px-2 mb-2">
                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 px-2">
                                 Appearance</p>
                             <div class="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl">
                                 <button onclick="setTheme('light')"
                                     class="theme-btn light flex flex-col items-center justify-center py-2 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
-                                    <span class="text-sm">☀️</span>
+                                    <i class="bi bi-sun-fill text-sm"></i>
                                     <span class="text-[9px] font-bold mt-1">Light</span>
                                 </button>
                                 <button onclick="setTheme('dark')"
                                     class="theme-btn dark flex flex-col items-center justify-center py-2 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
-                                    <span class="text-sm">🌙</span>
+                                    <i class="bi bi-moon-stars-fill text-sm"></i>
                                     <span class="text-[9px] font-bold mt-1">Dark</span>
                                 </button>
                                 <button onclick="setTheme('system')"
                                     class="theme-btn system flex flex-col items-center justify-center py-2 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
-                                    <span class="text-sm">💻</span>
+                                    <i class="bi bi-display text-sm"></i>
                                     <span class="text-[9px] font-bold mt-1">Auto</span>
                                 </button>
                             </div>
@@ -124,14 +125,16 @@
                         <a href="/profile"
                             class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-slate-600 dark:text-slate-400 hover:text-violet-700 dark:hover:text-violet-400 transition font-bold text-sm">
                             <span
-                                class="bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 p-2 rounded-xl text-xs">👤</span>
+                                class="bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 p-2 rounded-xl text-xs flex items-center justify-center w-8 h-8"><i
+                                    class="bi bi-person-fill"></i></span>
                             My Profile
                         </a>
                         <div class="h-px bg-slate-100 dark:bg-slate-800 my-2 mx-4"></div>
                         <a href="/logout"
                             class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 transition font-bold text-sm">
                             <span
-                                class="bg-red-100 dark:bg-red-900/50 text-red-500 dark:text-red-400 p-2 rounded-xl text-xs">⏻</span>
+                                class="bg-red-100 dark:bg-red-900/50 text-red-500 dark:text-red-400 p-2 rounded-xl text-xs flex items-center justify-center w-8 h-8"><i
+                                    class="bi bi-power"></i></span>
                             Log out
                         </a>
                     </div>
@@ -143,20 +146,27 @@
                     <nav class="flex flex-col space-y-2">
                         <a href="/dashboard"
                             class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-slate-600 dark:text-slate-400 hover:text-violet-700 dark:hover:text-violet-400 border border-transparent transition font-bold">
-                            <span class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs">📊</span> Dashboard
+                            <span
+                                class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs flex items-center justify-center w-8 h-8"><i
+                                    class="bi bi-grid-1x2-fill"></i></span> Dashboard
                         </a>
                         <a href="/templates"
                             class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-slate-600 dark:text-slate-400 hover:text-violet-700 dark:hover:text-violet-400 border border-transparent transition font-bold">
-                            <span class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs">🏗️</span> Templates
+                            <span
+                                class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs flex items-center justify-center w-8 h-8"><i
+                                    class="bi bi-layout-text-window-reverse"></i></span> Templates
                         </a>
                         <a href="/settings"
                             class="flex items-center gap-3 px-5 py-4 rounded-2xl bg-violet-600 text-white font-bold transition">
-                            <span class="p-2 bg-white/20 rounded-xl text-xs">⚙️</span> Settings
+                            <span class="p-2 bg-white/20 rounded-xl text-xs flex items-center justify-center w-8 h-8"><i
+                                    class="bi bi-gear-fill"></i></span> Settings
                         </a>
                         <div class="h-px bg-slate-100 dark:bg-slate-800 my-2"></div>
                         <a href="/profile"
                             class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-slate-600 dark:text-slate-400 hover:text-violet-700 dark:hover:text-violet-400 border border-transparent transition font-bold">
-                            <span class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs">👤</span> Profile
+                            <span
+                                class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs flex items-center justify-center w-8 h-8"><i
+                                    class="bi bi-person-fill"></i></span> Profile
                         </a>
 
                         <div class="h-px bg-slate-100 dark:bg-slate-800 my-2"></div>
@@ -168,12 +178,12 @@
                             <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl w-full">
                                 <button onclick="setTheme('light')"
                                     class="theme-btn light flex-1 flex items-center justify-center gap-2 py-3 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
-                                    <span class="text-sm">☀️</span>
+                                    <i class="bi bi-sun-fill text-sm"></i>
                                     <span class="text-xs font-bold">Light</span>
                                 </button>
                                 <button onclick="setTheme('dark')"
                                     class="theme-btn dark flex-1 flex items-center justify-center gap-2 py-3 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
-                                    <span class="text-sm">🌙</span>
+                                    <i class="bi bi-moon-stars-fill text-sm"></i>
                                     <span class="text-xs font-bold">Dark</span>
                                 </button>
                             </div>
@@ -183,7 +193,9 @@
 
                         <a href="/logout"
                             class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 transition font-bold">
-                            <span class="p-2 bg-red-100 dark:bg-red-900/50 rounded-xl text-xs">⏻</span> Log Out
+                            <span
+                                class="p-2 bg-red-100 dark:bg-red-900/50 rounded-xl text-xs flex items-center justify-center w-8 h-8"><i
+                                    class="bi bi-power"></i></span> Log Out
                         </a>
                     </nav>
                 </div>
@@ -204,7 +216,7 @@
                 {% for message in messages %}
                 <div
                     class="mb-8 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 rounded-2xl text-sm font-bold flex items-center gap-3 animate-fade-in-up">
-                    <span>✅</span> {{ message }}
+                    <span><i class="bi bi-check-circle-fill"></i></span> {{ message }}
                 </div>
                 {% endfor %}
                 {% endif %}
@@ -336,7 +348,8 @@
             <div class="text-center mb-6">
                 <div
                     class="w-16 h-16 bg-rose-50 dark:bg-rose-900/20 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl">
-                    ⚠️</div>
+                    <i class="bi bi-exclamation-triangle-fill text-rose-500"></i>
+                </div>
                 <h3 class="text-2xl font-black text-slate-900 dark:text-slate-100 mb-2">Delete Permanently?</h3>
                 <p class="text-sm font-bold text-slate-500 dark:text-slate-400">This action is irreversible. All your
                     projects, settings, and profile data will be erased forever.</p>
@@ -459,20 +472,31 @@
             }
         }
 
+        // Mobile Menu Logic
+        const toggleMenu = () => {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('menu-icon');
+            const isHidden = menu.classList.contains('hidden');
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                icon.setAttribute('d', 'M6 18L18 6M6 6l12 12');
+            } else {
+                menu.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+                icon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+            }
+        };
+        const mbtn = document.getElementById('mobile-menu-btn');
+        if (mbtn) mbtn.onclick = toggleMenu;
+
         (function () {
             const wrapper = document.getElementById('profile-menu-wrapper');
             const toggle = document.getElementById('profile-toggle');
             const dropdown = document.getElementById('profile-dropdown');
             if (!wrapper || !toggle || !dropdown) return;
-            let leaveTimeout;
-            function show() { clearTimeout(leaveTimeout); dropdown.classList.remove('hidden'); const saved = localStorage.getItem('theme') || 'system'; updateThemeUI(saved); }
-            function hide() { leaveTimeout = setTimeout(() => { dropdown.classList.add('hidden'); }, 200); }
-            wrapper.addEventListener('mouseenter', show);
-            wrapper.addEventListener('mouseleave', hide);
-            toggle.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); dropdown.classList.toggle('hidden'); });
-            dropdown.addEventListener('mouseenter', show);
-            dropdown.addEventListener('mouseleave', hide);
-            document.addEventListener('click', (e) => { if (!wrapper.contains(e.target)) { dropdown.classList.add('hidden'); } });
+            wrapper.addEventListener('mouseenter', () => dropdown.classList.remove('hidden'));
+            wrapper.addEventListener('mouseleave', () => dropdown.classList.add('hidden'));
         })();
     </script>
     <style>

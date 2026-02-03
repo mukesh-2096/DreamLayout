@@ -44,6 +44,7 @@
         }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body {
             font-family: 'Outfit', sans-serif;
@@ -81,30 +82,33 @@
     class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-violet-100 dark:selection:bg-violet-900 transition-colors duration-300 overflow-x-hidden">
 
     <!-- ================= NAVBAR ================= -->
-    <header class="fixed top-0 left-0 w-full z-50 px-6 py-4">
+    <header class="fixed top-0 left-0 w-full z-[100] px-4 py-4 md:py-6 pointer-events-none">
         <nav
-            class="max-w-7xl mx-auto glass border border-white/20 rounded-full px-6 py-3 flex items-center justify-between shadow-lg shadow-slate-200/50 dark:shadow-none">
-            <div class="flex items-center space-x-3">
-                <img src="/static/logo.png" alt="DreamLayout" class="h-8 md:h-10 dark:brightness-110">
+            class="max-w-7xl mx-auto glass border border-white/20 dark:border-slate-800 rounded-full px-4 md:px-6 py-2 md:py-3 flex items-center justify-between shadow-2xl shadow-slate-200/50 dark:shadow-none pointer-events-auto">
+            <div class="flex items-center space-x-2 md:space-x-3">
+                <img src="/static/logo.png" alt="DreamLayout" class="h-7 md:h-10 dark:brightness-110">
                 <span
-                    class="text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-700 to-indigo-700 dark:from-violet-400 dark:to-indigo-400">DreamLayout</span>
+                    class="text-base md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-violet-700 to-indigo-700 dark:from-violet-400 dark:to-indigo-400">DreamLayout</span>
             </div>
 
             <!-- Desktop Links -->
-            <div class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-600 dark:text-slate-400">
+            <div class="hidden md:flex items-center space-x-8 text-sm font-bold text-slate-600 dark:text-slate-400">
                 <a href="#features" class="hover:text-violet-600 dark:hover:text-violet-400 transition">Features</a>
                 <a href="#how-it-works" class="hover:text-violet-600 dark:hover:text-violet-400 transition">How it
                     Works</a>
                 <a href="/templates" class="hover:text-violet-600 dark:hover:text-violet-400 transition">Templates</a>
             </div>
 
-            <div class="flex items-center space-x-2 md:space-x-4">
+            <div class="flex items-center space-x-2">
                 <!-- Theme Toggle (Desktop) -->
-                <div class="hidden md:flex bg-slate-100 dark:bg-slate-800 p-1 rounded-full items-center">
+                <div
+                    class="hidden md:flex bg-slate-100 dark:bg-slate-800 p-1 rounded-full items-center border border-slate-200 dark:border-slate-700">
                     <button onclick="setTheme('light')"
-                        class="theme-btn light w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all hover:bg-white dark:hover:bg-slate-700">☀️</button>
+                        class="theme-btn light w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all hover:bg-white dark:hover:bg-slate-700"><i
+                            class="bi bi-sun-fill"></i></button>
                     <button onclick="setTheme('dark')"
-                        class="theme-btn dark w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all hover:bg-white dark:hover:bg-slate-700">🌙</button>
+                        class="theme-btn dark w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all hover:bg-white dark:hover:bg-slate-700"><i
+                            class="bi bi-moon-stars-fill"></i></button>
                 </div>
 
                 <!-- Auth Buttons -->
@@ -112,15 +116,15 @@
                     <a href="/login"
                         class="px-4 py-2.5 rounded-full text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 transition">Login</a>
                     <a href="/signup"
-                        class="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-violet-200 dark:shadow-none transition">Get
+                        class="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-full text-sm font-black shadow-lg shadow-violet-200 dark:shadow-none transition uppercase tracking-widest text-[10px]">Get
                         Started</a>
                 </div>
 
                 <!-- Mobile Menu Toggle -->
                 <button id="mobile-menu-btn"
-                    class="md:hidden p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    class="md:hidden p-2.5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all active:scale-95 border border-slate-100 dark:border-slate-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                             d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
@@ -128,46 +132,48 @@
         </nav>
 
         <!-- Mobile Menu Overlay -->
-        <div id="mobile-menu"
-            class="hidden md:hidden absolute top-24 left-6 right-6 glass border border-white/20 rounded-3xl p-6 shadow-2xl animate-fade-in-up z-50">
-            <nav class="flex flex-col space-y-4">
-                <a href="#features"
-                    class="px-4 py-3 rounded-xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-lg font-bold text-slate-700 dark:text-slate-300 transition">Features</a>
-                <a href="#how-it-works"
-                    class="px-4 py-3 rounded-xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-lg font-bold text-slate-700 dark:text-slate-300 transition">How
-                    it Works</a>
-                <a href="/templates"
-                    class="px-4 py-3 rounded-xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-lg font-bold text-slate-700 dark:text-slate-300 transition">Templates</a>
+        <div id="mobile-menu" class="hidden fixed inset-0 z-[60] md:hidden">
+            <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="toggleMenu()"></div>
+            <div
+                class="absolute top-24 left-4 right-4 bg-white dark:bg-slate-950 backdrop-blur-2xl border border-white/50 dark:border-slate-800 rounded-[2.5rem] p-6 shadow-2xl animate-fade-in-up">
+                <nav class="flex flex-col space-y-4">
+                    <a href="#features" onclick="toggleMenu()"
+                        class="px-4 py-3 rounded-xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-lg font-bold text-slate-700 dark:text-slate-300 transition">Features</a>
+                    <a href="#how-it-works" onclick="toggleMenu()"
+                        class="px-4 py-3 rounded-xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-lg font-bold text-slate-700 dark:text-slate-300 transition">How
+                        it Works</a>
+                    <a href="/templates"
+                        class="px-4 py-3 rounded-xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-lg font-bold text-slate-700 dark:text-slate-300 transition">Templates</a>
 
-                <div class="h-px bg-slate-100 dark:bg-slate-800 my-2"></div>
+                    <div class="h-px bg-slate-100 dark:bg-slate-800 my-2"></div>
 
-                <!-- Theme Toggle (Mobile) -->
-                <div class="px-4 py-2">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Appearance</p>
-                    <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl w-full">
-                        <button onclick="setTheme('light')"
-                            class="theme-btn light flex-1 flex items-center justify-center gap-2 py-3 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
-                            <span class="text-sm">☀️</span>
-                            <span class="text-xs font-bold">Light</span>
-                        </button>
-                        <button onclick="setTheme('dark')"
-                            class="theme-btn dark flex-1 flex items-center justify-center gap-2 py-3 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
-                            <span class="text-sm">🌙</span>
-                            <span class="text-xs font-bold">Dark</span>
-                        </button>
+                    <!-- Theme Toggle (Mobile) -->
+                    <div class="px-4 py-2">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Appearance</p>
+                        <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl w-full">
+                            <button onclick="setTheme('light')"
+                                class="theme-btn light flex-1 flex items-center justify-center gap-2 py-3 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
+                                <i class="bi bi-sun-fill text-sm"></i>
+                                <span class="text-xs font-bold">Light</span>
+                            </button>
+                            <button onclick="setTheme('dark')"
+                                class="theme-btn dark flex-1 flex items-center justify-center gap-2 py-3 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
+                                <i class="bi bi-moon-stars-fill text-sm"></i>
+                                <span class="text-xs font-bold">Dark</span>
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="h-px bg-slate-100 dark:bg-slate-800 my-2"></div>
-                <div class="flex flex-col space-y-2">
-                    <a href="/login"
-                        class="px-4 py-3 rounded-xl text-center font-bold text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition">Login</a>
-                    <a href="/signup"
-                        class="px-4 py-3 rounded-xl text-center font-bold text-white bg-violet-600 transition">Get
-                        Started Free</a>
-                </div>
-            </nav>
-        </div>
+                    <div class="h-px bg-slate-100 dark:bg-slate-800 my-2"></div>
+                    <div class="flex flex-col space-y-2">
+                        <a href="/login"
+                            class="px-4 py-3 rounded-xl text-center font-bold text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition">Login</a>
+                        <a href="/signup"
+                            class="px-4 py-3 rounded-xl text-center font-bold text-white bg-violet-600 transition">Get
+                            Started Free</a>
+                    </div>
+                </nav>
+            </div>
     </header>
 
     <!-- Flash Messages -->
@@ -178,8 +184,11 @@
         <div
             class="mb-4 p-4 rounded-2xl text-sm font-bold flex items-center gap-3 animate-fade-in-up border glass pointer-events-auto shadow-2xl
             {{ 'bg-emerald-50/90 dark:bg-emerald-900/40 border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400' if category == 'success' else 'bg-rose-50/90 dark:bg-rose-900/40 border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400' }}">
-            <span>{{ '✅' if category == 'success' else '⚠️' }}</span> {{ message }}
-            <button onclick="this.parentElement.remove()" class="ml-auto hover:opacity-70 transition">✕</button>
+            <span><i
+                    class="bi {{ 'bi-check-circle-fill' if category == 'success' else 'bi-exclamation-triangle-fill' }}"></i></span>
+            {{ message }}
+            <button onclick="this.parentElement.remove()" class="ml-auto hover:opacity-70 transition"><i
+                    class="bi bi-x-lg"></i></button>
         </div>
         {% endfor %}
         {% endif %}
@@ -250,7 +259,8 @@
                     class="p-10 rounded-3xl bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 transition-all group">
                     <div
                         class="w-16 h-16 bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 rounded-2xl flex items-center justify-center text-3xl mb-8 group-hover:scale-110 transition">
-                        ✨</div>
+                        <i class="bi bi-stars"></i>
+                    </div>
                     <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">Intelligent Designs</h3>
                     <p class="text-slate-500 dark:text-slate-400 leading-relaxed text-lg">Input area, venture type
                         (office, home, etc.), and requirements. AI generates tailored layouts that respect architectural
@@ -262,7 +272,8 @@
                     class="p-10 rounded-3xl bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 transition-all group">
                     <div
                         class="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center text-3xl mb-8 group-hover:scale-110 transition">
-                        📊</div>
+                        <i class="bi bi-bar-chart-fill"></i>
+                    </div>
                     <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">Realistic Cost Plans</h3>
                     <p class="text-slate-500 dark:text-slate-400 leading-relaxed text-lg">Get instant construction cost
                         estimations based on current market data and your optional target budget settings.</p>
@@ -273,7 +284,8 @@
                     class="p-10 rounded-3xl bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-800 transition-all group">
                     <div
                         class="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center text-3xl mb-8 group-hover:scale-110 transition">
-                        📁</div>
+                        <i class="bi bi-folder2-open"></i>
+                    </div>
                     <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">Reference Library</h3>
                     <p class="text-slate-500 dark:text-slate-400 leading-relaxed text-lg">Browse our curated library of
                         previously designed layouts for inspiration and rapid referencing for your new projects.</p>
@@ -417,28 +429,21 @@
         }
 
         // Mobile Menu Logic
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const menuIcon = document.getElementById('menu-icon');
-
-        mobileMenuBtn.onclick = () => {
-            const isHidden = mobileMenu.classList.contains('hidden');
+        const toggleMenu = () => {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('menu-icon');
+            const isHidden = menu.classList.contains('hidden');
             if (isHidden) {
-                mobileMenu.classList.remove('hidden');
-                menuIcon.setAttribute('d', 'M6 18L18 6M6 6l12 12'); // X icon
+                menu.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                icon.setAttribute('d', 'M6 18L18 6M6 6l12 12');
             } else {
-                mobileMenu.classList.add('hidden');
-                menuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16'); // Burger icon
+                menu.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+                icon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
             }
         };
-
-        // Close menu on link click
-        mobileMenu.querySelectorAll('a').forEach(link => {
-            link.onclick = () => {
-                mobileMenu.classList.add('hidden');
-                menuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
-            };
-        });
+        document.getElementById('mobile-menu-btn').onclick = toggleMenu;
     </script>
 
 </body>
