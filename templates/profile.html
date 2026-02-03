@@ -19,6 +19,7 @@
         }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body {
             font-family: 'Outfit', sans-serif;
@@ -105,17 +106,17 @@
                             <div class="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl">
                                 <button onclick="setTheme('light')"
                                     class="theme-btn light flex flex-col items-center justify-center py-2 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
-                                    <span class="text-sm">☀️</span>
+                                    <i class="bi bi-sun-fill text-sm"></i>
                                     <span class="text-[9px] font-bold mt-1">Light</span>
                                 </button>
                                 <button onclick="setTheme('dark')"
                                     class="theme-btn dark flex flex-col items-center justify-center py-2 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
-                                    <span class="text-sm">🌙</span>
+                                    <i class="bi bi-moon-stars-fill text-sm"></i>
                                     <span class="text-[9px] font-bold mt-1">Dark</span>
                                 </button>
                                 <button onclick="setTheme('system')"
                                     class="theme-btn system flex flex-col items-center justify-center py-2 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
-                                    <span class="text-sm">💻</span>
+                                    <i class="bi bi-display text-sm"></i>
                                     <span class="text-[9px] font-bold mt-1">Auto</span>
                                 </button>
                             </div>
@@ -126,14 +127,16 @@
                         <a href="/dashboard"
                             class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-slate-600 dark:text-slate-400 hover:text-violet-700 dark:hover:text-violet-400 transition font-bold text-sm">
                             <span
-                                class="bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 p-2 rounded-xl text-xs">📊</span>
+                                class="bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 p-2 rounded-xl text-xs flex items-center justify-center w-8 h-8"><i
+                                    class="bi bi-grid-1x2-fill"></i></span>
                             Dashboard
                         </a>
                         <div class="h-px bg-slate-100 dark:bg-slate-800 my-2 mx-4"></div>
                         <a href="/logout"
                             class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 transition font-bold text-sm">
                             <span
-                                class="bg-red-100 dark:bg-red-900/50 text-red-500 dark:text-red-400 p-2 rounded-xl text-xs">⏻</span>
+                                class="bg-red-100 dark:bg-red-900/50 text-red-500 dark:text-red-400 p-2 rounded-xl text-xs flex items-center justify-center w-8 h-8"><i
+                                    class="bi bi-power"></i></span>
                             Log out
                         </a>
                     </div>
@@ -145,20 +148,27 @@
                     <nav class="flex flex-col space-y-2">
                         <a href="/dashboard"
                             class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-slate-600 dark:text-slate-400 hover:text-violet-700 dark:hover:text-violet-400 border border-transparent transition font-bold">
-                            <span class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs">📊</span> Dashboard
+                            <span
+                                class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs flex items-center justify-center w-8 h-8"><i
+                                    class="bi bi-grid-1x2-fill"></i></span> Dashboard
                         </a>
                         <a href="/templates"
                             class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-slate-600 dark:text-slate-400 hover:text-violet-700 dark:hover:text-violet-400 border border-transparent transition font-bold">
-                            <span class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs">🏗️</span> Templates
+                            <span
+                                class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs flex items-center justify-center w-8 h-8"><i
+                                    class="bi bi-layout-text-window-reverse"></i></span> Templates
                         </a>
                         <a href="/settings"
                             class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-violet-50 dark:hover:bg-violet-900/30 text-slate-600 dark:text-slate-400 hover:text-violet-700 dark:hover:text-violet-400 border border-transparent transition font-bold">
-                            <span class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs">⚙️</span> Settings
+                            <span
+                                class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs flex items-center justify-center w-8 h-8"><i
+                                    class="bi bi-gear-fill"></i></span> Settings
                         </a>
                         <div class="h-px bg-slate-100 dark:bg-slate-800 my-2"></div>
                         <a href="/profile"
                             class="flex items-center gap-3 px-5 py-4 rounded-2xl bg-violet-600 text-white font-bold transition">
-                            <span class="p-2 bg-white/20 rounded-xl text-xs">👤</span> Profile
+                            <span class="p-2 bg-white/20 rounded-xl text-xs flex items-center justify-center w-8 h-8"><i
+                                    class="bi bi-person-fill"></i></span> Profile
                         </a>
 
                         <div class="h-px bg-slate-100 dark:bg-slate-800 my-2"></div>
@@ -170,12 +180,12 @@
                             <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl w-full">
                                 <button onclick="setTheme('light')"
                                     class="theme-btn light flex-1 flex items-center justify-center gap-2 py-3 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
-                                    <span class="text-sm">☀️</span>
+                                    <i class="bi bi-sun-fill text-sm"></i>
                                     <span class="text-xs font-bold">Light</span>
                                 </button>
                                 <button onclick="setTheme('dark')"
                                     class="theme-btn dark flex-1 flex items-center justify-center gap-2 py-3 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
-                                    <span class="text-sm">🌙</span>
+                                    <i class="bi bi-moon-stars-fill text-sm"></i>
                                     <span class="text-xs font-bold">Dark</span>
                                 </button>
                             </div>
@@ -185,7 +195,9 @@
 
                         <a href="/logout"
                             class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 transition font-bold">
-                            <span class="p-2 bg-red-100 dark:bg-red-900/50 rounded-xl text-xs">⏻</span> Log Out
+                            <span
+                                class="p-2 bg-red-100 dark:bg-red-900/50 rounded-xl text-xs flex items-center justify-center w-8 h-8"><i
+                                    class="bi bi-power"></i></span> Log Out
                         </a>
                     </nav>
                 </div>
@@ -210,7 +222,9 @@
                     <div
                         class="p-4 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-3 animate-fade-in-up border
                         {{ 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400' if category == 'success' else 'bg-rose-50 dark:bg-rose-900/20 border-rose-100 dark:border-rose-800 text-rose-600 dark:text-rose-400' }}">
-                        <span>{{ '✅' if category == 'success' else '⚠️' }}</span> {{ message }}
+                        <span><i
+                                class="bi {{ 'bi-check-circle-fill' if category == 'success' else 'bi-exclamation-triangle-fill' }}"></i></span>
+                        {{ message }}
                     </div>
                     {% endfor %}
                 </div>
@@ -253,7 +267,8 @@
                     <div class="flex items-center gap-4 text-slate-600 dark:text-slate-400">
                         <div
                             class="w-10 h-10 bg-slate-100 dark:bg-slate-700 rounded-xl flex items-center justify-center">
-                            📍</div>
+                            <i class="bi bi-geo-alt-fill"></i>
+                        </div>
                         <div>
                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Location</p>
                             <p class="text-sm font-extrabold text-slate-700 dark:text-slate-300">{{
@@ -263,7 +278,8 @@
                     <div class="flex items-center gap-4 text-slate-600 dark:text-slate-400">
                         <div
                             class="w-10 h-10 bg-slate-100 dark:bg-slate-700 rounded-xl flex items-center justify-center">
-                            🗓️</div>
+                            <i class="bi bi-calendar3"></i>
+                        </div>
                         <div>
                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Member Since</p>
                             <p class="text-sm font-extrabold text-slate-700 dark:text-slate-300">January 2026</p>
@@ -296,7 +312,7 @@
                             <div class="flex items-center gap-6">
                                 <div
                                     class="w-16 h-16 rounded-[1.5rem] bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-2xl group-hover:scale-110 transition">
-                                    🏗️
+                                    <i class="bi bi-layout-text-window-reverse"></i>
                                 </div>
                                 <div>
                                     <div class="flex items-center gap-3">
@@ -328,7 +344,7 @@
                             <div class="flex items-center gap-6">
                                 <div
                                     class="w-16 h-16 rounded-[1.5rem] bg-rose-50 dark:bg-rose-900/20 text-rose-500 dark:text-rose-400 flex items-center justify-center text-2xl group-hover:scale-110 transition">
-                                    ❤️
+                                    <i class="bi bi-heart-fill"></i>
                                 </div>
                                 <div>
                                     <h3
@@ -349,13 +365,13 @@
                     </a>
 
                     <!-- Reset Password (Authentication) -->
-                    <a href="javascript:void(0)" onclick="showToast('This feature is under development 🏗️', 'info')"
+                    <a href="javascript:void(0)" onclick="showToast('This feature is under development', 'bi-hammer')"
                         class="group block p-8 bg-white dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 rounded-[2.5rem] hover:border-violet-500 dark:hover:border-violet-600 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-6">
                                 <div
                                     class="w-16 h-16 rounded-[1.5rem] bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400 flex items-center justify-center text-2xl group-hover:scale-110 transition">
-                                    🔒
+                                    <i class="bi bi-shield-lock-fill"></i>
                                 </div>
                                 <div>
                                     <h3
@@ -382,7 +398,7 @@
                             <div class="flex items-center gap-6">
                                 <div
                                     class="w-16 h-16 rounded-[1.5rem] bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-2xl group-hover:scale-110 transition">
-                                    ⚙️
+                                    <i class="bi bi-gear-fill"></i>
                                 </div>
                                 <div>
                                     <h3
@@ -515,53 +531,30 @@
         }
 
         // Mobile Menu Logic
-        (function () {
-            const btn = document.getElementById('mobile-menu-btn');
+        const toggleMenu = () => {
             const menu = document.getElementById('mobile-menu');
             const icon = document.getElementById('menu-icon');
-            if (!btn || !menu || !icon) return;
-
-            btn.onclick = () => {
-                const isHidden = menu.classList.contains('hidden');
-                if (isHidden) {
-                    menu.classList.remove('hidden');
-                    icon.setAttribute('d', 'M6 18L18 6M6 6l12 12');
-                } else {
-                    menu.classList.add('hidden');
-                    icon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
-                }
-            };
-        })();
+            const isHidden = menu.classList.contains('hidden');
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                icon.setAttribute('d', 'M6 18L18 6M6 6l12 12');
+            } else {
+                menu.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+                icon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+            }
+        };
+        const mbtn = document.getElementById('mobile-menu-btn');
+        if (mbtn) mbtn.onclick = toggleMenu;
 
         (function () {
             const wrapper = document.getElementById('profile-menu-wrapper');
             const toggle = document.getElementById('profile-toggle');
             const dropdown = document.getElementById('profile-dropdown');
             if (!wrapper || !toggle || !dropdown) return;
-            let leaveTimeout;
-            function show() {
-                clearTimeout(leaveTimeout);
-                dropdown.classList.remove('hidden');
-                const saved = localStorage.getItem('theme') || 'system';
-                updateThemeUI(saved);
-            }
-            function hide() { leaveTimeout = setTimeout(() => { dropdown.classList.add('hidden'); }, 200); }
-            wrapper.addEventListener('mouseenter', show);
-            wrapper.addEventListener('mouseleave', hide);
-            toggle.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (dropdown.classList.contains('hidden')) {
-                    show();
-                } else {
-                    dropdown.classList.add('hidden');
-                }
-            });
-            dropdown.addEventListener('mouseenter', show);
-            dropdown.addEventListener('mouseleave', hide);
-            document.addEventListener('click', (e) => {
-                if (!wrapper.contains(e.target)) { dropdown.classList.add('hidden'); }
-            });
+            wrapper.addEventListener('mouseenter', () => dropdown.classList.remove('hidden'));
+            wrapper.addEventListener('mouseleave', () => dropdown.classList.add('hidden'));
         })();
 
         function openProjectsModal() {
@@ -573,9 +566,14 @@
             document.body.style.overflow = 'auto';
         }
 
-        function showToast(msg, type = 'success') {
+        function showToast(msg, iconClass = 'bi-stars') {
             const toast = document.getElementById('toast');
             if (toast) {
+                const iconContainer = document.getElementById('toast-icon');
+                if (iconContainer) {
+                    iconContainer.className = `w-10 h-10 bg-violet-100 dark:bg-violet-900/30 rounded-2xl flex items-center justify-center text-xl bi ${iconClass}`;
+                    iconContainer.innerText = '';
+                }
                 document.getElementById('toast-msg').innerText = msg;
                 toast.classList.remove('translate-x-full');
                 setTimeout(() => toast.classList.add('translate-x-full'), 3000);
@@ -622,7 +620,7 @@
                                     <img src="{{ project.thumbnail }}" class="w-full h-full object-contain"
                                         alt="Preview">
                                     {% else %}
-                                    <span class="text-3xl">🏗️</span>
+                                    <i class="bi bi-layout-text-window-reverse text-2xl"></i>
                                     {% endif %}
                                 </div>
                                 <div class="flex-1 overflow-hidden">
@@ -647,7 +645,8 @@
                     <div class="flex flex-col items-center justify-center py-20 text-center">
                         <div
                             class="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-[2.5rem] flex items-center justify-center text-5xl mb-6 shadow-inner">
-                            ✍️</div>
+                            <i class="bi bi-pencil-square"></i>
+                        </div>
                         <h4 class="text-xl font-black text-slate-900 dark:text-slate-100 mb-2">No projects yet</h4>
                         <p class="text-sm font-bold text-slate-400 max-w-xs">Start your first architectural generation
                             to see it in your portfolio.</p>
@@ -701,12 +700,10 @@
     <div id="toast" class="fixed bottom-10 right-10 z-[100] transition-all transform translate-x-full">
         <div
             class="glass dark:bg-slate-900/80 border border-white dark:border-slate-800 rounded-3xl px-8 py-5 shadow-2xl flex items-center gap-4">
-            <div class="w-10 h-10 bg-violet-100 dark:bg-violet-900/30 rounded-2xl flex items-center justify-center text-xl"
-                id="toast-icon">
-                ✨
-            </div>
-            <span id="toast-msg" class="text-sm font-bold text-slate-900 dark:text-slate-100">Action completed!</span>
+            <i class="bi bi-stars"></i>
         </div>
+        <span id="toast-msg" class="text-sm font-bold text-slate-900 dark:text-slate-100">Action completed!</span>
+    </div>
     </div>
 
 </body>

@@ -19,6 +19,7 @@
         }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body {
             font-family: 'Outfit', sans-serif;
@@ -69,102 +70,113 @@
     </div>
 
     <!-- ================= NAVBAR ================= -->
-    <nav class="fixed top-0 left-0 w-full z-50 px-6 py-4">
+    <nav class="fixed top-0 left-0 w-full z-[100] px-4 py-4 md:py-6 pointer-events-none">
         <div
-            class="max-w-7xl mx-auto glass border border-white/40 rounded-full px-6 py-3 flex items-center justify-between shadow-xl shadow-slate-200/40">
-            <a href="/dashboard" class="flex items-center gap-3">
-                <img src="/static/logo.png" alt="DreamLayout" class="h-10 dark:brightness-110">
+            class="max-w-7xl mx-auto glass border border-white/40 dark:border-slate-800 rounded-full px-4 md:px-6 py-2 md:py-3 flex items-center justify-between shadow-2xl shadow-slate-200/40 pointer-events-auto">
+
+            <a href="/dashboard" class="flex items-center gap-2 md:gap-3 group shrink-0">
+                <img src="/static/logo.png" alt="DreamLayout"
+                    class="h-7 md:h-10 w-auto group-hover:scale-110 transition dark:brightness-110">
                 <span
-                    class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-700 to-indigo-700 dark:from-violet-400 dark:to-indigo-400">DreamLayout</span>
+                    class="text-base md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-violet-700 to-indigo-700 dark:from-violet-400 dark:to-indigo-400">DreamLayout</span>
             </a>
+
             <div class="hidden md:flex items-center space-x-1">
                 <a href="/dashboard"
                     class="px-5 py-2 rounded-full text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-white dark:hover:bg-slate-800 transition-all text-sm font-bold">Dashboard</a>
                 <a href="/templates"
                     class="px-5 py-2 rounded-full bg-violet-600 text-white font-bold text-sm">Templates</a>
             </div>
-            <!-- Mobile Menu Toggle -->
-            <button id="mobile-menu-btn"
-                class="md:hidden p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            </button>
 
-            {% if current_user %}
-            <div id="profile-menu-wrapper" class="hidden md:block relative group">
-                <button id="profile-toggle"
-                    class="flex items-center gap-3 focus:outline-none pl-2 pr-1 py-1 rounded-full border border-white dark:border-slate-800 bg-white/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md transition-all">
-                    <div class="hidden md:block text-right">
-                        <p class="text-xs font-bold text-slate-900 dark:text-slate-100 leading-none">{{
-                            current_user.name }}</p>
-                    </div>
-                    <div
-                        class="w-9 h-9 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-full flex items-center justify-center text-white font-bold overflow-hidden shadow-sm">
-                        {% if current_user.profile_pic %}
-                        <img src="{{ (current_user.profile_pic if 'http' in current_user.profile_pic else '/static/' + current_user.profile_pic) }}"
-                            class="w-full h-full object-cover">
-                        {% else %} {{ current_user.name[0].upper() }} {% endif %}
-                    </div>
+            <div class="flex items-center space-x-2">
+                <!-- Mobile Menu Toggle -->
+                <button id="mobile-menu-btn"
+                    class="md:hidden p-2.5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all active:scale-95 border border-slate-100 dark:border-slate-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
                 </button>
-                <div id="profile-dropdown"
-                    class="hidden absolute right-0 mt-4 w-64 bg-white dark:bg-slate-950 rounded-[2rem] shadow-2xl border border-white/50 dark:border-slate-800 p-3 z-50 animate-fade-in-up">
-                    <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-800 mb-2">
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Account</p>
-                        <p class="text-sm font-bold text-slate-900 dark:text-slate-200 truncate">{{ current_user.email
-                            }}</p>
-                    </div>
 
-                    <!-- Appearance -->
-                    <div class="px-2 mb-2">
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 px-2">Appearance
-                        </p>
-                        <div class="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl">
-                            <button onclick="setTheme('light')"
-                                class="theme-btn light flex flex-col items-center justify-center py-2 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
-                                <span class="text-sm">☀️</span>
-                                <span class="text-[9px] font-bold mt-1">Light</span>
-                            </button>
-                            <button onclick="setTheme('dark')"
-                                class="theme-btn dark flex flex-col items-center justify-center py-2 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
-                                <span class="text-sm">🌙</span>
-                                <span class="text-[9px] font-bold mt-1">Dark</span>
-                            </button>
-                            <button onclick="setTheme('system')"
-                                class="theme-btn system flex flex-col items-center justify-center py-2 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
-                                <span class="text-sm">💻</span>
-                                <span class="text-[9px] font-bold mt-1">Auto</span>
-                            </button>
+                <!-- Profile + Dropdown (Desktop) -->
+                {% if current_user %}
+                <div id="profile-menu-wrapper" class="hidden md:block relative group">
+                    <button id="profile-toggle"
+                        class="flex items-center gap-3 focus:outline-none pl-2 pr-1 py-1 rounded-full border border-white dark:border-slate-800 bg-white/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md transition-all">
+                        <div
+                            class="w-9 h-9 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-full flex items-center justify-center text-white font-bold shadow-sm overflow-hidden shrink-0">
+                            {% if current_user.profile_pic %}
+                            <img src="{{ (current_user.profile_pic if 'http' in current_user.profile_pic else '/static/' + current_user.profile_pic) }}"
+                                alt="Profile" class="w-full h-full object-cover">
+                            {% else %}
+                            <span class="text-sm">{{ current_user.name[0].upper() }}</span>
+                            {% endif %}
                         </div>
+                    </button>
+                    <div id="profile-dropdown"
+                        class="hidden absolute right-0 mt-4 w-64 bg-white dark:bg-slate-950 rounded-[2rem] shadow-2xl border border-white/50 dark:border-slate-800 p-3 z-50 animate-fade-in-up">
+                        <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-800 mb-2">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Account</p>
+                            <p class="text-sm font-bold text-slate-900 dark:text-slate-200 truncate">{{
+                                current_user.email
+                                }}</p>
+                        </div>
+
+                        <!-- Appearance -->
+                        <div class="px-2 mb-2">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 px-2">
+                                Appearance
+                            </p>
+                            <div class="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl">
+                                <button onclick="setTheme('light')"
+                                    class="theme-btn light flex flex-col items-center justify-center py-2 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
+                                    <i class="bi bi-sun-fill text-sm"></i>
+                                    <span class="text-[9px] font-bold mt-1">Light</span>
+                                </button>
+                                <button onclick="setTheme('dark')"
+                                    class="theme-btn dark flex flex-col items-center justify-center py-2 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
+                                    <i class="bi bi-moon-stars-fill text-sm"></i>
+                                    <span class="text-[9px] font-bold mt-1">Dark</span>
+                                </button>
+                                <button onclick="setTheme('system')"
+                                    class="theme-btn system flex flex-col items-center justify-center py-2 rounded-xl transition-all hover:bg-white dark:hover:bg-slate-700">
+                                    <i class="bi bi-display text-sm"></i>
+                                    <span class="text-[9px] font-bold mt-1">Auto</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="h-px bg-slate-100 dark:bg-slate-800 my-2 mx-4"></div>
+
+                        <a href="/profile"
+                            class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-blue-50 dark:hover:bg-blue-900/30 font-bold text-sm">
+                            <span
+                                class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 p-2 rounded-xl text-xs flex items-center justify-center w-8 h-8"><i
+                                    class="bi bi-person-fill"></i></span>
+                            My Profile
+                        </a>
+                        <a href="/my-projects"
+                            class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-emerald-50 dark:hover:bg-emerald-900/30 font-bold text-sm">
+                            <span
+                                class="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 p-2 rounded-xl text-xs flex items-center justify-center w-8 h-8"><i
+                                    class="bi bi-layout-text-window-reverse"></i></span>
+                            My Projects
+                        </a>
+                        <a href="/logout"
+                            class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 font-bold text-sm">
+                            <span
+                                class="bg-red-100 dark:bg-red-900/50 text-red-600 p-2 rounded-xl text-xs flex items-center justify-center w-8 h-8"><i
+                                    class="bi bi-power"></i></span>
+                            Log out
+                        </a>
                     </div>
-
-                    <div class="h-px bg-slate-100 dark:bg-slate-800 my-2 mx-4"></div>
-
-                    <a href="/profile"
-                        class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-blue-50 dark:hover:bg-blue-900/30 font-bold text-sm">
-                        <span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 p-2 rounded-xl text-xs">👤</span>
-                        My Profile
-                    </a>
-                    <a href="/my-projects"
-                        class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-emerald-50 dark:hover:bg-emerald-900/30 font-bold text-sm">
-                        <span
-                            class="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 p-2 rounded-xl text-xs">🏗️</span>
-                        My Projects
-                    </a>
-                    <a href="/logout"
-                        class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 font-bold text-sm">
-                        <span class="bg-red-100 dark:bg-red-900/50 text-red-600 p-2 rounded-xl text-xs">⏻</span>
-                        Log out
-                    </a>
                 </div>
+                {% endif %}
             </div>
-            {% endif %}
-        </div>
     </nav>
 
-    <!-- ================= MAIN ================= -->
-    <div class="max-w-7xl mx-auto px-6 pt-32 pb-20 relative z-10">
+    <!-- ================= MAIN ================ -->
+    <div class="max-w-7xl mx-auto px-4 md:px-6 pt-24 lg:pt-32 pb-20 relative z-10">
         <div class="mb-12">
             <span class="text-xs font-black text-violet-600 uppercase tracking-[0.3em] block mb-3">Community
                 Library</span>
@@ -173,13 +185,13 @@
                 shared by the community.</p>
         </div>
 
-        <div id="templates-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div id="templates-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {% if public_projects %}
             {% for project in public_projects %}
             <a href="/project/{{ project.id }}"
-                class="group block p-8 bg-white dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 rounded-[3rem] hover:border-violet-500 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+                class="group block p-6 md:p-8 bg-white dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 rounded-[3rem] hover:border-violet-500 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
                 <div
-                    class="aspect-[4/3] bg-slate-50 dark:bg-slate-950 rounded-[2rem] p-6 flex items-center justify-center overflow-hidden mb-8 border border-slate-100 dark:border-slate-800">
+                    class="aspect-[4/3] bg-slate-50 dark:bg-slate-950 rounded-[2rem] p-4 md:p-6 flex items-center justify-center overflow-hidden mb-6 md:mb-8 border border-slate-100 dark:border-slate-800">
                     {% if project.svg_content %}
                     <div class="w-full h-full scale-110 group-hover:scale-125 transition-transform duration-700">
                         {{ project.svg_content | safe }}
@@ -188,7 +200,7 @@
                     <img src="{{ project.thumbnail }}"
                         class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700">
                     {% else %}
-                    <span class="text-4xl">🏗️</span>
+                    <i class="bi bi-layout-text-window-reverse text-4xl text-slate-300"></i>
                     {% endif %}
                 </div>
                 <div class="flex items-center justify-between mb-2">
@@ -205,7 +217,7 @@
             <!-- Fallback templates if no public projects -->
             <div
                 class="col-span-full py-20 text-center bg-white/40 dark:bg-slate-900/40 rounded-[3rem] border border-dashed border-slate-200 dark:border-slate-800">
-                <span class="text-4xl mb-4 block">🏗️</span>
+                <i class="bi bi-layout-text-window-reverse text-4xl mb-4 block text-slate-300"></i>
                 <h3 class="text-xl font-extrabold">The library is evolving</h3>
                 <p class="text-slate-400 font-bold text-sm mt-2 uppercase tracking-widest">Share your first public
                     design to inspire the community.</p>
@@ -215,38 +227,36 @@
     </div>
 
     <script>
-            (function () {
-                const wrapper = document.getElementById('profile-menu-wrapper');
-                const toggle = document.getElementById('profile-toggle');
-                const dropdown = document.getElementById('profile-dropdown');
-                if (!wrapper || !toggle || !dropdown) return;
+        // Mobile Menu Logic
+        const toggleMenu = () => {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('menu-icon');
+            const isHidden = menu.classList.contains('hidden');
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                icon.setAttribute('d', 'M6 18L18 6M6 6l12 12');
+            } else {
+                menu.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+                icon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+            }
+        };
+        const mbtn = document.getElementById('mobile-menu-btn');
+        if (mbtn) mbtn.onclick = toggleMenu;
 
-                let leaveTimeout;
-                function show() {
-                    clearTimeout(leaveTimeout);
-                    dropdown.classList.remove('hidden');
-                    const saved = localStorage.getItem('theme') || 'system';
-                    updateThemeUI(saved);
-                }
-                function hide() { leaveTimeout = setTimeout(() => { dropdown.classList.add('hidden'); }, 300); }
+        {% if current_user %}
+        (function () {
+            const wrapper = document.getElementById('profile-menu-wrapper');
+            const toggle = document.getElementById('profile-toggle');
+            const dropdown = document.getElementById('profile-dropdown');
+            if (!wrapper || !toggle || !dropdown) return;
+            wrapper.addEventListener('mouseenter', () => dropdown.classList.remove('hidden'));
+            wrapper.addEventListener('mouseleave', () => dropdown.classList.add('hidden'));
+        })();
+        {% endif %}
 
-                wrapper.addEventListener('mouseenter', show);
-                wrapper.addEventListener('mouseleave', hide);
-                dropdown.addEventListener('mouseenter', show);
-                dropdown.addEventListener('mouseleave', hide);
-
-                toggle.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    dropdown.classList.toggle('hidden');
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (!wrapper.contains(e.target)) dropdown.classList.add('hidden');
-                });
-            })();
-
-        // Theme and Mobile Menu Logic
+        // Theme Logic
         function setTheme(theme) {
             const html = document.documentElement;
             const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -268,25 +278,6 @@
             });
         }
 
-        (function () {
-            const btn = document.getElementById('mobile-menu-btn');
-            const menu = document.getElementById('mobile-menu');
-            const icon = document.getElementById('menu-icon');
-            if (!btn || !menu || !icon) return;
-
-            btn.onclick = () => {
-                const isHidden = menu.classList.contains('hidden');
-                if (isHidden) {
-                    menu.classList.remove('hidden');
-                    icon.setAttribute('d', 'M6 18L18 6M6 6l12 12');
-                } else {
-                    menu.classList.add('hidden');
-                    icon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
-                }
-            };
-        })();
-
-        // Initial Theme Load
         (function () {
             const saved = localStorage.getItem('theme') || 'system';
             setTheme(saved);
