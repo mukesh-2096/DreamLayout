@@ -798,7 +798,7 @@
                                         id="summary-area-chat" class="font-bold text-violet-600"></span> space.
                                     Everything has been designed following your requirements!
                                 </div>
-                                <div class="bg-violet-50 dark:bg-violet-900/20 p-4 rounded-2xl border border-violet-100 dark:border-violet-800/50 text-sm text-violet-700 dark:text-violet-300 italic font-semibold whitespace-pre-wrap"
+                                <div class="bg-violet-50 dark:bg-violet-900/20 p-4 rounded-2xl border border-violet-100 dark:border-violet-800/50 text-sm text-violet-700 dark:text-violet-300 italic font-semibold whitespace-pre-wrap leading-relaxed shadow-inner"
                                     id="ai-advice-text">
                                     Analyzing architectural flow...
                                 </div>
@@ -833,12 +833,27 @@
                                 Workspace Preview</h4>
                         </div>
                         <div class="flex gap-3">
+                            <a href="/dashboard"
+                                class="px-6 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-red-500 transition flex items-center gap-2">
+                                <i class="bi bi-arrow-left"></i> Exit Workspace
+                            </a>
                             <button onclick="exportPng()"
                                 class="px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-200 transition">Export
                                 PNG</button>
                             <button id="save-btn-2" onclick="openSaveModal()"
                                 class="px-8 py-3 rounded-xl bg-violet-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-violet-700 transition shadow-lg shadow-violet-600/20">Save
                                 Project</button>
+                        </div>
+                    </div>
+
+                    <div id="legend-container" class="hidden px-2 mb-2">
+                        <div
+                            class="glass dark:bg-slate-900/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
+                            <h5 class="text-[9px] font-black uppercase text-slate-400 mb-3 tracking-widest">Design
+                                Legend</h5>
+                            <div id="legend-list" class="flex flex-wrap gap-x-6 gap-y-2">
+                                <!-- Legend items will be injected here -->
+                            </div>
                         </div>
                     </div>
 
@@ -1269,6 +1284,29 @@
                 renderSvg(layout.floors[0].svg);
             } else {
                 renderSvg(layout.svg);
+                updateLegend(layout.rooms);
+            }
+
+            function updateLegend(rooms) {
+                const container = document.getElementById('legend-container');
+                const list = document.getElementById('legend-list');
+                if (!rooms || rooms.length === 0) {
+                    container.classList.add('hidden');
+                    return;
+                }
+
+                container.classList.remove('hidden');
+                list.innerHTML = '';
+                rooms.forEach(room => {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center gap-2 text-[11px] font-bold text-slate-600 dark:text-slate-400';
+                    item.innerHTML = `
+                        <span class="w-5 h-5 rounded-full bg-violet-600 text-white flex items-center justify-center text-[9px]">${room.id}</span>
+                        <span>${room.name}</span>
+                        <span class="text-slate-400 text-[9px] ml-1 font-medium">${room.size}</span>
+                    `;
+                    list.appendChild(item);
+                });
             }
 
             function renderSvg(svgCode) {
@@ -1363,38 +1401,57 @@
 
         function triggerPngDownload(svgContent, filename) {
             return new Promise((resolve) => {
+                // Ensure SVG has proper attributes for rendering
+                if (!svgContent.includes('xmlns=')) {
+                    svgContent = svgContent.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+                }
+
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
                 const img = new Image();
 
-                // Get SVG dimensions
-                const parser = new DOMParser();
-                const svgDoc = parser.parseFromString(svgContent, 'image/svg+xml');
-                const svgElement = svgDoc.documentElement;
-                const width = parseInt(svgElement.getAttribute('width')) || 1200;
-                const height = parseInt(svgElement.getAttribute('height')) || 800;
+                // Get explicit dimensions or defaults
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = svgContent;
+                const svgEl = tempDiv.querySelector('svg');
+                const width = parseInt(svgEl.getAttribute('width')) || 1200;
+                const height = parseInt(svgEl.getAttribute('height')) || 800;
 
-                canvas.width = width * 2; // Higher resolution
-                canvas.height = height * 2;
+                const scale = 2; // High DPI
+                canvas.width = width * scale;
+                canvas.height = height * scale;
 
+                // Embed styles if needed (optional but recommended for complex SVGs)
                 const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
                 const url = URL.createObjectURL(svgBlob);
 
                 img.onload = function () {
-                    ctx.fillStyle = 'white'; // Background for PNG
+                    // Fill background
+                    ctx.fillStyle = '#FFFFFF';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    ctx.scale(2, 2);
+
+                    ctx.scale(scale, scale);
                     ctx.drawImage(img, 0, 0);
 
-                    const pngUrl = canvas.toDataURL('image/png');
-                    const link = document.createElement('a');
-                    link.href = pngUrl;
-                    link.download = filename;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+                    try {
+                        const pngUrl = canvas.toDataURL('image/png', 1.0);
+                        const link = document.createElement('a');
+                        link.href = pngUrl;
+                        link.download = filename;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    } catch (e) {
+                        console.error('PNG conversion failed:', e);
+                        showToast('Export failed. Try copying the screen.', 'bi-x-circle');
+                    }
 
                     URL.revokeObjectURL(url);
+                    resolve();
+                };
+                img.onerror = function () {
+                    console.error('Image load error for SVG');
+                    showToast('Error processing image.', 'bi-x-circle');
                     resolve();
                 };
                 img.src = url;
@@ -1555,7 +1612,7 @@
                 }, 4000);
             }
         }
-        function sendMessage() {
+        async function sendMessage() {
             const chatInput = document.getElementById('chat-input');
             if (chatInput && chatInput.value.trim()) {
                 const msg = chatInput.value.trim();
@@ -1574,35 +1631,32 @@
                 chatInput.value = '';
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-                // Simulated AI thinking
-                setTimeout(() => {
-                    const aiMsg = document.createElement('div');
-                    aiMsg.className = 'flex gap-3 animate-fade-in-up';
-
-                    let responseText = `I'm analyzing your request for the ${generatedLayout?.venture_type || 'custom'} layout. `;
-
-                    const lowerMsg = msg.toLowerCase();
-                    if (lowerMsg.includes('common circulation')) {
-                        responseText += "Common circulation refers to the shared hallways and transit zones that connect different functional areas like shops or offices without passing through private spaces. In this design, I've optimized it for maximum foot traffic efficiency.";
-                    } else if (lowerMsg.includes('entrance')) {
-                        responseText += "The main entrance is strategically placed to align with the primary flow from the North-East corner, ensuring visibility and easy access for all visitors.";
-                    } else if (lowerMsg.includes('wc') || lowerMsg.includes('bathroom')) {
-                        responseText += "The utility and sanitation blocks are grouped near the secondary circulation path to minimize plumbing complexity while remaining accessible.";
-                    } else if (lowerMsg.includes('dimension') || lowerMsg.includes('size')) {
-                        responseText += "I've included the precise dimensions in my initial architectural review above. If you'd like to adjust a specific room size, let me know and I'll recalibrate the layout.";
-                    } else {
-                        responseText += `I've noted your feedback: "${msg}". In a live architectural session, I would now recalculate the spatial weights and update the SVG blueprint to reflect these adjustments.`;
+                // Real AI Chat
+                try {
+                    const response = await fetch('/api/chat-layout', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            message: msg,
+                            layout: generatedLayout
+                        })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        const aiMsg = document.createElement('div');
+                        aiMsg.className = 'flex gap-3 animate-fade-in-up';
+                        aiMsg.innerHTML = `
+                            <div class="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-violet-600 text-sm shrink-0 font-bold">A</div>
+                            <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl rounded-tl-none border border-slate-100 dark:border-slate-700 shadow-sm text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium whitespace-pre-wrap">
+                                ${data.response}
+                            </div>
+                        `;
+                        messagesContainer.appendChild(aiMsg);
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
                     }
-
-                    aiMsg.innerHTML = `
-                        <div class="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-violet-600 text-sm shrink-0 font-bold">A</div>
-                        <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl rounded-tl-none border border-slate-100 dark:border-slate-700 shadow-sm text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
-                            ${responseText}
-                        </div>
-                    `;
-                    messagesContainer.appendChild(aiMsg);
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                }, 1000);
+                } catch (err) {
+                    console.error('Chat error:', err);
+                }
             }
         }
 

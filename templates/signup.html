@@ -45,7 +45,7 @@
         }
 
         .bg-auth {
-            background-image: url('/static/images/signup_bg.png');
+            background-image: url('/static/images/signup_bg.jpeg');
             background-size: cover;
             background-position: center;
         }
@@ -116,7 +116,7 @@
                 <div class="space-y-2">
                     {% for category, message in messages %}
                     <div
-                        class="p-3 rounded-xl text-xs font-bold flex items-center gap-3 border {{ 'bg-emerald-50/50 border-emerald-100 text-emerald-600 dark:bg-emerald-900/10 dark:border-emerald-800 dark:text-emerald-400' if category == 'success' else 'bg-rose-50/50 border-rose-100 text-rose-600 dark:bg-rose-900/10 dark:border-rose-800 dark:text-rose-400' }}">
+                        class="p-4 rounded-xl text-sm font-bold flex items-center gap-3 border {{ 'bg-emerald-50/50 border-emerald-100 text-emerald-600 dark:bg-emerald-900/10 dark:border-emerald-800 dark:text-emerald-400' if category == 'success' else 'bg-rose-50/50 border-rose-100 text-rose-600 dark:bg-rose-900/10 dark:border-rose-800 dark:text-rose-400' }}">
                         <span><i
                                 class="bi {{ 'bi-check-circle-fill' if category == 'success' else 'bi-exclamation-triangle-fill' }}"></i></span>
                         {{ message }}

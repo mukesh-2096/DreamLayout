@@ -170,7 +170,7 @@
 
                 <script>
                     const projectData = {
-                        rooms: JSON.parse('{{ project.rooms | tojson | safe }}' || '[]')
+                        rooms: {{ project.rooms | tojson | safe }}
                     };
 
                     document.addEventListener('DOMContentLoaded', () => {
@@ -242,50 +242,111 @@
                         const svgElement = svgArea.querySelector('svg');
                         if (!svgElement) return;
 
-                        const svgContent = svgArea.innerHTML;
+                        let svgContent = svgArea.innerHTML;
+                        if (!svgContent.includes('xmlns=')) {
+                            svgContent = svgContent.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+                        }
+
                         const projectName = "{{ project.title }}".replace(/\s+/g, '_');
-                        const floorName = document.getElementById('current-floor-label').innerText.replace(/\s+/g, '_');
+                        const floorName = document.getElementById('current-floor-label').innerText.replace(/\s+/g, '_') || 'design';
                         const fileName = `${projectName}_${floorName}.png`;
 
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
                         const img = new Image();
 
+                        const scale = 2;
                         const width = parseInt(svgElement.getAttribute('width')) || 1200;
                         const height = parseInt(svgElement.getAttribute('height')) || 800;
 
-                        canvas.width = width * 2;
-                        canvas.height = height * 2;
+                        canvas.width = width * scale;
+                        canvas.height = height * scale;
 
                         const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
                         const url = URL.createObjectURL(svgBlob);
 
                         img.onload = function () {
-                            ctx.fillStyle = 'white';
+                            ctx.fillStyle = '#FFFFFF';
                             ctx.fillRect(0, 0, canvas.width, canvas.height);
-                            ctx.scale(2, 2);
+                            ctx.scale(scale, scale);
                             ctx.drawImage(img, 0, 0);
 
-                            const pngUrl = canvas.toDataURL('image/png');
-                            const link = document.createElement('a');
-                            link.href = pngUrl;
-                            link.download = fileName;
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
+                            try {
+                                const pngUrl = canvas.toDataURL('image/png', 1.0);
+                                const link = document.createElement('a');
+                                link.href = pngUrl;
+                                link.download = fileName;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                            } catch (e) {
+                                console.error('PNG conversion failed:', e);
+                            }
 
                             URL.revokeObjectURL(url);
                         };
                         img.src = url;
                     }
+
+                    async function sendChatMessage() {
+                        const input = document.getElementById('chat-input');
+                        const msg = input.value.trim();
+                        if (!msg) return;
+
+                        const container = document.getElementById('chat-messages');
+
+                        // User message
+                        const uDiv = document.createElement('div');
+                        uDiv.className = 'mb-4 flex flex-col items-end';
+                        uDiv.innerHTML = `<div class="bg-violet-600 text-white p-3 rounded-2xl rounded-tr-none text-xs font-medium max-w-[85%]">${msg}</div>`;
+                        container.appendChild(uDiv);
+                        input.value = '';
+                        container.scrollTop = container.scrollHeight;
+
+                        try {
+                            const response = await fetch('/api/chat-layout', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    message: msg,
+                                    layout: {
+                                        venture_type: "{{ project.title }}",
+                                        description: "{{ project.description }}",
+                                        floors: projectData.rooms.length > 0 && projectData.rooms[0].floor_name ? projectData.rooms : [{ floor_name: 'Ground Floor', rooms: projectData.rooms }]
+                                    }
+                                })
+                            });
+                            const data = await response.json();
+                            if (data.success) {
+                                const aDiv = document.createElement('div');
+                                aDiv.className = 'mb-4 flex flex-col items-start';
+                                aDiv.innerHTML = `<div class="bg-slate-100 dark:bg-slate-800 p-3 rounded-2xl rounded-tl-none text-xs text-slate-700 dark:text-slate-300 font-medium max-w-[85%] whitespace-pre-wrap">${data.response}</div>`;
+                                container.appendChild(aDiv);
+                                container.scrollTop = container.scrollHeight;
+                            }
+                        } catch (e) { console.error(e); }
+                    }
                 </script>
 
-                <div class="bg-gradient-to-br from-violet-600 to-indigo-700 rounded-[2.5rem] p-8 text-white shadow-2xl">
-                    <h3 class="font-bold mb-2">Need changes?</h3>
-                    <p class="text-sm text-violet-100 mb-6">Ask Gemini to refactor this layout or add more details.</p>
-                    <button
-                        class="w-full py-4 bg-white text-violet-700 font-bold rounded-2xl hover:scale-105 transition">Coming
-                        Soon: AI Editor</button>
+                <div class="glass border border-white rounded-[2.5rem] p-8 shadow-xl flex flex-col h-[400px]">
+                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Architect Chat</h3>
+                    <div id="chat-messages" class="flex-1 overflow-y-auto mb-4 space-y-4 pr-2 custom-scrollbar">
+                        <div class="flex flex-col items-start mb-4">
+                            <div
+                                class="bg-slate-100 dark:bg-slate-800 p-3 rounded-2xl rounded-tl-none text-xs text-slate-700 dark:text-slate-300 font-medium max-w-[85%]">
+                                Hello! I'm your architect assistant. Ask me anything about this layout.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <input type="text" id="chat-input" placeholder="Type a message..."
+                            onkeydown="if(event.key==='Enter') sendChatMessage()"
+                            class="w-full px-5 py-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-xs focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                        <button onclick="sendChatMessage()"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 text-violet-600 hover:text-violet-700 p-1">
+                            <i class="bi bi-send-fill text-sm"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 

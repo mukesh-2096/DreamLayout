@@ -280,7 +280,8 @@
         <div class="flex flex-col lg:flex-row gap-12">
 
             <!-- ================= SIDEBAR ================= -->
-            <aside class="hidden lg:flex flex-col w-72 flex-shrink-0 space-y-8 sticky top-32 h-fit self-start">
+            <aside
+                class="flex flex-col w-full lg:w-72 flex-shrink-0 space-y-8 lg:sticky lg:top-32 h-fit self-start order-2 lg:order-1 mt-12 lg:mt-0">
 
                 <div class="sidebar-glass border border-white rounded-[2.5rem] p-8 shadow-xl shadow-slate-200/30">
                     <h3 class="text-[10px] font-black text-slate-400 uppercase mb-8 tracking-[0.2em] px-2">Your
@@ -296,7 +297,7 @@
                                             class="bi bi-grid-1x2-fill"></i></span>
                                     <span class="text-sm">Active Projects</span>
                                 </div>
-                                <svg class="w-4 h-4 text-slate-400 group-hover:text-violet-500 transition-transform"
+                                <svg class="w-4 h-4 text-slate-400 group-hover:text-violet-500 transition-transform duration-300 pointer-events-none"
                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                         d="M19 9l-7 7-7-7"></path>
@@ -317,7 +318,7 @@
                                             class="bi bi-clock-history"></i></span>
                                     <span class="text-sm">Recent History</span>
                                 </div>
-                                <svg class="w-4 h-4 text-slate-400 group-hover:text-violet-500 transition-transform"
+                                <svg class="w-4 h-4 text-slate-400 group-hover:text-violet-500 transition-transform duration-300 pointer-events-none"
                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                         d="M19 9l-7 7-7-7"></path>
@@ -345,7 +346,7 @@
             </aside>
 
             <!-- ================= CONTENT ================= -->
-            <div class="flex-1">
+            <div class="flex-1 order-1 lg:order-2">
 
                 <!-- Header Section -->
                 <div class="mb-8 md:mb-12">
@@ -531,7 +532,7 @@
         };
         document.getElementById('mobile-menu-btn').onclick = toggleMenu;
 
-        const PROJECTS = JSON.parse('{{ projects| tojson | safe }}' || '[]');
+        const PROJECTS = {{ projects| tojson | safe }};
 
         function renderList(container, items) {
             container.innerHTML = '';
@@ -557,34 +558,53 @@
         }
 
         function closeAll() {
-            document.getElementById('all-projects-list').classList.add('hidden');
-            document.getElementById('recent-projects-list').classList.add('hidden');
+            document.querySelectorAll('[id$="-projects-list"]').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('[id$="-projects-btn"] svg').forEach(el => el.classList.remove('rotate-180'));
+        }
+
+        function toggleSection(btnId, listId, items) {
+            const box = document.getElementById(listId);
+            const btn = document.getElementById(btnId);
+            const arrow = btn.querySelector('svg');
+            const isHidden = box.classList.contains('hidden');
+
+            closeAll();
+
+            if (isHidden) {
+                renderList(box, items);
+                box.classList.remove('hidden');
+                arrow.classList.add('rotate-180');
+                btn.classList.add('border-violet-200', 'bg-white', 'dark:bg-slate-800');
+            }
         }
 
         document.getElementById('all-projects-btn').onclick = e => {
             e.preventDefault();
-            const box = document.getElementById('all-projects-list');
-            if (!box.classList.contains('hidden')) {
-                box.classList.add('hidden');
-                return;
-            }
-            closeAll();
-            renderList(box, PROJECTS);
-            box.classList.remove('hidden');
+            toggleSection('all-projects-btn', 'all-projects-list', PROJECTS);
         };
 
         document.getElementById('recent-projects-btn').onclick = e => {
             e.preventDefault();
-            const box = document.getElementById('recent-projects-list');
-            if (!box.classList.contains('hidden')) {
-                box.classList.add('hidden');
-                return;
-            }
-            closeAll();
-            const recent = PROJECTS.slice(0, 3);
-            renderList(box, recent);
-            box.classList.remove('hidden');
+            toggleSection('recent-projects-btn', 'recent-projects-list', PROJECTS.slice(0, 5));
         };
+
+        // Search Logic
+        const searchInput = document.querySelector('input[placeholder*="Search"]');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const projectCards = document.querySelectorAll('.grid > div.group');
+                projectCards.forEach(card => {
+                    const title = card.querySelector('h3').innerText.toLowerCase();
+                    const desc = card.querySelector('p').innerText.toLowerCase();
+                    if (title.includes(query) || desc.includes(query)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        }
 
         (function () {
             const wrapper = document.getElementById('profile-menu-wrapper');
