@@ -248,6 +248,42 @@
             font-size: 14px;
             letter-spacing: -0.01em;
         }
+
+        /* Typing Dots Animation */
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+            padding: 4px 0;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: #8b5cf6;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+
+            40% {
+                transform: scale(1.0);
+            }
+        }
     </style>
     <script>
             (function () {
@@ -737,17 +773,59 @@
             class="hidden w-full min-h-screen fixed inset-0 z-[100] bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-6 overflow-y-auto custom-scrollbar">
 
             <!-- Loader View -->
-            <div id="loader-view" class="flex flex-col items-center justify-center animate-fade-in">
-                <div class="w-32 h-32 relative mb-8">
-                    <div class="absolute inset-0 border-4 border-violet-100 dark:border-violet-900/30 rounded-full">
-                    </div>
+            <div id="loader-view" class="flex flex-col items-center justify-center animate-fade-in text-center">
+                <div class="relative w-48 h-48 mb-12">
+                    <!-- Outer rotating ring -->
+                    <div class="absolute inset-0 border-2 border-violet-500/20 rounded-full"></div>
+                    <div class="absolute inset-0 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"
+                        style="animation-duration: 2s;"></div>
+
+                    <!-- Inner pulsing core -->
                     <div
-                        class="absolute inset-0 border-4 border-violet-600 rounded-full border-t-transparent animate-spin">
+                        class="absolute inset-4 bg-gradient-to-br from-violet-600/20 to-indigo-600/20 rounded-full animate-pulse backdrop-blur-sm">
                     </div>
-                    <div <i class="bi bi-magic"></i></div>
+
+                    <!-- Floating architectural elements -->
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="relative w-12 h-12 text-4xl text-violet-600 animate-float">
+                            <i class="bi bi-magic"></i>
+                        </div>
+                    </div>
+
+                    <!-- Scanning Line Animation -->
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-violet-500 to-transparent opacity-50 blur-sm"
+                        style="animation: scan 3s ease-in-out infinite;"></div>
                 </div>
-                <h2 class="text-3xl font-black mb-2 text-slate-900 dark:text-white">Crafting your layout...</h2>
-                <p class="text-slate-500 font-medium">Optimizing spatial distribution and architectural flow.</p>
+
+                <div class="space-y-4 max-w-sm">
+                    <h2 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight animate-pulse">
+                        Architecting...</h2>
+                    <p class="text-slate-500 font-medium text-sm leading-relaxed">Your Architect Assistant is analyzing
+                        your site outline
+                        and spatial requirements to craft the optimal blueprint.</p>
+                </div>
+
+                <!-- Step specific loading messages -->
+                <div id="loading-message-v2"
+                    class="mt-8 px-6 py-2 bg-violet-50 dark:bg-violet-900/20 rounded-full border border-violet-100 dark:border-violet-800 text-[10px] font-black uppercase tracking-widest text-violet-600 opacity-0 transition-all duration-1000">
+                    Optimizing Circulation Paths
+                </div>
+
+                <style>
+                    @keyframes scan {
+
+                        0%,
+                        100% {
+                            top: 0%;
+                            opacity: 0;
+                        }
+
+                        50% {
+                            top: 100%;
+                            opacity: 0.8;
+                        }
+                    }
+                </style>
             </div>
 
             <!-- Result View -->
@@ -833,10 +911,10 @@
                                 Workspace Preview</h4>
                         </div>
                         <div class="flex gap-3">
-                            <a href="/dashboard"
+                            <button onclick="confirmExit()"
                                 class="px-6 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-red-500 transition flex items-center gap-2">
                                 <i class="bi bi-arrow-left"></i> Exit Workspace
-                            </a>
+                            </button>
                             <button onclick="exportPng()"
                                 class="px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-200 transition">Export
                                 PNG</button>
@@ -893,6 +971,31 @@
                                 class="flex-1 py-5 rounded-2xl bg-violet-600 text-white font-black hover:bg-violet-700 shadow-xl shadow-violet-600/20 transition-all">Save
                                 Project</button>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exit Confirmation Modal -->
+        <div id="exit-modal"
+            class="hidden fixed inset-0 z-[200] flex items-center justify-center p-6 backdrop-blur-md bg-slate-900/20">
+            <div
+                class="bg-white dark:bg-slate-900 w-full max-w-md rounded-[2.5rem] p-10 shadow-2xl border border-slate-100 dark:border-slate-800 animate-fade-in-up">
+                <div class="flex flex-col items-center text-center space-y-6">
+                    <div
+                        class="w-20 h-20 bg-rose-100 dark:bg-rose-900/30 rounded-3xl flex items-center justify-center text-4xl text-rose-500">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-black text-slate-900 dark:text-white">Unsaved Work</h3>
+                        <p class="text-slate-500 text-sm font-medium mt-1">Are you sure you want to exit? Your generated
+                            layout will be permanently lost unless you save it.</p>
+                    </div>
+                    <div class="w-full flex gap-4">
+                        <button onclick="closeExitModal()"
+                            class="flex-1 py-5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-black hover:bg-slate-200 transition-all">Stay</button>
+                        <button onclick="window.location.href='/dashboard'"
+                            class="flex-1 py-5 rounded-2xl bg-rose-500 text-white font-black hover:bg-rose-600 shadow-xl shadow-rose-500/20 transition-all">Discard</button>
                     </div>
                 </div>
             </div>
@@ -1207,8 +1310,9 @@
                 : '');
 
             const simplifiedPoints = points.filter((_, i) => i % 5 === 0);
+            // Change from /api/generate-layout to /api/generate-preview to prevent auto-save
             try {
-                const response = await fetch('/api/generate-layout', {
+                const response = await fetch('/api/generate-preview', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -1245,13 +1349,13 @@
             if (chatVenture) chatVenture.innerText = layout.venture_type || 'Custom';
             if (chatArea) chatArea.innerText = layout.area || 'Optimal';
 
-            // Display AI Advice
+            // Start typing effect for AI Advice
             const adviceText = document.getElementById('ai-advice-text');
-            if (layout.conversational_response) {
-                adviceText.innerText = layout.conversational_response;
-            } else {
-                adviceText.innerText = "I've successfully generated your custom architectural layout! You can examine the numbered components in the design and refer to the legend above for details.";
-            }
+            const baseResponse = layout.conversational_response || "I've successfully generated your custom architectural layout!";
+            const fullResponse = baseResponse + "\n\nI've assigned numbers (1, 2, 3...) to each room. You can check the details for these in the Design Legend on the right side of the workspace.";
+
+            adviceText.innerText = "";
+            typeMessage(adviceText, fullResponse);
 
             const svgContainer = document.getElementById('svg-container');
             svgContainer.innerHTML = '';
@@ -1334,6 +1438,14 @@
 
         function closeSaveModal() {
             document.getElementById('save-modal').classList.add('hidden');
+        }
+
+        async function confirmExit() {
+            document.getElementById('exit-modal').classList.remove('hidden');
+        }
+
+        function closeExitModal() {
+            document.getElementById('exit-modal').classList.add('hidden');
         }
 
         async function confirmSave() {
@@ -1593,6 +1705,27 @@
             });
         }
 
+        async function typeMessage(element, text, speed = 15) {
+            let i = 0;
+            element.innerText = "";
+
+            return new Promise((resolve) => {
+                function type() {
+                    if (i < text.length) {
+                        element.innerText += text.charAt(i);
+                        i++;
+                        // Auto-scroll chat if possible
+                        const chatContainer = document.getElementById('chat-messages');
+                        if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+                        setTimeout(type, speed);
+                    } else {
+                        resolve();
+                    }
+                }
+                type();
+            });
+        }
+
         function showToast(message, iconClass = 'bi-exclamation-triangle-fill') {
             const toast = document.getElementById('custom-toast');
             if (!toast) {
@@ -1631,6 +1764,23 @@
                 chatInput.value = '';
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
+                // Show Thinking Indicator
+                const thinkingMsg = document.createElement('div');
+                thinkingMsg.id = 'ai-thinking';
+                thinkingMsg.className = 'flex gap-3 animate-fade-in';
+                thinkingMsg.innerHTML = `
+                    <div class="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-violet-600 text-sm shrink-0 font-bold">A</div>
+                    <div class="bg-white dark:bg-slate-800 px-4 py-3 rounded-2xl rounded-tl-none border border-slate-100 dark:border-slate-700 shadow-sm">
+                        <div class="typing-dots">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                `;
+                messagesContainer.appendChild(thinkingMsg);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
                 // Real AI Chat
                 try {
                     const response = await fetch('/api/chat-layout', {
@@ -1642,19 +1792,25 @@
                         })
                     });
                     const data = await response.json();
+
+                    // Remove Thinking Indicator
+                    document.getElementById('ai-thinking')?.remove();
+
                     if (data.success) {
                         const aiMsg = document.createElement('div');
                         aiMsg.className = 'flex gap-3 animate-fade-in-up';
                         aiMsg.innerHTML = `
                             <div class="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-violet-600 text-sm shrink-0 font-bold">A</div>
-                            <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl rounded-tl-none border border-slate-100 dark:border-slate-700 shadow-sm text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium whitespace-pre-wrap">
-                                ${data.response}
+                            <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl rounded-tl-none border border-slate-100 dark:border-slate-700 shadow-sm text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium whitespace-pre-wrap message-content">
                             </div>
                         `;
                         messagesContainer.appendChild(aiMsg);
+                        const contentDiv = aiMsg.querySelector('.message-content');
+                        await typeMessage(contentDiv, data.response);
                         messagesContainer.scrollTop = messagesContainer.scrollHeight;
                     }
                 } catch (err) {
+                    document.getElementById('ai-thinking')?.remove();
                     console.error('Chat error:', err);
                 }
             }

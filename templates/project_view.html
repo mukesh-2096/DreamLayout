@@ -42,6 +42,77 @@
             height: auto;
             border-radius: 1.5rem;
         }
+
+        /* Floating Chat Widget Styles */
+        #chat-widget {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+
+        #chat-bubble {
+            width: 4rem;
+            height: 4rem;
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            border-radius: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 20px 25px -5px rgba(124, 58, 237, 0.3), 0 10px 10px -5px rgba(124, 58, 237, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #chat-bubble:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 25px 30px -5px rgba(124, 58, 237, 0.4);
+        }
+
+        #chat-bubble i {
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        #chat-popup {
+            position: absolute;
+            bottom: 5rem;
+            right: 0;
+            width: 380px;
+            height: 500px;
+            background: white;
+            border-radius: 2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transform-origin: bottom right;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.9) translateY(20px);
+        }
+
+        .dark #chat-popup {
+            background: #0f172a;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        #chat-popup.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1) translateY(0);
+        }
+
+        .chat-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            border-radius: 2rem 2rem 0 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
     </style>
     <script>
             (function () {
@@ -130,9 +201,15 @@
                 <!-- Architect's Analysis & Legend -->
                 {% if project.design_philosophy %}
                 <div class="glass border border-white rounded-[2.5rem] p-8 shadow-xl">
-                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Architect's
-                        Analysis</h3>
-                    <div class="prose prose-sm dark:prose-invert max-w-none">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Architect's Analysis
+                        </h3>
+                        <button onclick="toggleAnalysis()" id="analysis-toggle-btn"
+                            class="px-4 py-1.5 rounded-lg bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400 text-[9px] font-black uppercase tracking-widest hover:bg-violet-600 hover:text-white transition-all">
+                            View Details
+                        </button>
+                    </div>
+                    <div id="analysis-container" class="prose prose-sm dark:prose-invert max-w-none hidden">
                         <div
                             class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-wrap font-medium">
                             {{ project.design_philosophy }}
@@ -142,8 +219,14 @@
                 {% endif %}
 
                 <div class="glass border border-white rounded-[2.5rem] p-8 shadow-xl">
-                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Room Breakdown</h3>
-                    <div id="rooms-container" class="space-y-4">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Room Breakdown</h3>
+                        <button onclick="toggleRooms()" id="rooms-toggle-btn"
+                            class="px-4 py-1.5 rounded-lg bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400 text-[9px] font-black uppercase tracking-widest hover:bg-violet-600 hover:text-white transition-all">
+                            View Details
+                        </button>
+                    </div>
+                    <div id="rooms-container" class="space-y-4 hidden">
                         {% if project.rooms and project.rooms[0] is mapping and 'floor_name' not in project.rooms[0] %}
                         {% for room in project.rooms %}
                         <div
@@ -196,6 +279,34 @@
                             label.innerText = floors[0].floor_name;
                             const firstBtn = selector.querySelector('button');
                             if (firstBtn) switchFloor(0, firstBtn, floors);
+                        }
+                    }
+
+                    function toggleRooms() {
+                        const container = document.getElementById('rooms-container');
+                        const btn = document.getElementById('rooms-toggle-btn');
+                        const isHidden = container.classList.contains('hidden');
+
+                        if (isHidden) {
+                            container.classList.remove('hidden');
+                            btn.innerText = 'Hide Details';
+                        } else {
+                            container.classList.add('hidden');
+                            btn.innerText = 'View Details';
+                        }
+                    }
+
+                    function toggleAnalysis() {
+                        const container = document.getElementById('analysis-container');
+                        const btn = document.getElementById('analysis-toggle-btn');
+                        const isHidden = container.classList.contains('hidden');
+
+                        if (isHidden) {
+                            container.classList.remove('hidden');
+                            btn.innerText = 'Hide Details';
+                        } else {
+                            container.classList.add('hidden');
+                            btn.innerText = 'View Details';
                         }
                     }
 
@@ -288,6 +399,14 @@
                         img.src = url;
                     }
 
+                    function toggleChatPopup() {
+                        const popup = document.getElementById('chat-popup');
+                        popup.classList.toggle('active');
+                        if (popup.classList.contains('active')) {
+                            setTimeout(() => document.getElementById('chat-input').focus(), 300);
+                        }
+                    }
+
                     async function sendChatMessage() {
                         const input = document.getElementById('chat-input');
                         const msg = input.value.trim();
@@ -328,30 +447,56 @@
                     }
                 </script>
 
-                <div class="glass border border-white rounded-[2.5rem] p-8 shadow-xl flex flex-col h-[400px]">
-                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Architect Chat</h3>
-                    <div id="chat-messages" class="flex-1 overflow-y-auto mb-4 space-y-4 pr-2 custom-scrollbar">
-                        <div class="flex flex-col items-start mb-4">
-                            <div
-                                class="bg-slate-100 dark:bg-slate-800 p-3 rounded-2xl rounded-tl-none text-xs text-slate-700 dark:text-slate-300 font-medium max-w-[85%]">
-                                Hello! I'm your architect assistant. Ask me anything about this layout.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="relative">
-                        <input type="text" id="chat-input" placeholder="Type a message..."
-                            onkeydown="if(event.key==='Enter') sendChatMessage()"
-                            class="w-full px-5 py-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-xs focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
-                        <button onclick="sendChatMessage()"
-                            class="absolute right-2 top-1/2 -translate-y-1/2 text-violet-600 hover:text-violet-700 p-1">
-                            <i class="bi bi-send-fill text-sm"></i>
-                        </button>
-                    </div>
-                </div>
+                <!-- Chat button will be outside sidebar -->
             </div>
 
         </div>
     </main>
+
+    <!-- Floating Chat Widget -->
+    <div id="chat-widget">
+        <div id="chat-popup">
+            <div class="chat-header">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
+                        <i class="bi bi-robot text-base"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-black uppercase tracking-widest">Architect Assistant</h4>
+                        <span class="text-[9px] font-bold opacity-80">Online & Ready</span>
+                    </div>
+                </div>
+                <button onclick="toggleChatPopup()" class="text-white/70 hover:text-white transition">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar dark:bg-slate-900/50">
+                <div class="flex flex-col items-start">
+                    <div
+                        class="bg-slate-100 dark:bg-slate-800 p-3 rounded-2xl rounded-tl-none text-xs text-slate-700 dark:text-slate-300 font-medium max-w-[85%]">
+                        Hello! I'm your architect assistant. Ask me anything about this layout.
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-slate-50 dark:border-slate-800">
+                <div class="relative">
+                    <input type="text" id="chat-input" placeholder="Ask a question..."
+                        onkeydown="if(event.key==='Enter') sendChatMessage()"
+                        class="w-full pl-4 pr-12 py-3 rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs focus:ring-2 focus:ring-violet-500/20 focus:outline-none font-medium">
+                    <button onclick="sendChatMessage()"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-violet-600 text-white rounded-lg flex items-center justify-center hover:bg-violet-700 transition shadow-lg shadow-violet-600/20">
+                        <i class="bi bi-send-fill text-[10px]"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="chat-bubble" onclick="toggleChatPopup()" title="Chat with Architect">
+            <i class="bi bi-chat-left-dots-fill"></i>
+        </div>
+    </div>
 </body>
 
 </html>
