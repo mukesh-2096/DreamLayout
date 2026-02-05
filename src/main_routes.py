@@ -430,3 +430,54 @@ async def api_save_project(request: Request):
         }
     except Exception as e:
         return {"success": False, "error": str(e)}
+
+@main_router.post("/api/chat-layout")
+async def api_chat_layout(request: Request):
+    if not request.state.user:
+        return {"error": "Unauthorized"}, 401
+    
+    data = await request.json()
+    message = data.get("message")
+    layout_data = data.get("layout") # The current layout object
+    
+    if not message or not layout_data:
+        return {"error": "Missing message or layout data"}, 400
+        
+    try:
+        # Create a context-aware prompt for the chat
+        rooms_summary = ""
+        if "floors" in layout_data:
+            for floor in layout_data["floors"]:
+                rooms_summary += f"\nFloor: {floor.get('floor_name')}\n"
+                for room in floor.get("rooms", []):
+                    rooms_summary += f"- {room.get('id')}. {room.get('name')} ({room.get('size')})\n"
+        
+        system_prompt = f"""
+        You are an expert architect assistant. You are discussing a specific layout you just generated.
+        
+        LAYOUT CONTEXT:
+        Venture: {layout_data.get('venture_type', 'Custom Project')}
+        Area: {layout_data.get('area', 'Optimal')}
+        Description: {layout_data.get('description', '')}
+        
+        ROOMS & COMPONENTS:{rooms_summary}
+        
+        The user has a question or comment about this specific design. 
+        Answer professionally, keeping the architectural context in mind. 
+        If they ask for changes, explain how they might be implemented or give professional advice.
+        Keep responses concise but helpful.
+        """
+        
+        # Use Gemini to generate a response
+        from src.layout_generator import layout_generator
+        response = layout_generator.llm.invoke([
+            ("system", system_prompt),
+            ("human", message)
+        ])
+        
+        return {
+            "success": True,
+            "response": response.content
+        }
+    except Exception as e:
+        return {"success": False, "error": str(e)}
